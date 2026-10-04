@@ -1,0 +1,2 @@
+# Spike A only. Pinned to the SDK major version the script was written against.
+mcp>=2.3,<3

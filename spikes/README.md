@@ -1,0 +1,141 @@
+# Spikes
+
+One-off experiments that answer open questions before the real build. Spike code
+is not part of the product and is not imported by `moodmeals/`.
+
+## Spike A: Swiggy sign-in from Python (tasks.md T0.2, design DQ1, requirements Q2)
+
+**Question:** can the official `mcp` Python SDK complete Swiggy's OAuth sign-in
+(phone and OTP) on localhost, and then make a read-only call?
+
+**What the script does** (`swiggy_signin.py`):
+
+1. Connects to `https://mcp.swiggy.com/food` over streamable HTTP.
+2. Runs OAuth 2.1 with PKCE. It opens the Swiggy sign-in page in your browser;
+   the redirect comes back to `http://localhost:8765/callback` on your machine.
+3. Makes **one** read-only call, `get_addresses`.
+4. Prints **only the number** of saved addresses.
+
+**What it does not do:** it never prints, logs or saves address text, phone
+numbers or names. Tokens are kept in memory and are gone when the script exits.
+It calls no cart, order, checkout, address-changing or payment tool.
+
+**Run it on your own Windows laptop, not in the Codespace.** The redirect goes to
+`localhost` on the machine where the browser runs.
+
+### Windows steps
+
+You need Python 3.11 or newer. Check in PowerShell:
+
+```powershell
+py --version
+```
+
+If that fails or shows an older version, install Python from python.org (tick
+"Add python.exe to PATH") and reopen PowerShell.
+
+1. Get the code and go to the repo folder:
+
+   ```powershell
+   git clone https://github.com/vartika-24-06/swiggymcp-moodmeals.git
+   cd swiggymcp-moodmeals
+   ```
+
+   (If you already cloned it: `cd` into it and run `git pull`.)
+
+2. Create and activate a virtual environment:
+
+   ```powershell
+   py -m venv .venv
+   .venv\Scripts\Activate.ps1
+   ```
+
+   If PowerShell says running scripts is disabled, run this once and then
+   activate again:
+
+   ```powershell
+   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+   ```
+
+   (In the old Command Prompt, activate with `.venv\Scripts\activate.bat` instead.)
+
+3. Install the one dependency:
+
+   ```powershell
+   python -m pip install -r spikes\requirements.txt
+   ```
+
+4. Run the spike:
+
+   ```powershell
+   python spikes\swiggy_signin.py
+   ```
+
+5. Your browser opens the Swiggy sign-in page. Enter your phone number and OTP
+   there (the script never sees them). When the browser tab says the sign-in
+   step finished, go back to PowerShell.
+
+Options: `--port 9000` uses a different redirect port (if 8765 is taken);
+`--no-browser` prints the sign-in URL instead of opening it.
+
+### What you should see
+
+```
+Opening the Swiggy sign-in page in your browser...
+Signed in. MCP session is open.
+SUCCESS: saved addresses = <a number> (from pagination.total)
+```
+
+### What to send back
+
+Copy the terminal output from the first line the script printed. It is one of:
+
+- **`SUCCESS: saved addresses = N ...`**: send that line. (The number alone is
+  not personal; leave it out if you prefer and just say "success".)
+- **`PARTIAL: ...`**: sign-in worked but the response shape was not what the
+  script expected. Send all the lines. They hold only key names and value types
+  (for example `"addressLine": "str"`), never values.
+- **`FAILED: <ErrorType>: <message>`**: send the exact line(s), and say at which
+  point it failed: before the browser opened, on the Swiggy page (what the page
+  said, in your words), or after you were sent back to localhost.
+
+Before sending, read it once. It should contain no address, phone number or
+name; the script masks any run of 6 or more digits as `<digits>`. If a
+`Could not open a browser` line appears, do not send the long URL under it
+(it is not personal, just not needed).
+
+Also useful: the output of `python --version` and
+`python -m pip show mcp` (the `Version:` line only).
+
+### Things I am unsure about (not guessed, to be settled by this run)
+
+- **Client registration.** The script gives the SDK no pre-registered client
+  id. The SDK then does OAuth *dynamic client registration* by itself. What I
+  could check without signing in: Swiggy's public OAuth metadata
+  (`https://mcp.swiggy.com/.well-known/oauth-authorization-server`, read on
+  2026-10-04) does advertise a `registration_endpoint`, PKCE `S256`, and the
+  `none` token-endpoint auth method the script asks for. What I could **not**
+  check: whether that endpoint accepts a registration from an unknown client,
+  or only from clients Swiggy has allow-listed. If it refuses, expect a
+  `FAILED: OAuthRegistrationError` line.
+- **Redirect address.** Requirements A1 says localhost redirects are allowed.
+  I do not know if Swiggy restricts the port, the path (`/callback`) or
+  `localhost` versus `127.0.0.1`. If the Swiggy page shows a redirect-URI error,
+  tell me its wording.
+- **Resource check.** The server's metadata names its resource as
+  `https://mcp.swiggy.com` while we connect to `/food`. Reading the SDK source,
+  it accepts a parent resource, so this should pass; it is untested.
+- **Response shape.** The count is read from `pagination.total`, which the
+  tool's description documents. I have not seen a real response from this
+  client, hence the `PARTIAL` branch.
+- **SDK version.** The script was written against `mcp` 2.3.0 by reading its
+  source (`Client`, `OAuthClientProvider`, `streamable_http_client`). It was
+  linted and its local callback server was tested offline, but the script was
+  **never run against Swiggy**. `mcp` 2.x uses `httpx2` (installed with it), not
+  `httpx`.
+
+### After the run
+
+The result and any fallback go into `spikes/notes.md` (T0.2 "done when"). If
+sign-in fails, the fallback in tasks.md applies: the live demo signs in through
+another MCP client and nothing else changes.
