@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets and tokens: never commit
+.env
+.env.*
+!.env.example
+*token*.json
+*tokens*.json
+*.token
+*credentials*.json
+.streamlit/secrets.toml
+
+# Local, unredacted captures of real tool responses
+spikes/_local/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
