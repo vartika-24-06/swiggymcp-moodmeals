@@ -67,7 +67,20 @@ not a model miss.
 - Counts this small cannot separate the two models. They show native calling is
   workable on small free models, not that either is reliable.
 
-**Not yet run:** Gemini (`gemini-3.8-flash`) and OpenAI (`gpt-5-mini`).
+**OpenAI gpt-5-mini (native, 3 repeats per prompt).**
+
+| Run | Valid | Right | Median s |
+|---|---|---|---|
+| default | 11/15 | 11/15 | 5.0 |
+| parallel calls off | 15/15 | 15/15 | 4.3 |
+
+In the default run, the 4 misses were not wrong answers: on the two "find ingredients"
+prompts it returned 7 to 10 searches in one turn (parallel tool calling), which breaks
+our one-action-per-turn contract. With `parallel_tool_calls` off it was valid and right
+on every call. It is also about ten times slower per call than the Groq models, which
+matters for the 90-second run budget.
+
+**Not yet run:** Gemini (`gemini-3.8-flash`).
 
 **Provisional decision (DQ3).** Build the `LLMClient` on native function calling.
 Do not build a JSON fallback yet. Treat the grounding and plan-building step as the
