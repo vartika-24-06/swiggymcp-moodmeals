@@ -450,6 +450,10 @@ def one_call(
                 time.sleep(20 * retries)
                 continue
             out = Outcome(e.kind, note=e.note)
+            if e.note == "HTTP 400" and any(w in e.detail.lower() for w in ("tool", "function")):
+                # The provider rejected the model's own output (malformed or unwanted
+                # tool call). That is a model failure, not an infrastructure error.
+                out = Outcome("ok", n_actions=0, note="provider_rejected_model_output")
             if e.detail and e.detail not in seen_details:
                 seen_details.add(e.detail)
                 print(f"  note: {e.note}: {e.detail}", flush=True)
