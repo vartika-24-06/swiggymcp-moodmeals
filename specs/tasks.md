@@ -24,7 +24,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 |---|---|---|---|---|---|
 | T0.1 | Create the GitHub repo, Python project skeleton (folders from design section 2), pytest, ruff, a basic CI check | Both | S | `pytest` and `ruff` run green on an empty test; repo pushed | design 2 |
 | T0.2 ✅ done 2026-10-04 | **Spike A: Python sign-in to Swiggy on localhost.** Small script using the `mcp` SDK, OAuth with phone and OTP, one call to `get_addresses` | You (CC writes the script) | M | Script prints the address count, nothing else. Outcome and any fallback written to `spikes/notes.md` | DQ1, Q2 |
-| T0.3 | **Spike B: tool-calling reliability.** Tiny harness: 5 canned prompts, 3 fake tools, 3 to 4 candidate models (free tiers first). Measure how often each returns a valid action | Both | M | A table of valid-action rates per model; a recommended-models list; decision on whether a JSON fallback is needed | DQ3, R14 |
+| T0.3 (Groq done 2026-10-04; Gemini and OpenAI pending) | **Spike B: tool-calling reliability.** Tiny harness: 5 canned prompts, 3 fake tools, 3 to 4 candidate models (free tiers first). Measure how often each returns a valid action | Both | M | A table of valid-action rates per model; a recommended-models list; decision on whether a JSON fallback is needed | DQ3, R14 |
 | T0.4 | **Spike C: result compaction.** Save redacted real responses (restaurants, menu, products) as test fixtures, count tokens before and after whitelisting fields | Both | S | Compaction rules chosen with token numbers; redacted fixtures committed (no addresses, phones or names of people) | DQ2, R12 |
 | T0.5 | Decisions from the spikes recorded in design.md (update DQ1 to DQ3 as settled) | CC | S | design.md updated | design 14 |
 
