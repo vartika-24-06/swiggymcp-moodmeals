@@ -77,5 +77,7 @@ class Plan(_Frozen):
     reason: str
     items: list[PlanItem]
     item_total: int = Field(ge=0)
+    restaurant_id: str | None = None  # order-in plans
+    eta_minutes: int | None = None  # must equal the tool's value (R5.6)
     assumptions: list[str] = Field(default_factory=list)
     mode_notes: list[str] = Field(default_factory=list)

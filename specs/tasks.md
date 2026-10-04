@@ -39,7 +39,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 | T1.3 ✅ done 2026-10-04 | `RunBudget`, guardrail checks, cancel flag, question budget | CC | S | Tests for each limit and for the 4th question being refused | R1.2, R11 |
 | T1.4 ✅ done 2026-10-04 | `WriteGate`: mode check, approval bound to params hash, single use, expiry, dry-run preview | CC | M | Tests: approve, params mismatch, reuse, expiry, dry-run block, every outcome logged | R10 |
 | T1.5 | Crisis matcher: phrase and pattern list (English and common Hinglish) in a config file; resources as config | Both | S | Tests for hits and common false positives; you review the phrase list and resources (Q6) | R2.2 |
-| T1.6 | Plan validator V1 to V9 and totals | CC | M | One test per check, including unverified veg, max quantity, price mismatch, closed restaurant, sponsored flag, dry-run disclaimer present | R8, R5.2, R6 (removed), R7, R10.8 |
+| T1.6 ✅ done 2026-10-04 | Plan validator V1 to V9 and totals | CC | M | One test per check, including unverified veg, max quantity, price mismatch, closed restaurant, sponsored flag, dry-run disclaimer present | R8, R5.2, R6 (removed), R7, R10.8 |
 
 ## Phase 2: Mock world
 
