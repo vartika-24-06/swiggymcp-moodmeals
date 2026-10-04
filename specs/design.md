@@ -276,6 +276,7 @@ class RunBudget:
 ```
 - Checked at the start of every step. Cancel is a flag checked between steps.
 - A breached limit ends the run in `STOPPED` and returns the best verified plan so far, or a plain explanation (R11.2).
+- **To revisit:** `tool_timeout_s = 15` is too tight for real Swiggy. In Spike A (2026-10-04) a single `get_addresses` call took about 16 seconds (`spikes/notes.md`). Settle the value, and how it fits inside `max_seconds`, before the real provider is built.
 
 ### 10.2 Retry policy
 - **Read tools:** retry once with the same parameters, then try an alternative (another restaurant, another query, or switch path) (R9.1).
@@ -373,7 +374,7 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 
 | ID | Question | When to settle |
 |---|---|---|
-| DQ1 | Can the Python MCP client complete Swiggy sign-in on localhost? (requirements Q2) | First spike |
+| DQ1 | Can the Python MCP client complete Swiggy sign-in on localhost? (requirements Q2) | **Resolved 2026-10-04: yes.** Spike A (T0.2) signed in with the `mcp` SDK 2.3.0 using dynamic client registration, PKCE and a `localhost:8765/callback` redirect, then made a read-only call. No sign-in fallback is needed. Details in `spikes/notes.md` |
 | DQ2 | **Result compaction:** how much of each tool result the model sees (top N restaurants, menu caps, whitelisted fields) to keep context small and cheap | Before the loop is built |
 | DQ3 | **Tool-calling reliability on free or cheap models.** Test 2–3 models early; decide a minimum tier and a recommended-model list; add a JSON fallback if needed | Early spike |
 | DQ4 | **Cook path:** how a simple meal becomes products (model proposes a meal; each ingredient searched; unavailable items substituted or dropped; at most ~6 ingredients *(proposed)*) | During the cook-path build |

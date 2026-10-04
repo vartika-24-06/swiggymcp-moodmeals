@@ -231,7 +231,7 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 
 ## 10. Open questions
 
-- **Q2.** Can the Python MCP client complete Swiggy's OAuth sign-in on localhost? Run an early spike on the owner's machine. If not, live mode would rely on another MCP client for sign-in and the demo video would use it; the public deployment is unaffected.
+- **Q2. (Resolved 2026-10-04: yes.)** Can the Python MCP client complete Swiggy's OAuth sign-in on localhost? Spike A on the owner's machine signed in and made a read-only call (`spikes/notes.md`, design DQ1), so live mode does not need another MCP client for sign-in.
 - **Q4.** Name and branding: check "MoodMeals" availability; use no Swiggy logos or wording that implies endorsement.
 - **Q5.** Final scenario list and the rubric for "appropriate path".
 - **Q6.** Crisis resources text and regions.
