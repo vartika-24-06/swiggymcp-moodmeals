@@ -96,10 +96,18 @@ _EGG = {"egg", "egg_veg", "contains_egg"}
 _NON_VEG = {"non_veg", "non-veg", "nonveg", "non veg", "non_vegetarian", "non-vegetarian"}
 
 
-def map_veg_classifier(value: str | None) -> Veg:
+def map_veg_classifier(value: str | bool | None) -> Veg:
+    """Instamart sends strings such as VEG_CLASSIFIER_VEG and VEG_CLASSIFIER_INVALID
+    (observed 2026-10-04); Food menus send a boolean isVeg. Only VEG_CLASSIFIER_VEG
+    was observed on Instamart, so the NON_VEG and EGG spellings are best guesses and
+    anything unknown stays "unverified". A Food boolean cannot tell egg from
+    non-veg, so False maps to non_veg.
+    """
+    if isinstance(value, bool):
+        return "veg" if value else "non_veg"
     if not isinstance(value, str):
         return "unverified"
-    key = value.strip().lower()
+    key = value.strip().lower().removeprefix("veg_classifier_")
     if key in _VEG:
         return "veg"
     if key in _EGG:

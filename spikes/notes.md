@@ -90,3 +90,41 @@ change to the plan.
 Do not build a JSON fallback yet. Treat the grounding and plan-building step as the
 risk to test in the real loop, backed by the validator (it rejects bad plans and
 allows 2 retries). Revisit after the Gemini and OpenAI runs.
+
+## Spike C: shape of real responses (T0.4, DQ2), captured 2026-10-04
+
+Shape reports: `spikes/results/shapes_food.json`, `shapes_im.json` (checked: no digit
+runs, emails, names, phones or address words). Raw captures stay local and git-ignored.
+
+**What the real shapes changed in our assumptions**
+- **Restaurant search:** `availabilityStatus` is "OPEN", "CLOSED" or "UNAVAILABLE", not a
+  boolean. 8 of 10 results for "khichdi" carried "(Ad)" in the name, so sponsored
+  handling matters in practice. `dishes` was empty. Paging uses `hasMore` and `nextOffset`.
+  There is no veg filter on restaurant search. A `veg` boolean appeared on 3 of 10
+  (meaning not yet confirmed, so it is not used).
+- **Menu:** `isVeg` is a boolean (not a classifier string, and cannot tell egg from
+  non-veg); `inStock` is the number 1; categories hold `items[]`, nested ones hold
+  `subcategories[]`; `pageSize` max is 8 categories. One menu page was the biggest
+  payload on Food.
+- **Dish search (`search_menu`):** takes `vegFilter` (1 = veg only) and an optional
+  restaurant scope (`restaurantIdOfAddedItem`). Items carry `menu_item_id` but no
+  restaurant id, so we must scope the search to one restaurant to know where a dish is
+  from. Addons come with ids and prices.
+- **Instamart `search_products`:** `vegClassifier` is "VEG_CLASSIFIER_VEG" or
+  "VEG_CLASSIFIER_INVALID" (no non-veg seen in this sample); `isPromoted` was true on a
+  large share of products; badges include AD, TRENDING and "BUY AGAIN" (history leak, R7.2);
+  prices are `offerPrice` and `mrp` numbers; `maxQuantity` and `vegClassifier` are per variant.
+  The `addressId` is required.
+- **Location:** the tools also accept latitude and longitude (a guest flow), so a
+  no-address mode may exist. Not explored.
+
+**Token numbers: not final.** The `est_tokens` in the reports double-count each response
+(structured and text copies both counted), so real sizes are about half. Before-and-after
+compaction numbers still need an offline run on the local captures.
+
+**Done in code:** parsers for these shapes (`moodmeals/tools/normalise.py`), the
+whitelisted model view (`moodmeals/tools/compact.py`), the veg-classifier mapping fixed
+for the real strings. Tests use synthetic payloads in the observed shapes.
+
+**Still to do for T0.4:** the offline compaction check on local captures (fix the
+double count in `capture_shapes.py` first), then record the token numbers here.

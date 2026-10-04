@@ -89,6 +89,11 @@ def test_eta_minutes_is_upper_bound():
         (None, "unverified"),
         (1, "unverified"),
         ("maybe", "unverified"),
+        ("VEG_CLASSIFIER_VEG", "veg"),
+        ("VEG_CLASSIFIER_INVALID", "unverified"),
+        ("VEG_CLASSIFIER_NON_VEG", "non_veg"),
+        (True, "veg"),
+        (False, "non_veg"),
     ],
 )
 def test_map_veg_classifier(value, want):
