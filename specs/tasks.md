@@ -34,7 +34,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T1.1 | Normalised types and parsing: `Restaurant`, `MenuItem`, `Product`, `Variant`, `Plan`; `parse_count`, `parse_cost_for_two`, `parse_eta`, `map_veg_classifier`, `strip_ad_marker` | CC | M | Unit tests pass, including "5.1K+", "₹400 for two", "10-20 MINS", invalid veg classifier becomes `unverified`, "(Ad)" detection | R5.5, R7.4, R7.7 |
+| T1.1 ✅ done 2026-10-04 | Normalised types and parsing: `Restaurant`, `MenuItem`, `Product`, `Variant`, `Plan`; `parse_count`, `parse_cost_for_two`, `parse_eta`, `map_veg_classifier`, `strip_ad_marker` | CC | M | Unit tests pass, including "5.1K+", "₹400 for two", "10-20 MINS", invalid veg classifier becomes `unverified`, "(Ad)" detection | R5.5, R7.4, R7.7 |
 | T1.2 | `RunState`, `Event` schema, and the redaction function that runs at event creation | CC | M | State round-trips to JSON; redaction tests show no fixture address or phone pattern survives | R12, R13 |
 | T1.3 | `RunBudget`, guardrail checks, cancel flag, question budget | CC | S | Tests for each limit and for the 4th question being refused | R1.2, R11 |
 | T1.4 | `WriteGate`: mode check, approval bound to params hash, single use, expiry, dry-run preview | CC | M | Tests: approve, params mismatch, reuse, expiry, dry-run block, every outcome logged | R10 |
