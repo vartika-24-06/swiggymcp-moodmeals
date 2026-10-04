@@ -314,11 +314,27 @@ KEY_ENV = {
 }
 
 
+UA = "Mozilla/5.0 (compatible; moodmeals-spike/0.1)"
+
+
 class CallError(Exception):
-    def __init__(self, kind: str, note: str = "") -> None:
+    def __init__(self, kind: str, note: str = "", detail: str = "") -> None:
         super().__init__(kind)
         self.kind = kind
         self.note = note
+        self.detail = detail
+
+
+def _error_detail(e: urllib.error.HTTPError) -> str:
+    """Short provider error message, for diagnosis. Never includes request data."""
+    try:
+        raw = e.read().decode("utf-8", "replace")
+        obj = json.loads(raw)
+        err = obj.get("error", obj)
+        msg = err.get("message") if isinstance(err, dict) else str(err)
+        return str(msg or raw)[:160].replace("\n", " ")
+    except Exception:
+        return ""
 
 
 def _post(
@@ -327,14 +343,14 @@ def _post(
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json", **headers},
+        headers={"Content-Type": "application/json", "User-Agent": UA, **headers},
         method="POST",
     )
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
             return json.loads(resp.read())
     except urllib.error.HTTPError as e:
-        raise CallError("http_error", f"HTTP {e.code}") from None
+        raise CallError("http_error", f"HTTP {e.code}", _error_detail(e)) from None
     except TimeoutError:
         raise CallError("timeout") from None
     except urllib.error.URLError as e:
@@ -417,6 +433,9 @@ class Tally:
     per_prompt: dict[str, list[int]] = field(default_factory=dict)  # pid -> [valid, right, n]
 
 
+seen_details: set[str] = set()
+
+
 def one_call(
     provider: str, model: str, mode: str, text: str, key: str, timeout: float, delay: float
 ) -> Outcome:
@@ -431,6 +450,9 @@ def one_call(
                 time.sleep(20 * retries)
                 continue
             out = Outcome(e.kind, note=e.note)
+            if e.detail and e.detail not in seen_details:
+                seen_details.add(e.detail)
+                print(f"  note: {e.note}: {e.detail}", flush=True)
         out.latency_s = time.monotonic() - t0
         out.retries = retries
         time.sleep(delay)
@@ -514,12 +536,12 @@ def list_models(provider: str) -> list[str]:
         headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
     else:
         raise SystemExit(f"Unknown provider: {provider}")
-    req = urllib.request.Request(url, headers=headers)
+    req = urllib.request.Request(url, headers={"User-Agent": UA, **headers})
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310
             body = json.loads(resp.read())
     except urllib.error.HTTPError as e:
-        raise SystemExit(f"HTTP {e.code} while listing models") from None
+        raise SystemExit(f"HTTP {e.code} while listing models: {_error_detail(e)}") from None
     except urllib.error.URLError as e:
         raise SystemExit(f"network error: {type(e.reason).__name__}") from None
     if provider == "gemini":
