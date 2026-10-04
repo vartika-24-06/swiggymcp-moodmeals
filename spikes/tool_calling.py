@@ -20,6 +20,7 @@ See spikes/README.md for the full steps.
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import re
@@ -355,6 +356,9 @@ def _post(
         raise CallError("timeout") from None
     except urllib.error.URLError as e:
         raise CallError("http_error", f"network: {type(e.reason).__name__}") from None
+    except (OSError, http.client.HTTPException, json.JSONDecodeError) as e:
+        # e.g. ConnectionResetError, a dropped or empty response
+        raise CallError("http_error", f"network: {type(e).__name__}") from None
 
 
 def call_model(
@@ -448,6 +452,10 @@ def one_call(
             if e.note == "HTTP 429" and retries < 2:
                 retries += 1
                 time.sleep(20 * retries)
+                continue
+            if e.note.startswith("network:") and retries < 2:
+                retries += 1
+                time.sleep(3 * retries)
                 continue
             out = Outcome(e.kind, note=e.note)
             if e.note == "HTTP 400" and any(w in e.detail.lower() for w in ("tool", "function")):
@@ -658,14 +666,23 @@ def main() -> None:
     if not args.run:
         ap.error("give at least one --run provider:model")
     tallies: list[Tally] = []
-    for spec in args.run:
-        for mode in args.modes.split(","):
-            print(f"running {spec} [{mode}] ...", flush=True)
-            tallies.append(run_one(spec, mode.strip(), args.repeats, args.timeout, args.delay))
-    text = report(tallies)
-    print()
-    print(text)
     out = Path(args.out)
+    try:
+        for spec in args.run:
+            for mode in args.modes.split(","):
+                print(f"running {spec} [{mode}] ...", flush=True)
+                tallies.append(run_one(spec, mode.strip(), args.repeats, args.timeout, args.delay))
+                save_results(tallies, out)  # keep finished models even if a later one fails
+    except KeyboardInterrupt:
+        print("\nStopped by you. Showing what finished.")
+    except Exception as e:  # noqa: BLE001 - never lose finished results to one failure
+        print(f"\nStopped early: {type(e).__name__}. Showing what finished.")
+    print()
+    print(report(tallies))
+    print(f"\nSaved counts to {out} (no prompts, replies or keys inside).")
+
+
+def save_results(tallies: list[Tally], out: Path) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(
@@ -688,7 +705,6 @@ def main() -> None:
             indent=2,
         )
     )
-    print(f"\nSaved counts to {out} (no prompts, replies or keys inside).")
 
 
 if __name__ == "__main__":
