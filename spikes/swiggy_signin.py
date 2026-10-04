@@ -1,8 +1,8 @@
 """Spike A (tasks.md T0.2): can the Python `mcp` SDK sign in to Swiggy on localhost?
 
 Signs in to the Swiggy Food MCP server with OAuth 2.1 + PKCE over streamable
-HTTP, makes ONE read-only call (`get_addresses`) and prints ONLY the number of
-saved addresses.
+HTTP, lists the server's tools, makes ONE read-only tool call (`get_addresses`)
+and prints ONLY the number of saved addresses, plus a progress line per step.
 
 Privacy rules this script follows:
 - It never prints, logs or saves address text, phone numbers or names.
@@ -18,9 +18,11 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import re
 import sys
 import threading
+import traceback
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import Any
@@ -31,12 +33,14 @@ from mcp import Client
 from mcp.client.auth import AuthorizationCodeResult, OAuthClientProvider
 from mcp.client.streamable_http import streamable_http_client
 from mcp.shared.auth import OAuthClientInformationFull, OAuthClientMetadata, OAuthToken
+from pydantic import ValidationError
 
 SERVER_URL = "https://mcp.swiggy.com/food"
 READ_ONLY_TOOL = "get_addresses"
 DEFAULT_PORT = 8765
 CALLBACK_PATH = "/callback"
 SIGN_IN_TIMEOUT_S = 300
+CALL_TIMEOUT_S = 90
 PAGE_SIZE = 10  # the tool's documented page size
 
 _DONE_PAGE = (
@@ -103,19 +107,48 @@ class CallbackServer:
         self._httpd.server_close()
 
 
+def step(message: str) -> None:
+    """Progress line, flushed at once so a stall shows the last finished step."""
+    print(f"[step] {message}", flush=True)
+
+
+def mask_digits(text: str) -> str:
+    """Mask long digit runs so no output can ever carry a phone number."""
+    return re.sub(r"\d{6,}", "<digits>", text)
+
+
 def scrub(text: str) -> str:
-    """Mask long digit runs so an error message can never carry a phone number."""
-    return re.sub(r"\d{6,}", "<digits>", text)[:500]
+    """Masked and cut short, for error messages."""
+    return mask_digits(text)[:500]
 
 
-def leaf_exceptions(exc: BaseException) -> list[BaseException]:
-    """Flatten exception groups (the SDK runs inside task groups)."""
+def safe_message(exc: BaseException) -> str:
+    """Exception message that cannot quote the server's response."""
+    if isinstance(exc, ValidationError):
+        # The default message echoes the input values, which could be address
+        # text. Keep only where it failed and why.
+        errors = exc.errors(include_url=False, include_input=False, include_context=False)
+        return scrub("; ".join(f"{error['loc']}: {error['type']}" for error in errors))
+    return scrub(str(exc))
+
+
+def print_failure(exc: BaseException, indent: str = "", seen: set[int] | None = None) -> None:
+    """Type, message and traceback frames for an exception, its causes and group members."""
+    seen = set() if seen is None else seen
+    if id(exc) in seen:
+        return
+    seen.add(id(exc))
+    print(f"{indent}FAILED: {type(exc).__name__}: {safe_message(exc)}")
+    # Frames hold file names, line numbers and source lines only, never values.
+    for line in mask_digits("".join(traceback.format_tb(exc.__traceback__))).splitlines():
+        print(f"{indent}{line}")
     if isinstance(exc, BaseExceptionGroup):
-        leaves: list[BaseException] = []
         for inner in exc.exceptions:
-            leaves.extend(leaf_exceptions(inner))
-        return leaves
-    return [exc]
+            print_failure(inner, indent + "  | ", seen)
+    cause = exc.__cause__ or (None if exc.__suppress_context__ else exc.__context__)
+    if cause is not None and id(cause) not in seen:
+        print(f"{indent}caused by:")
+        print_failure(cause, indent, seen)
 
 
 def find_total(payload: Any) -> int | None:
@@ -214,9 +247,33 @@ async def run(port: int, open_browser: bool) -> int:
         timeout = httpx2.Timeout(30.0, read=300.0)
         async with httpx2.AsyncClient(auth=oauth, timeout=timeout) as http_client:
             transport = streamable_http_client(SERVER_URL, http_client=http_client)
+            step("opening MCP session (sign-in, then initialize)")
             async with Client(transport, read_timeout_seconds=60) as client:
-                print("Signed in. MCP session is open.")
-                result = await client.call_tool(READ_ONLY_TOOL, {"page": 1, "pageSize": PAGE_SIZE})
+                step("signed in, session initialised")
+
+                step("list_tools started")
+                tools = (await client.list_tools()).tools
+                names = ", ".join(tool.name for tool in tools)
+                step(f"list_tools finished: {len(tools)} tools: {names}")
+
+                step(f"call_tool {READ_ONLY_TOOL} started")
+                try:
+                    result = await asyncio.wait_for(
+                        client.call_tool(
+                            READ_ONLY_TOOL,
+                            {"page": 1, "pageSize": PAGE_SIZE},
+                            # Longer than the limit below, so that limit is the one that fires.
+                            read_timeout_seconds=CALL_TIMEOUT_S + 30,
+                        ),
+                        timeout=CALL_TIMEOUT_S,
+                    )
+                except TimeoutError:
+                    print(f"FAILED: TimeoutError at {READ_ONLY_TOOL} after {CALL_TIMEOUT_S}s")
+                    sys.stdout.flush()
+                    # Hard exit: closing a stalled session could hang as well.
+                    # Tokens are in memory only, so there is nothing to clean up.
+                    os._exit(1)
+                step(f"call_tool {READ_ONLY_TOOL} returned")
     finally:
         callback_server.stop()
 
@@ -257,8 +314,7 @@ def main() -> int:
         print("Cancelled.")
         return 130
     except BaseException as exc:  # noqa: BLE001 (report every failure the same way)
-        for leaf in leaf_exceptions(exc):
-            print(f"FAILED: {type(leaf).__name__}: {scrub(str(leaf))}")
+        print_failure(exc)
         return 1
 
 
