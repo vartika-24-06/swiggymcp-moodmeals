@@ -377,6 +377,9 @@ def call_model(
         if native:
             payload["tools"] = [{"type": "function", "function": a} for a in ACTIONS]
             payload["tool_choice"] = "auto"
+            if provider == "openai":
+                # One action per turn is our contract; stop the model batching calls.
+                payload["parallel_tool_calls"] = False
         body = _post(OPENAI_COMPAT[provider], {"Authorization": f"Bearer {key}"}, payload, timeout)
         return parse_openai_native(body) if native else parse_json_text(text_of(provider, body))
     if provider == "anthropic":
@@ -395,7 +398,7 @@ def call_model(
                 }
                 for a in ACTIONS
             ]
-            payload["tool_choice"] = {"type": "auto"}
+            payload["tool_choice"] = {"type": "auto", "disable_parallel_tool_use": True}
         body = _post(
             "https://api.anthropic.com/v1/messages",
             {"x-api-key": key, "anthropic-version": "2023-06-01"},
