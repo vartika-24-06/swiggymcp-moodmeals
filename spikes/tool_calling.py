@@ -498,6 +498,39 @@ def report(tallies: list[Tally]) -> str:
     return "\n".join(lines)
 
 
+def list_models(provider: str) -> list[str]:
+    """Ask the provider which model IDs this key can use. Prints IDs only."""
+    key = os.environ.get(KEY_ENV.get(provider, ""), "")
+    if not key:
+        raise SystemExit(f"Set {KEY_ENV.get(provider, '<provider>')} in this terminal first.")
+    if provider == "gemini":
+        url = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200"
+        headers = {"x-goog-api-key": key}
+    elif provider in OPENAI_COMPAT:
+        url = OPENAI_COMPAT[provider].replace("/chat/completions", "/models")
+        headers = {"Authorization": f"Bearer {key}"}
+    elif provider == "anthropic":
+        url = "https://api.anthropic.com/v1/models?limit=100"
+        headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
+    else:
+        raise SystemExit(f"Unknown provider: {provider}")
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310
+            body = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        raise SystemExit(f"HTTP {e.code} while listing models") from None
+    except urllib.error.URLError as e:
+        raise SystemExit(f"network error: {type(e.reason).__name__}") from None
+    if provider == "gemini":
+        return sorted(
+            m["name"].removeprefix("models/")
+            for m in body.get("models", [])
+            if "generateContent" in m.get("supportedGenerationMethods", [])
+        )
+    return sorted(m["id"] for m in body.get("data", []))
+
+
 def selftest() -> None:
     p = PROMPTS[0]
     good = parse_openai_native(
@@ -584,9 +617,17 @@ def main() -> None:
     )
     ap.add_argument("--out", default="spikes/results/tool_calling.json")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument(
+        "--list-models",
+        metavar="PROVIDER",
+        help="print the model IDs your key can use, then exit",
+    )
     args = ap.parse_args()
     if args.selftest:
         selftest()
+        return
+    if args.list_models:
+        print("\n".join(list_models(args.list_models)))
         return
     if not args.run:
         ap.error("give at least one --run provider:model")

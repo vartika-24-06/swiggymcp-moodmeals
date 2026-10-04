@@ -171,8 +171,9 @@ Swiggy or personal data, and it saves only counts, never prompts, replies or key
    ```
 
    Closing the terminal forgets them. Never paste a key into a file or into chat.
-3. Pick models from each provider's own model list (names change, so copy them from
-   the provider's site, not from me). Prefer free-tier or small models. Then run, one
+3. Find exact model IDs by asking the provider, for example
+   `python spikes\tool_calling.py --list-models gemini` (also `openai`, `groq`). It
+   prints IDs only. Names change, so copy them from this list, not from memory. Prefer free-tier or small models. Then run, one
    `--run provider:model` per model, for example:
 
    ```powershell
