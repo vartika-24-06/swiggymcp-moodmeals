@@ -80,7 +80,11 @@ our one-action-per-turn contract. With `parallel_tool_calls` off it was valid an
 on every call. It is also about ten times slower per call than the Groq models, which
 matters for the 90-second run budget.
 
-**Not yet run:** Gemini (`gemini-3.8-flash`).
+**Gemini: not scored.** `gemini-3.8-flash` returned HTTP 503 (server unavailable) and a
+second Flash model stalled on repeated calls, both on 2026-10-04 in the evening. No
+valid or right counts were obtained, so nothing is claimed about its tool calling.
+Treated as "unreliable at the time of testing"; it can be retried later without any
+change to the plan.
 
 **Provisional decision (DQ3).** Build the `LLMClient` on native function calling.
 Do not build a JSON fallback yet. Treat the grounding and plan-building step as the
