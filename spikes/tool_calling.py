@@ -456,6 +456,10 @@ def one_call(
                 retries += 1
                 time.sleep(20 * retries)
                 continue
+            if e.note in ("HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504") and retries < 3:
+                retries += 1
+                time.sleep(5 * retries)  # provider overloaded: wait and try again
+                continue
             if e.note.startswith("network:") and retries < 2:
                 retries += 1
                 time.sleep(3 * retries)
