@@ -139,3 +139,53 @@ Also useful: the output of `python --version` and
 The result and any fallback go into `spikes/notes.md` (T0.2 "done when"). If
 sign-in fails, the fallback in tasks.md applies: the live demo signs in through
 another MCP client and nothing else changes.
+
+## Spike B: tool-calling reliability (tasks.md T0.3, design DQ3)
+
+**Question:** which models can drive our loop, where every turn must be exactly one
+action (a tool call, `ask_user` or `propose_plan`) with arguments that match the schema?
+
+**What it does** (`tool_calling.py`): sends 5 synthetic prompts (English, Hinglish, a
+vague one, and one that must build a plan from given results), 5 times each, to each
+model you name. It runs two modes: `native` (the provider's function calling) and
+`json` (plain JSON reply, our possible fallback). It scores:
+
+- **valid**: exactly one action, a known name, arguments matching the schema
+- **right**: valid and also the sensible action for that prompt
+
+It uses only Python's standard library, so there is nothing to install. It sends no
+Swiggy or personal data, and it saves only counts, never prompts, replies or keys.
+
+### Steps (PowerShell, from the repo folder, `.venv` active)
+
+1. Check the scoring code works offline: `python spikes\tool_calling.py --selftest`
+   (should print `selftest ok`).
+2. Set the key for each provider you want to test, in this terminal only:
+
+   ```powershell
+   $env:GEMINI_API_KEY = "paste-key-here"
+   $env:GROQ_API_KEY = "paste-key-here"
+   $env:OPENROUTER_API_KEY = "paste-key-here"
+   $env:OPENAI_API_KEY = "paste-key-here"
+   $env:ANTHROPIC_API_KEY = "paste-key-here"
+   ```
+
+   Closing the terminal forgets them. Never paste a key into a file or into chat.
+3. Pick models from each provider's own model list (names change, so copy them from
+   the provider's site, not from me). Prefer free-tier or small models. Then run, one
+   `--run provider:model` per model, for example:
+
+   ```powershell
+   python spikes\tool_calling.py --run gemini:<model-name> --run groq:<model-name>
+   ```
+
+   Providers: `gemini`, `groq`, `openrouter`, `openai`, `anthropic`.
+4. Free tiers rate-limit. The script waits 2s between calls and retries a 429 twice.
+   If you still see many errors, raise `--delay 6` or run one model at a time.
+   Each model makes 50 calls (5 prompts x 5 repeats x 2 modes). Use `--repeats 3` for
+   a cheaper first pass.
+
+### What to send back
+
+Paste the table and per-prompt lines the script prints at the end. They contain no
+keys and no prompt text. Also say which exact model names you used.
