@@ -207,6 +207,7 @@ class WriteGate:
 ```
 - One approval authorises one action; the params hash prevents "approve A, execute B".
 - Dry-run returns a "would do" preview. Every call, allowed or blocked, is logged (R10.4).
+- Built in T1.4 (`moodmeals/providers/gate.py`). Order of checks: forbidden tools (payment, address changes, coupons) always blocked; unknown tools blocked (fail closed); dry-run returns a preview and never calls the provider, even with an approval; otherwise the approval must match tool and params hash, be unused and unexpired. The approval is marked used **before** the call, so a failed write is never retried. **Mock mode** follows the same approval rules and then calls the in-memory `MockProvider`, so evals and demos exercise the real gate; this is stricter than "blocks unless live", not looser.
 
 ### 7.3 Swiggy connection (dry-run and live)
 - Official `mcp` Python SDK, streamable HTTP, OAuth 2.1 with PKCE, localhost redirect.
