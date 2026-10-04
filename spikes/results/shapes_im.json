@@ -1,0 +1,897 @@
+{
+  "server": "im",
+  "date": "2026-10-04",
+  "note": "Shape only. Sensitive-named fields are not read; text is masked.",
+  "tools": {
+    "get_addresses": {
+      "input_schema": {
+        "required": [],
+        "properties": {
+          "page": {
+            "type": "number",
+            "enum": null,
+            "description": "Page number for pagination, 1-based (default: 1)"
+          },
+          "pageSize": {
+            "type": "number",
+            "enum": null,
+            "description": "Number of addresses per page (default: 10, max: 10)"
+          },
+          "explicitAddressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional saved address ID requested in the current user turn. It takes precedence over selectedAddressId; use only an ID previously returned by get_addresses."
+          },
+          "selectedAddressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional saved address ID selected earlier in this conversation/widget flow. Used for continuity only when the current turn has no explicit address request."
+          },
+          "latitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional current latitude supplied by the client context. Pass only when the client provides it; never infer it or ask the user to type it. Must be paired with longitude."
+          },
+          "longitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional current longitude supplied by the client context. Pass only when the client provides it; never infer it or ask the user to type it. Must be paired with latitude."
+          }
+        },
+        "tool_description": "Swiggy (Instamart/Food): Get saved delivery addresses in recommended display order. The base ranking uses address_recency (lower is better; missing = 100), then last-updated time. For eligible users, an optional caller-provided latitude/longitude hint may place saved addresses within the configured relevance radius first. Ranking never auto-selects an address. Saved-address coordinates are never exposed. Authentication is handled automatically.\n\n📄 PAGINATION: Results are returned one page at a time (10 addresses per page). The response includes a \"pagination\" object ({ page, pageSize, total, t"
+      },
+      "args_used": [
+        "page",
+        "pageSize"
+      ],
+      "status": "ok",
+      "raw_chars": 3763,
+      "est_tokens": 940,
+      "flags": {
+        "ad_marker": 0,
+        "buy_again": 0,
+        "go_to": 0
+      },
+      "fields": {
+        "$": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.addresses": {
+          "count": 1,
+          "types": [
+            "list"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.total": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            14,
+            14
+          ]
+        },
+        "$.pagination": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.pagination.page": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        },
+        "$.pagination.pageSize": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            10
+          ]
+        },
+        "$.pagination.total": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            14,
+            14
+          ]
+        },
+        "$.pagination.totalPages": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            2,
+            2
+          ]
+        },
+        "$.pagination.hasMore": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        },
+        "$.resolution": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.resolution.resolutionSource": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            20,
+            20
+          ],
+          "formats": [
+            {
+              "mask": "aaaaaa_aaaaa_aaaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.resolution.needsUserClarification": {
+          "count": 1,
+          "types": [
+            "bool"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.resolution.candidateAddressIds": {
+          "count": 1,
+          "types": [
+            "list"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.resolution.defaultAddressId": {
+          "count": 1,
+          "types": [
+            "str"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.resolution.scoreUsed": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        },
+        "$.imWidgetV2Eligible": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        }
+      },
+      "address_id_found": true
+    },
+    "search_products": {
+      "input_schema": {
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "addressId": {
+            "type": "string",
+            "enum": null,
+            "description": "REQUIRED: Address ID obtained from get_addresses tool. You MUST call get_addresses first to get this value. Do NOT invent or guess addressId values."
+          },
+          "latitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Guest mode: delivery latitude (-90 to 90)."
+          },
+          "longitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Guest mode: delivery longitude (-180 to 180)."
+          },
+          "query": {
+            "type": "string",
+            "enum": null,
+            "description": "REQUIRED: Search query (product name, category, or brand). Cannot be empty."
+          },
+          "offset": {
+            "type": "number",
+            "enum": null,
+            "description": "Pagination offset (default: 0)"
+          }
+        },
+        "tool_description": "Search for products available at an address or guest coordinates. Returns products with variants (e.g., different pack sizes, quantities). For guest mode, pass latitude and longitude; for signed-in mode, use addressId from get_addresses. When adding a product, ALWAYS search first and ask the user which variant they want."
+      },
+      "args_used": [
+        "addressId",
+        "offset",
+        "query"
+      ],
+      "status": "ok",
+      "raw_chars": 53898,
+      "est_tokens": 13474,
+      "flags": {
+        "ad_marker": 0,
+        "buy_again": 4,
+        "go_to": 0
+      },
+      "fields": {
+        "$": {
+          "count": 2,
+          "types": [
+            "object"
+          ]
+        },
+        "$.nextOffset": {
+          "count": 2,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            1,
+            1
+          ],
+          "formats": [
+            {
+              "mask": "9",
+              "count": 2
+            }
+          ]
+        },
+        "$.products": {
+          "count": 2,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            20,
+            20
+          ]
+        },
+        "$.products[]": {
+          "count": 40,
+          "types": [
+            "object"
+          ]
+        },
+        "$.products[].displayName": {
+          "count": 40,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            16,
+            92
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaaaa Aaaaaaa Aaaaa Aaaaa Aaaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaa Aaaa Aaaaaa Aaa Aaaaaa, 99% Aaaa Aaaaaaaaa Aaaa, Aa Aaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaaaaaaa Aaaaa Aaaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaaa Aaaaaaa Aaaaaaaaaa Aaaaa Aaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaa'a Aaa Aaaaaaa Aaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaa Aaaaaaa Aaaaaaaaaa Aaaaa Aaa Aaaaaa",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].brand": {
+          "count": 40,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            6,
+            15
+          ],
+          "formats": [
+            {
+              "mask": "Aaaa Aaaaaaa",
+              "count": 10
+            },
+            {
+              "mask": "Aaa Aaaa!",
+              "count": 8
+            },
+            {
+              "mask": "Aaaaaaa Aaaaaaa",
+              "count": 6
+            },
+            {
+              "mask": "Aaaaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaaaaaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaa'a Aaa",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].inStock": {
+          "count": 40,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 40
+          }
+        },
+        "$.products[].isAvail": {
+          "count": 40,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 40
+          }
+        },
+        "$.products[].variations": {
+          "count": 40,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            1,
+            4
+          ]
+        },
+        "$.products[].variations[]": {
+          "count": 66,
+          "types": [
+            "object"
+          ]
+        },
+        "$.products[].variations[].spinId": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "<id>",
+              "count": 66
+            }
+          ]
+        },
+        "$.products[].variations[].skuId": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "<id>",
+              "count": 66
+            }
+          ]
+        },
+        "$.products[].variations[].quantityDescription": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            4,
+            9
+          ],
+          "formats": [
+            {
+              "mask": "999 g",
+              "count": 36
+            },
+            {
+              "mask": "999 g x 9",
+              "count": 22
+            },
+            {
+              "mask": "9 kg",
+              "count": 6
+            },
+            {
+              "mask": "9 kg x 9",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].variations[].displayName": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            16,
+            92
+          ],
+          "formats": [
+            {
+              "mask": "Aaa Aaaa Aaaaaa Aaaa Aaaaaa Aaa Aaaaaa, 99% Aaaa Aaaaaaaaa A",
+              "count": 8
+            },
+            {
+              "mask": "Aaa Aaaa Aaaaa Aaa Aaaaaaa, 99% Aaaa Aaaaaaaaa Aaaa, Aa Aaaa",
+              "count": 6
+            },
+            {
+              "mask": "Aaa Aaaa Aaaaaa Aaa Aaaaaa, 99% Aaaa Aaaaaaaaa Aaaa, Aa Aaaa",
+              "count": 6
+            },
+            {
+              "mask": "Aaaa Aaaaaaa Aaaaaaaaaa Aaaaa Aaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaaa Aaaaaaa Aaaaaaaaaa Aaaaa Aaa Aaaaaa",
+              "count": 4
+            },
+            {
+              "mask": "AAAA Aaaaaaa Aaaaaaaaaa Aaaaa Aaa",
+              "count": 4
+            }
+          ]
+        },
+        "$.products[].variations[].brandName": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            6,
+            15
+          ],
+          "formats": [
+            {
+              "mask": "Aaa Aaaa!",
+              "count": 20
+            },
+            {
+              "mask": "Aaaa Aaaaaaa",
+              "count": 18
+            },
+            {
+              "mask": "Aaaaaaa Aaaaaaa",
+              "count": 8
+            },
+            {
+              "mask": "Aaaaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaaaaaa",
+              "count": 4
+            },
+            {
+              "mask": "Aaaaaaaa",
+              "count": 4
+            }
+          ]
+        },
+        "$.products[].variations[].price": {
+          "count": 66,
+          "types": [
+            "object"
+          ]
+        },
+        "$.products[].variations[].price.mrp": {
+          "count": 66,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            55,
+            424
+          ]
+        },
+        "$.products[].variations[].price.offerPrice": {
+          "count": 66,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            41,
+            362
+          ]
+        },
+        "$.products[].variations[].price.unitLevelPrice": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            6,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "999/kg",
+              "count": 40
+            },
+            {
+              "mask": "99.9/999 g",
+              "count": 26
+            }
+          ]
+        },
+        "$.products[].variations[].isInStockAndAvailable": {
+          "count": 66,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 66
+          }
+        },
+        "$.products[].variations[].imageUrl": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            130,
+            180
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 40
+            },
+            {
+              "mask": "aaaaa://aaaaa-aaaaaa.aaaaaa.aaa/aaaaaa/aaaaa/aaaaaa/AA_AAAAA",
+              "count": 26
+            }
+          ]
+        },
+        "$.products[].variations[].rating": {
+          "count": 66,
+          "types": [
+            "object"
+          ]
+        },
+        "$.products[].variations[].rating.value": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            3,
+            3
+          ],
+          "formats": [
+            {
+              "mask": "9.9",
+              "count": 66
+            }
+          ]
+        },
+        "$.products[].variations[].rating.count": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            3,
+            5
+          ],
+          "formats": [
+            {
+              "mask": "9.9k",
+              "count": 32
+            },
+            {
+              "mask": "99.9k",
+              "count": 20
+            },
+            {
+              "mask": "999",
+              "count": 10
+            },
+            {
+              "mask": "99k",
+              "count": 4
+            }
+          ]
+        },
+        "$.products[].variations[].sla": {
+          "count": 60,
+          "types": [
+            "object"
+          ]
+        },
+        "$.products[].variations[].sla.value": {
+          "count": 60,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            1,
+            1
+          ],
+          "formats": [
+            {
+              "mask": "9",
+              "count": 60
+            }
+          ]
+        },
+        "$.products[].variations[].sla.unit": {
+          "count": 60,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            4,
+            4
+          ],
+          "enum_values": [
+            "MINS"
+          ],
+          "formats": [
+            {
+              "mask": "MINS",
+              "count": 60
+            }
+          ]
+        },
+        "$.products[].variations[].vegClassifier": {
+          "count": 66,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            18,
+            22
+          ],
+          "enum_values": [
+            "VEG_CLASSIFIER_INVALID",
+            "VEG_CLASSIFIER_VEG"
+          ],
+          "formats": [
+            {
+              "mask": "VEG_AAAAAAAAAA_VEG",
+              "count": 64
+            },
+            {
+              "mask": "VEG_AAAAAAAAAA_AAAAAAA",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].variations[].maxQuantity": {
+          "count": 60,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            20
+          ]
+        },
+        "$.products[].variations[].maxQuantityMessage": {
+          "count": 60,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            42,
+            52
+          ],
+          "formats": [
+            {
+              "mask": "Aaaa’a aaa aa aaaa aa aaaaa aa aaa aaaaaa!",
+              "count": 46
+            },
+            {
+              "mask": "Only 9 unit(a) aa aaaa item aaa aa aaaaa per aaaaa.",
+              "count": 12
+            },
+            {
+              "mask": "Only 99 unit(a) aa aaaa item aaa aa aaaaa per aaaaa.",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].productId": {
+          "count": 40,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "<id>",
+              "count": 40
+            }
+          ]
+        },
+        "$.products[].parentProductId": {
+          "count": 40,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "<id>",
+              "count": 40
+            }
+          ]
+        },
+        "$.products[].isPromoted": {
+          "count": 40,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "false": 24,
+            "true": 16
+          }
+        },
+        "$.products[].badges": {
+          "count": 22,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            1,
+            2
+          ]
+        },
+        "$.products[].badges[]": {
+          "count": 32,
+          "types": [
+            "object"
+          ]
+        },
+        "$.products[].badges[].type": {
+          "count": 32,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            13,
+            28
+          ],
+          "enum_values": [
+            "BADGE_TYPE_AD",
+            "BADGE_TYPE_INSTA_UPGRADE",
+            "BADGE_TYPE_TRENDING"
+          ],
+          "formats": [
+            {
+              "mask": "AAAAA_AAAA_AD",
+              "count": 16
+            },
+            {
+              "mask": "AAAAA_AAAA_AAAAA_AAAAAAA",
+              "count": 10
+            },
+            {
+              "mask": "AAAAA_AAAA_AAAAAAAAAA_AAAAAA",
+              "count": 4
+            },
+            {
+              "mask": "AAAAA_AAAA_AAAAAAAA",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].badges[].text": {
+          "count": 32,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            2,
+            9
+          ],
+          "formats": [
+            {
+              "mask": "AD",
+              "count": 16
+            },
+            {
+              "mask": "AAAAAA",
+              "count": 10
+            },
+            {
+              "mask": "BUY AGAIN",
+              "count": 4
+            },
+            {
+              "mask": "AAAAAAAA",
+              "count": 2
+            }
+          ]
+        },
+        "$.products[].badges[].backgroundColor": {
+          "count": 32,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            7,
+            17
+          ],
+          "formats": [
+            {
+              "mask": "aaaa(9,9,99,9.99)",
+              "count": 16
+            },
+            {
+              "mask": "#999A99",
+              "count": 10
+            },
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 4
+            },
+            {
+              "mask": "#9AA9AA",
+              "count": 2
+            }
+          ]
+        }
+      }
+    }
+  }
+}

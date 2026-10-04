@@ -1,0 +1,1651 @@
+{
+  "server": "food",
+  "date": "2026-10-04",
+  "note": "Shape only. Sensitive-named fields are not read; text is masked.",
+  "tools": {
+    "get_addresses": {
+      "input_schema": {
+        "required": [],
+        "properties": {
+          "page": {
+            "type": "number",
+            "enum": null,
+            "description": "Page number for pagination, 1-based (default: 1)"
+          },
+          "pageSize": {
+            "type": "number",
+            "enum": null,
+            "description": "Number of addresses per page (default: 10, max: 10)"
+          },
+          "explicitAddressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional saved address ID requested in the current user turn. It takes precedence over selectedAddressId; use only an ID previously returned by get_addresses."
+          },
+          "selectedAddressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional saved address ID selected earlier in this conversation/widget flow. Used for continuity only when the current turn has no explicit address request."
+          },
+          "latitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional current latitude supplied by the client context. Pass only when the client provides it; never infer it or ask the user to type it. Must be paired with longitude."
+          },
+          "longitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional current longitude supplied by the client context. Pass only when the client provides it; never infer it or ask the user to type it. Must be paired with latitude."
+          }
+        },
+        "tool_description": "Swiggy (Instamart/Food): Get saved delivery addresses in recommended display order. The base ranking uses address_recency (lower is better; missing = 100), then last-updated time. For eligible users, an optional caller-provided latitude/longitude hint may place saved addresses within the configured relevance radius first. Ranking never auto-selects an address. Saved-address coordinates are never exposed. Authentication is handled automatically.\n\n📄 PAGINATION: Results are returned one page at a time (10 addresses per page). The response includes a \"pagination\" object ({ page, pageSize, total, t"
+      },
+      "args_used": [
+        "page",
+        "pageSize"
+      ],
+      "status": "ok",
+      "raw_chars": 3735,
+      "est_tokens": 933,
+      "flags": {
+        "ad_marker": 0,
+        "buy_again": 0,
+        "go_to": 0
+      },
+      "fields": {
+        "$": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.addresses": {
+          "count": 1,
+          "types": [
+            "list"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.total": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            14,
+            14
+          ]
+        },
+        "$.pagination": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.pagination.page": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        },
+        "$.pagination.pageSize": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            10
+          ]
+        },
+        "$.pagination.total": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            14,
+            14
+          ]
+        },
+        "$.pagination.totalPages": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            2,
+            2
+          ]
+        },
+        "$.pagination.hasMore": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        },
+        "$.resolution": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.resolution.resolutionSource": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            20,
+            20
+          ],
+          "formats": [
+            {
+              "mask": "aaaaaa_aaaaa_aaaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.resolution.needsUserClarification": {
+          "count": 1,
+          "types": [
+            "bool"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.resolution.candidateAddressIds": {
+          "count": 1,
+          "types": [
+            "list"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.resolution.defaultAddressId": {
+          "count": 1,
+          "types": [
+            "str"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.resolution.scoreUsed": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        }
+      },
+      "address_id_found": true
+    },
+    "search_restaurants": {
+      "input_schema": {
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "addressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional location input: address ID obtained from get_addresses. Use this instead of latitude/longitude when preferred."
+          },
+          "latitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional location input: user latitude. Pass together with longitude. Supported for authenticated and guest calls."
+          },
+          "longitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional location input: user longitude. Pass together with latitude. Supported for authenticated and guest calls."
+          },
+          "query": {
+            "type": "string",
+            "enum": null,
+            "description": "REQUIRED: Search query (restaurant name or cuisine). Cannot be empty. Examples: \"pizza\", \"biryani\", \"KFC\""
+          },
+          "offset": {
+            "type": "number",
+            "enum": null,
+            "description": "Pagination offset. Use nextOffset from previous response to load more results. Default: 0."
+          }
+        },
+        "tool_description": "Search and order food from restaurants for delivery. PRIMARY FOOD DELIVERY SERVICE - Use this when user wants to order food, get food delivered, or search restaurants for delivery. Swiggy Food delivery service. NOT for restaurant reservations or dine-out.\n\n📍 LOCATION INPUT: Pass either latitude and longitude directly, or an addressId returned by get_addresses. Coordinates are supported for both authenticated and guest calls; guests should not call get_addresses.\n\nIMPORTANT: Each restaurant in the response includes an \"availabilityStatus\" field with values \"OPEN\", \"CLOSED\", or \"UNAVAILABLE\". Al"
+      },
+      "args_used": [
+        "addressId",
+        "offset",
+        "query"
+      ],
+      "status": "ok",
+      "raw_chars": 5236,
+      "est_tokens": 1309,
+      "flags": {
+        "ad_marker": 8,
+        "buy_again": 0,
+        "go_to": 0
+      },
+      "fields": {
+        "$": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.restaurants": {
+          "count": 1,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            10,
+            10
+          ]
+        },
+        "$.restaurants[]": {
+          "count": 10,
+          "types": [
+            "object"
+          ]
+        },
+        "$.restaurants[].id": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            5,
+            7
+          ],
+          "formats": [
+            {
+              "mask": "<id>",
+              "count": 10
+            }
+          ]
+        },
+        "$.restaurants[].name": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            11,
+            35
+          ],
+          "formats": [
+            {
+              "mask": "AaaaaAaa - Aaaaa aaa Aaaaaa (Ad)",
+              "count": 1
+            },
+            {
+              "mask": "AA9 Aaaaa - Aaaaaaa To Aaaaa (Ad)",
+              "count": 1
+            },
+            {
+              "mask": "Aaa Aaaa Aaaaaaa Aaaaaaa (Ad)",
+              "count": 1
+            },
+            {
+              "mask": "Aaaa aa aaaaa (Ad)",
+              "count": 1
+            },
+            {
+              "mask": "Aaa Aaaa Aaaa (Ad)",
+              "count": 1
+            },
+            {
+              "mask": "Veg Aaaaa Aa AaaaaAaa (Ad)",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurants[].cuisines": {
+          "count": 10,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            2,
+            6
+          ]
+        },
+        "$.restaurants[].cuisines[]": {
+          "count": 40,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            5,
+            12
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaaa",
+              "count": 10
+            },
+            {
+              "mask": "Aaaaaaa",
+              "count": 10
+            },
+            {
+              "mask": "Aaaaa Aaaaaa",
+              "count": 8
+            },
+            {
+              "mask": "Aaaaaaaa",
+              "count": 3
+            },
+            {
+              "mask": "Aaaaaaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaa Aaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurants[].avgRating": {
+          "count": 10,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            3.2,
+            4.6
+          ]
+        },
+        "$.restaurants[].totalRatings": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            2,
+            5
+          ],
+          "formats": [
+            {
+              "mask": "9.9K+",
+              "count": 3
+            },
+            {
+              "mask": "999",
+              "count": 3
+            },
+            {
+              "mask": "99",
+              "count": 3
+            },
+            {
+              "mask": "99K+",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurants[].costForTwo": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            12,
+            12
+          ],
+          "formats": [
+            {
+              "mask": "₹999 for two",
+              "count": 10
+            }
+          ]
+        },
+        "$.restaurants[].areaName": {
+          "count": 10,
+          "types": [
+            "str"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.restaurants[].distanceKm": {
+          "count": 10,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            2.6,
+            4.4
+          ]
+        },
+        "$.restaurants[].deliveryTimeMinutes": {
+          "count": 10,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            18,
+            28
+          ]
+        },
+        "$.restaurants[].deliveryTimeRange": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "99-99 MINS",
+              "count": 10
+            }
+          ]
+        },
+        "$.restaurants[].imageUrl": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            162,
+            174
+          ],
+          "formats": [
+            {
+              "mask": "aaaaa://aaaaa-aaaaaa.aaaaaa.aaa/aaaaaa/aaaaa/aaaaaa/AAAA_AAA",
+              "count": 6
+            },
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 4
+            }
+          ]
+        },
+        "$.restaurants[].availabilityStatus": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            4,
+            4
+          ],
+          "enum_values": [
+            "OPEN"
+          ],
+          "formats": [
+            {
+              "mask": "AAAA",
+              "count": 10
+            }
+          ]
+        },
+        "$.restaurants[].veg": {
+          "count": 3,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 3
+          }
+        },
+        "$.dishes": {
+          "count": 1,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            0,
+            0
+          ]
+        },
+        "$.total": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            10
+          ]
+        },
+        "$.totalRestaurants": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            107,
+            107
+          ]
+        },
+        "$.totalDishes": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            0,
+            0
+          ]
+        },
+        "$.query": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            7,
+            7
+          ],
+          "formats": [
+            {
+              "mask": "aaaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.hasMore": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        },
+        "$.nextOffset": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            10
+          ]
+        }
+      },
+      "restaurant_id_found": true
+    },
+    "get_restaurant_menu": {
+      "input_schema": {
+        "required": [
+          "restaurantId"
+        ],
+        "properties": {
+          "addressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional location input: address ID from get_addresses. Use this instead of latitude/longitude when preferred."
+          },
+          "latitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional location input: user latitude. Pass together with longitude. Supported for authenticated and guest calls."
+          },
+          "longitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional location input: user longitude. Pass together with latitude. Supported for authenticated and guest calls."
+          },
+          "restaurantId": {
+            "type": "string",
+            "enum": null,
+            "description": "Restaurant ID to fetch menu for (from search_restaurants)"
+          },
+          "page": {
+            "type": "number",
+            "enum": null,
+            "description": "Page number for pagination (default: 1)"
+          },
+          "pageSize": {
+            "type": "number",
+            "enum": null,
+            "description": "Number of categories per page (default: 5, max: 8)"
+          }
+        },
+        "tool_description": "[STAGING GUEST FLOW] Pass either latitude and longitude directly, or an addressId returned by get_addresses. Guests should omit addressId and should not call get_addresses; authenticated callers may use either location form.\n\nGet the complete menu of a restaurant, paginated by category. Use this to BROWSE a restaurant menu and see what is available. Returns restaurant info plus a categories[] array — simple categories carry items[], nested categories carry subcategories[] (each with items[]). Use page/pageSize to navigate category pages when the user asks for more options. COMPACT view: dish n"
+      },
+      "args_used": [
+        "addressId",
+        "page",
+        "pageSize",
+        "restaurantId"
+      ],
+      "status": "ok",
+      "raw_chars": 38790,
+      "est_tokens": 9697,
+      "flags": {
+        "ad_marker": 0,
+        "buy_again": 0,
+        "go_to": 0
+      },
+      "fields": {
+        "$": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.restaurant": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.restaurant.id": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            5,
+            5
+          ],
+          "formats": [
+            {
+              "mask": "<id>",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.name": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            27,
+            27
+          ],
+          "formats": [
+            {
+              "mask": "AaaaaAaa - Aaaaa aaa Aaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.city": {
+          "count": 1,
+          "types": [
+            "str"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.restaurant.areaName": {
+          "count": 1,
+          "types": [
+            "str"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.restaurant.cuisines": {
+          "count": 1,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            2,
+            2
+          ]
+        },
+        "$.restaurant.cuisines[]": {
+          "count": 2,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            6,
+            12
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaa Aaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.avgRating": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            4.2,
+            4.2
+          ]
+        },
+        "$.restaurant.avgRatingString": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            3,
+            3
+          ],
+          "formats": [
+            {
+              "mask": "9.9",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.totalRatingsString": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            13,
+            13
+          ],
+          "formats": [
+            {
+              "mask": "9.9K+ ratings",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.costForTwoMessage": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            12,
+            12
+          ],
+          "formats": [
+            {
+              "mask": "₹999 for two",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.isOpen": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        },
+        "$.restaurant.deliveryTime": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            22,
+            22
+          ]
+        },
+        "$.restaurant.slaString": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            10
+          ],
+          "formats": [
+            {
+              "mask": "99-99 MINS",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurant.address": {
+          "count": 1,
+          "types": [
+            "str"
+          ],
+          "values": "not read (sensitive field name)"
+        },
+        "$.restaurant.imageUrl": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            136,
+            136
+          ],
+          "formats": [
+            {
+              "mask": "aaaaa://aaaaa-aaaaaa.aaaaaa.aaa/aaaaaa/aaaaa/aaaaaa/AA_AAAAA",
+              "count": 1
+            }
+          ]
+        },
+        "$.categories": {
+          "count": 1,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            8,
+            8
+          ]
+        },
+        "$.categories[]": {
+          "count": 8,
+          "types": [
+            "object"
+          ]
+        },
+        "$.categories[].title": {
+          "count": 8,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            11,
+            30
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaaaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaa Aaa Aaaaaaaaa Aaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaa Aaaa Aaaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaaa Aaaaaaa Aaaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaaa Aaaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaa Aaaaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.categories[].items": {
+          "count": 8,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            10,
+            10
+          ]
+        },
+        "$.categories[].items[]": {
+          "count": 80,
+          "types": [
+            "object"
+          ]
+        },
+        "$.categories[].items[].id": {
+          "count": 80,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            8,
+            9
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 80
+            }
+          ]
+        },
+        "$.categories[].items[].name": {
+          "count": 80,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            11,
+            59
+          ],
+          "formats": [
+            {
+              "mask": "Aaa Aaaaaaa & Aaaaaaa Aaaaaaaa",
+              "count": 3
+            },
+            {
+              "mask": "Aaaa Aaaaaaa Aaaa Aaa Aaaaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaaa Aaaaa aaaa Aaaaaa Aaaaaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaaa aaa Aaaaaaa Aaaaaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaaaaaa Aaaaaaa & Aaaa Aaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaaaaaa Aaaaaaa Aaaa Aaaa aaaa Aaaa Aaaaaaa",
+              "count": 2
+            }
+          ]
+        },
+        "$.categories[].items[].price": {
+          "count": 80,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            150,
+            440
+          ]
+        },
+        "$.categories[].items[].inStock": {
+          "count": 80,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        },
+        "$.categories[].items[].isVeg": {
+          "count": 80,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 65,
+            "false": 15
+          }
+        },
+        "$.categories[].items[].isBestseller": {
+          "count": 10,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 10
+          }
+        },
+        "$.categories[].items[].rating": {
+          "count": 47,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            3,
+            3
+          ],
+          "formats": [
+            {
+              "mask": "9.9",
+              "count": 47
+            }
+          ]
+        },
+        "$.categories[].items[].hasVariants": {
+          "count": 80,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "false": 64,
+            "true": 16
+          }
+        },
+        "$.categories[].items[].hasAddons": {
+          "count": 80,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 72,
+            "false": 8
+          }
+        },
+        "$.categories[].items[].description": {
+          "count": 80,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            69,
+            103
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaaaaaa Aaa Aaaaaa, aaaaaa & aaaa aa aaa aaaa, aaaa aaaa a",
+              "count": 5
+            },
+            {
+              "mask": "9 aaaa Aaaa Aaaaaaaa aaaaaa aaaa a aaaaaaaaaa aaaaaaa aa aaa",
+              "count": 3
+            },
+            {
+              "mask": "Aaaaaaaaa Aaaaa Aaaaaa aaaaa aaaaaaaaa Aaaaa aaaaa aaaaaa aa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaa AaaaaAaa aaaaaaaa aaaaaaaaaa aaaaa aaaaaa, 9 aaaa aaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aa Aaaaa, Aa Aaaaaa, Aaaaaa Aaaaa - Aaaaa aaa aaaaaaaaaa Aaa",
+              "count": 2
+            },
+            {
+              "mask": "Aa Aaaaa, Aa Aaaaaa, Aaaaaa Aaaaa - A aaaaaa aaa aaaaaaaaaa ",
+              "count": 2
+            }
+          ]
+        },
+        "$.categories[].items[].imageUrl": {
+          "count": 80,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            163,
+            165
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 43
+            },
+            {
+              "mask": "aaaaa://aaaaa-aaaaaa.aaaaaa.aaa/aaaaaa/aaaaa/aaaaaa/AAAA_AAA",
+              "count": 37
+            }
+          ]
+        },
+        "$.categories[].totalItems": {
+          "count": 8,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            22
+          ]
+        },
+        "$.categories[].hasMoreItems": {
+          "count": 8,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 7,
+            "false": 1
+          }
+        },
+        "$.categories[].categoryId": {
+          "count": 7,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            8,
+            8
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 7
+            }
+          ]
+        },
+        "$.totalCategories": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            19,
+            19
+          ]
+        },
+        "$.page": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        },
+        "$.pageSize": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            8,
+            8
+          ]
+        },
+        "$.hasMore": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        }
+      }
+    },
+    "search_menu": {
+      "input_schema": {
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "addressId": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional location input: address ID obtained from get_addresses. Use this instead of latitude/longitude when preferred."
+          },
+          "latitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional location input: user latitude. Pass together with longitude. Supported for authenticated and guest calls."
+          },
+          "longitude": {
+            "type": "number",
+            "enum": null,
+            "description": "Optional location input: user longitude. Pass together with latitude. Supported for authenticated and guest calls."
+          },
+          "query": {
+            "type": "string",
+            "enum": null,
+            "description": "REQUIRED: Search query (dish name). Cannot be empty. Examples: \"biryani\", \"pizza margherita\", \"paneer tikka\""
+          },
+          "restaurantIdOfAddedItem": {
+            "type": "string",
+            "enum": null,
+            "description": "Optional restaurant ID to scope search"
+          },
+          "vegFilter": {
+            "type": "number",
+            "enum": [
+              0,
+              1
+            ],
+            "description": "Veg filter flag (0 or 1). Pass 1 for veg-only items. 0 or omitted returns mixed veg + non-veg. There is NO non-veg-only filter — if user asks for \"non-veg only\", pass 0 (mixed) and mention in text that you are showing all items including non-veg, since a non-veg-only filter is not available yet."
+          },
+          "offset": {
+            "type": "number",
+            "enum": null,
+            "description": "Pagination offset. Use nextOffset from previous response to load more results. Default: 0."
+          }
+        },
+        "tool_description": "Search for dishes and menu items to order for food delivery. PRIMARY FOOD DELIVERY SERVICE - Use this when user wants to find specific dishes, browse menu items, see what a restaurant offers, or order food. Swiggy Food delivery. Returns items with their customizations. The text response includes variant/addon IDs that you need for update_food_cart calls. IMPORTANT: Each item has EITHER \"variations\" (legacy format) OR \"variantsV2\" (new format), never both - check which field exists and use the corresponding field when adding to cart. The addons shown are ALL possible addons for the item, but so"
+      },
+      "args_used": [
+        "addressId",
+        "offset",
+        "query",
+        "restaurantIdOfAddedItem"
+      ],
+      "status": "ok",
+      "raw_chars": 10740,
+      "est_tokens": 2685,
+      "flags": {
+        "ad_marker": 0,
+        "buy_again": 0,
+        "go_to": 0
+      },
+      "fields": {
+        "$": {
+          "count": 1,
+          "types": [
+            "object"
+          ]
+        },
+        "$.items": {
+          "count": 1,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            10,
+            10
+          ]
+        },
+        "$.items[]": {
+          "count": 10,
+          "types": [
+            "object"
+          ]
+        },
+        "$.items[].name": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            20,
+            53
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaaaaa Aaaaaaa Aaaa Aaaa aaaa Aaaa Aaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaaaa Aaaaaaa & Aaaa Aaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaaaa Aaaaaaa & Aaaaaa Aaaaaaaa Aaaa Aaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaa Aaaaaa Aaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaaaa Aaaaaaa & Aaaaaaaa Aaaaa Aaaaaa Aaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaaaaa Aaaa & Aaaaa Aaaa Aaaaaaa Aaaa Aaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.items[].price": {
+          "count": 10,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            260,
+            440
+          ]
+        },
+        "$.items[].isVeg": {
+          "count": 10,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 10
+          }
+        },
+        "$.items[].menu_item_id": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            9,
+            9
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 10
+            }
+          ]
+        },
+        "$.items[].inStock": {
+          "count": 10,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            1
+          ]
+        },
+        "$.items[].imageUrl": {
+          "count": 10,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            164,
+            164
+          ],
+          "formats": [
+            {
+              "mask": "aaaaa://aaaaa-aaaaaa.aaaaaa.aaa/aaaaaa/aaaaa/aaaaaa/AAAA_AAA",
+              "count": 6
+            },
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 4
+            }
+          ]
+        },
+        "$.items[].rating": {
+          "count": 4,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            3,
+            3
+          ],
+          "formats": [
+            {
+              "mask": "9.9",
+              "count": 4
+            }
+          ]
+        },
+        "$.items[].totalRatings": {
+          "count": 4,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            1,
+            3
+          ],
+          "formats": [
+            {
+              "mask": "9",
+              "count": 2
+            },
+            {
+              "mask": "999",
+              "count": 1
+            },
+            {
+              "mask": "99",
+              "count": 1
+            }
+          ]
+        },
+        "$.items[].hasVariants": {
+          "count": 10,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "false": 10
+          }
+        },
+        "$.items[].hasAddons": {
+          "count": 10,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 9,
+            "false": 1
+          }
+        },
+        "$.items[].addons": {
+          "count": 9,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            1,
+            6
+          ]
+        },
+        "$.items[].addons[]": {
+          "count": 14,
+          "types": [
+            "object"
+          ]
+        },
+        "$.items[].addons[].groupId": {
+          "count": 14,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            9,
+            9
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 14
+            }
+          ]
+        },
+        "$.items[].addons[].groupName": {
+          "count": 14,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            23
+          ],
+          "formats": [
+            {
+              "mask": "Aaaaa Aaa aaa",
+              "count": 8
+            },
+            {
+              "mask": "Aaa a Aaaaaaa",
+              "count": 2
+            },
+            {
+              "mask": "Aaaa aa a Aaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaa a Aaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaa a Aaaaaaaa",
+              "count": 1
+            },
+            {
+              "mask": "Aaa a Aaaaaaa (Non Veg)",
+              "count": 1
+            }
+          ]
+        },
+        "$.items[].addons[].choices": {
+          "count": 14,
+          "types": [
+            "array"
+          ],
+          "list_len": [
+            1,
+            7
+          ]
+        },
+        "$.items[].addons[].choices[]": {
+          "count": 79,
+          "types": [
+            "object"
+          ]
+        },
+        "$.items[].addons[].choices[].id": {
+          "count": 79,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            9,
+            9
+          ],
+          "formats": [
+            {
+              "mask": "<phone-or-email-like value omitted>",
+              "count": 79
+            }
+          ]
+        },
+        "$.items[].addons[].choices[].name": {
+          "count": 79,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            10,
+            36
+          ],
+          "formats": [
+            {
+              "mask": "Aaaa Aaaaaaa",
+              "count": 10
+            },
+            {
+              "mask": "Aaaaa Aaaa Aaaaaaa (9pcs)",
+              "count": 9
+            },
+            {
+              "mask": "Aaaaaaaa Aaaa (9 pcs)",
+              "count": 9
+            },
+            {
+              "mask": "Aaaaa Aaaaaa Aaaaaa (Pack aa 9)",
+              "count": 8
+            },
+            {
+              "mask": "Aaaaaaa Aaaaa (99 aa)",
+              "count": 8
+            },
+            {
+              "mask": "Aaaaa Aaaaaaa (99 aa)",
+              "count": 8
+            }
+          ]
+        },
+        "$.items[].addons[].choices[].price": {
+          "count": 79,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            0,
+            159
+          ]
+        },
+        "$.items[].addons[].maxAddons": {
+          "count": 14,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            1,
+            7
+          ]
+        },
+        "$.items[].addons[].maxFreeAddons": {
+          "count": 14,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            -1,
+            -1
+          ]
+        },
+        "$.total": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            10
+          ]
+        },
+        "$.query": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            7,
+            7
+          ],
+          "formats": [
+            {
+              "mask": "aaaaaaa",
+              "count": 1
+            }
+          ]
+        },
+        "$.restaurantIdOfAddedItem": {
+          "count": 1,
+          "types": [
+            "string"
+          ],
+          "text_len": [
+            5,
+            5
+          ],
+          "formats": [
+            {
+              "mask": "99999",
+              "count": 1
+            }
+          ]
+        },
+        "$.hasMore": {
+          "count": 1,
+          "types": [
+            "boolean"
+          ],
+          "bools": {
+            "true": 1
+          }
+        },
+        "$.nextOffset": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            10,
+            10
+          ]
+        },
+        "$.totalItems": {
+          "count": 1,
+          "types": [
+            "number"
+          ],
+          "number_range": [
+            47,
+            47
+          ]
+        }
+      }
+    }
+  }
+}
