@@ -21,6 +21,7 @@ venv/
 
 # Local, unredacted captures of real tool responses
 spikes/_local/
+spikes/captures/
 
 # Editors and OS
 .vscode/

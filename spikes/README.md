@@ -190,3 +190,43 @@ Swiggy or personal data, and it saves only counts, never prompts, replies or key
 
 Paste the table and per-prompt lines the script prints at the end. They contain no
 keys and no prompt text. Also say which exact model names you used.
+
+## Spike C: shape of real responses (tasks.md T0.4, design DQ2)
+
+**Question:** what do Swiggy's real responses look like, so the mock world matches
+them and we can choose which fields the model sees (compaction)?
+
+**What it does** (`capture_shapes.py`): signs in like Spike A, then makes a few
+read-only calls (addresses, a restaurant search, one menu, a dish search on Food; a
+product search on Instamart). It writes two things:
+
+- `spikes/captures/<server>/<tool>.json`: the raw responses. **Local only and
+  git-ignored.** Nothing reads them out loud; they are for the offline token check.
+- `spikes/results/shapes_<server>.json`: a **shape report** that is safe to commit.
+  It has field names, types, list lengths, number ranges, text formats with every
+  letter and digit masked, and the values of a few enum-like fields (VEG, OPEN...).
+  Any field whose name contains address, phone, email, area, location, user, token
+  and similar words is never read at all.
+
+It calls no cart, order, checkout, address-changing, order-history or payment tool.
+`get_addresses` is called only to get an address id, which stays in memory.
+
+### Steps (PowerShell, repo folder, `.venv` active)
+
+1. `git pull`, then `python spikes\capture_shapes.py --selftest` (prints `selftest ok`).
+2. Food: `python spikes\capture_shapes.py --server food`
+   Sign in in the browser as before. It takes about a minute (each call can take
+   ~15 s). It prints one line per tool at the end.
+3. Instamart (a second sign-in, since it is a separate server):
+   `python spikes\capture_shapes.py --server im`
+4. **Read the shape reports once** (`spikes\results\shapes_food.json`, `shapes_im.json`).
+   They should contain no address, phone number or person's name. Restaurant and
+   product names are masked to `Aaaa Aaaa` form. If anything looks personal, do not
+   share it; tell me which line.
+5. Commit and push the two shape reports (not `spikes\captures\`, which is ignored),
+   or paste the terminal summary and I will ask for the files if needed.
+
+### What to send back
+
+The summary the script prints (tool names, status, rough token counts), and whether
+any tool says `skipped` or `tool error`. Do not paste anything from `spikes\captures\`.
