@@ -28,7 +28,7 @@ Everything marked *(proposed)* is a starting choice to revisit during the build.
    ┌───────────────────────────────────────────────┐
    │ RunState (serialisable)   Event log            │
    │ Agent loop (state machine)                     │
-   │ Guardrails · Question budget · Crisis check    │
+   │ Guardrails · Question budget                   │
    │ Plan validator · Totals (pure functions)       │
    │ WriteGate (mode + approval records)            │
    └───────┬───────────────────────────┬───────────┘
@@ -51,7 +51,7 @@ Everything marked *(proposed)* is a starting choice to revisit during the build.
 ```
 moodmeals/
   core/        loop.py state.py events.py guardrails.py validator.py
-               totals.py parsing.py crisis.py writegate.py checkin.py
+               totals.py parsing.py writegate.py checkin.py
   models/      base.py openai_compat.py anthropic.py pricing.py
   providers/   base.py mock.py swiggy.py fixtures/
   tools/       catalogue.py schemas.py (tool specs shown to the model)
@@ -81,12 +81,12 @@ tests/
 CHECKIN → GATHER → PROPOSE → VALIDATE → AWAITING_APPROVAL → EXECUTE → DONE
               ↑        │          │              │
               └────────┴──────────┘              └→ (rejected) → PROPOSE
-         any state → STOPPED (guardrail, cancel, crisis, unrecoverable error)
+         any state → STOPPED (guardrail, cancel, unrecoverable error)
 ```
 
 | State | What happens | Who acts |
 |---|---|---|
-| CHECKIN | Crisis check on any free text. Model may ask at most 3 questions (address counts). | Code + model |
+| CHECKIN | Model may ask at most 3 questions (address counts). | Code + model |
 | GATHER | Model calls read tools to look at restaurants, menus, products. | Model, within limits |
 | PROPOSE | Model submits a structured plan for one path with a one-sentence reason. | Model |
 | VALIDATE | Validator checks the plan; on failure the errors go back to the model, max 2 retries. | Code |
@@ -283,8 +283,8 @@ class RunBudget:
 - **Read tools:** retry once with the same parameters, then try an alternative (another restaurant, another query, or switch path) (R9.1).
 - **Amber and red tools are never retried automatically.** A repeated order or cart write is a real-world duplicate.
 
-### 10.3 Crisis check (R2.2)
-A deterministic phrase and pattern matcher in code, run on every free-text input before the model sees it. A hit stops planning, does not send the text to any model vendor, and shows the crisis message. The phrase list covers English and common Hinglish and lives in a reviewed config file; resources are config (open item Q6). **Stated limit:** a phrase matcher is a floor, not a classifier; the README says so.
+### 10.3 (removed)
+The crisis check was removed on 2026-10-04 (requirements section 12.2). MoodMeals is a food decision tool, not a wellbeing product. The number is kept so other references stay stable.
 
 ### 10.4 Prompt injection
 Restaurant names, dish descriptions and other tool text are untrusted data.
@@ -381,7 +381,7 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 | DQ4 | **Cook path:** how a simple meal becomes products (model proposes a meal; each ingredient searched; unavailable items substituted or dropped; at most ~6 ingredients *(proposed)*) | During the cook-path build |
 | DQ5 | **Order-in menu depth:** prefer a dish search scoped to one restaurant over paging whole menus | During the order-in build |
 | DQ6 | **Existing carts:** Instamart `update_cart` replaces the whole cart. In live mode code must read the current cart first and warn before replacing. The cart's contents stay out of the model's view (only "empty" or "not empty") | Before any live write |
-| DQ7 | Hinglish input: the model handles it; the crisis phrase list must cover it | With Q6 |
+| DQ7 | Hinglish input: the model handles it; add Hinglish prompts to the eval scenarios | With Q5 |
 
 ## 15. Design decisions
 
@@ -408,12 +408,11 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 | Model API error (bad key, rate limit) | Plain message to the user; no retry loop; run ends | N5 |
 | OAuth expired | Prompt to sign in again; read-only runs can continue in mock | section 7.3 |
 | Cancel or limit reached | `STOPPED` with the best verified plan or an explanation | R11.2 |
-| Crisis phrase | Stop and show the crisis message | R2.2 |
 | Write requested in dry-run | Blocked and previewed; logged | R10.2, R10.4 |
 
 ## 17. Test plan
 
-- **Unit:** parsing functions, validator checks, `WriteGate` (approve, mismatch, reuse, expiry, dry-run), guardrails, question budget, redaction, crisis matcher.
+- **Unit:** parsing functions, validator checks, `WriteGate` (approve, mismatch, reuse, expiry, dry-run), guardrails, question budget, redaction.
 - **PII tests:** no fixture address text or phone pattern appears in any model message, event or replay.
 - **Loop tests with a `FakeLLM`** that replays scripted actions, so the full state machine runs with no model cost.
 - **Mock world tests:** every failure switch produces the behaviour in section 16.

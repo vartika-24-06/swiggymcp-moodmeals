@@ -1,6 +1,6 @@
 # MoodMeals: Requirements
 
-**Status:** Draft v0.8 · **Date:** 2026-10-04
+**Status:** Draft v0.9 · **Date:** 2026-10-04
 **Owner:** Vartika · **Build:** Python + Streamlit, hand-written agent loop, Claude Code + GitHub, spec-driven
 **Companion files (to come):** design.md, tasks.md, evals/scenarios.md
 
@@ -73,7 +73,7 @@ A Python agent loop (no framework) calls tools through an **action-provider inte
 
 ### R2 Safety and tone
 - R2.1 THE SYSTEM SHALL NOT diagnose, give medical advice or describe the user's mood as a condition.
-- R2.2 WHEN free text contains crisis language, THE SYSTEM SHALL stop planning and show the crisis message, using a deterministic check independent of the model (resources: open item Q6).
+- R2.2 (removed) The crisis-language check was dropped. See section 12.2.
 - R2.3 THE SYSTEM SHALL show a short "planning aid, not advice" line at the start and on each plan.
 
 ### R3 Location and account
@@ -181,7 +181,7 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 | Infeasible | 3 | Everything closed; key product out of stock; nothing within budget |
 | Tool failure | 3 | Timeout; empty search; partial menu |
 | Mid-run change | 3 | Switch path; lower budget; add a guest |
-| Safety | 2 | Crisis wording; attempt to place order without approval |
+| Safety | 2 | Instruction hidden in a dish description; attempt to place order without approval |
 
 ### 7.3 Metrics and targets *(all proposed, recalibrate after the first run)*
 | Metric | Target |
@@ -234,7 +234,7 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 - **Q2. (Resolved 2026-10-04: yes.)** Can the Python MCP client complete Swiggy's OAuth sign-in on localhost? Spike A on the owner's machine signed in and made a read-only call (`spikes/notes.md`, design DQ1), so live mode does not need another MCP client for sign-in.
 - **Q4.** Name and branding: check "MoodMeals" availability; use no Swiggy logos or wording that implies endorsement.
 - **Q5.** Final scenario list and the rubric for "appropriate path".
-- **Q6.** Crisis resources text and regions.
+- **Q6. (Removed 2026-10-04.)** Crisis resources were part of the dropped crisis check (section 12.2).
 - **Q7.** Demo account: a test account or a redaction process for recording.
 - **Q8.** Sign-off on the check-in wording and the heuristics in R4.4.
 
@@ -264,3 +264,13 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 **Revisit when.** Swiggy closes issues #102, #104 and #105 (a structured slots result and a working cancel tool) and a Dineout search returns data from a connected client. The action-provider interface means a Dineout provider can be added later without changing the agent loop.
 
 **Research notes retained from the drop.** Dineout facts from the live tool descriptions: one slots call returns up to 7 days of slots; free deals book in one step and paid deals need UPI; searches take a single term, not a sentence. These are not observed and not relied on.
+
+### 12.2 Crisis check removed, 2026-10-04
+**What changed.** Requirement R2.2 (a deterministic crisis-phrase check that stops planning and shows helplines), task T1.5, design section 10.3, open question Q6 and the crisis eval scenario are removed. R2.1 stays: the system does not diagnose or give medical advice, and moods are never scored or labelled.
+
+**Why.** The check came from the earlier wellbeing and burnout idea, which was dropped. MoodMeals decides between cooking and ordering in. "Mood" here means "tired, what should I eat", and it is not a wellbeing product, so a crisis flow was scope carried over from a different project. It also needed verified helpline numbers and a phrase list the owner would have to maintain, for a case this product is not built for.
+
+**What stays true.** The app still shows the "planning aid, not advice" line (R2.3) and never describes a mood as a condition.
+
+**Revisit when.** The product moves toward wellbeing, or free-text input becomes a main feature.
+
