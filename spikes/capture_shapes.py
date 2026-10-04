@@ -483,7 +483,7 @@ def selftest() -> None:
 
 
 def main() -> int:
-    # Windows consoles and files default to cp1252, which cannot hold characters like the rupee sign.
+    # Windows defaults to cp1252, which cannot encode the rupee sign.
     for stream in (sys.stdout, sys.stderr):
         with contextlib.suppress(AttributeError, ValueError):
             stream.reconfigure(encoding="utf-8", errors="replace")
