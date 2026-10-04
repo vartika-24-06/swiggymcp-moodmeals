@@ -710,7 +710,8 @@ def save_results(tallies: list[Tally], out: Path) -> None:
                 for t in tallies
             ],
             indent=2,
-        )
+        ),
+        encoding="utf-8",
     )
 
 

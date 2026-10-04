@@ -398,7 +398,9 @@ async def capture(server: str, port: int, open_browser: bool, cap_dir: Path) -> 
                 entry["error"] = scrub(" ".join(texts))[:300]
                 continue
             payloads = payloads_from(result)
-            (cap_dir / f"{name}.json").write_text(json.dumps(payloads, ensure_ascii=False))
+            (cap_dir / f"{name}.json").write_text(
+                json.dumps(payloads, ensure_ascii=False), encoding="utf-8"
+            )
             raw = json.dumps(payloads, ensure_ascii=False)
             stats: dict[str, Stats] = {}
             for p in payloads:
@@ -481,6 +483,10 @@ def selftest() -> None:
 
 
 def main() -> int:
+    # Windows consoles and files default to cp1252, which cannot hold characters like the rupee sign.
+    for stream in (sys.stdout, sys.stderr):
+        with contextlib.suppress(AttributeError, ValueError):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--server", choices=sorted(SERVERS), default="food")
     ap.add_argument("--port", type=int, default=DEFAULT_PORT)
@@ -501,7 +507,7 @@ def main() -> int:
         return 1
     out = Path(f"spikes/results/shapes_{args.server}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, indent=2, ensure_ascii=False))
+    out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print()
     for name, entry in report["tools"].items():
         extra = f", ~{entry['est_tokens']} tokens" if entry.get("status") == "ok" else ""
