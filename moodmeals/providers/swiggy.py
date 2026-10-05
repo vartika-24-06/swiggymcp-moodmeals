@@ -212,11 +212,19 @@ def _qty(item: Any) -> int:
 
 
 def _cart_items(cart: Any) -> list[Any] | None:
-    """The line list of a cart reply, or None if the shape is not recognised. Instamart's real
-    reply has a top-level `items` list. The Food shape is not confirmed yet, so a few likely
-    places are tried; anything else stays unrecognised and blocks a write."""
+    """The line list of a cart reply, or None if the shape is not recognised. Observed
+    2026-10-05: Instamart's reply has a top-level `items` list; Food's empty cart is an
+    envelope with statusCode 0, successful true and data null. A Food cart WITH items has not
+    been seen, so a few likely places are tried; anything else stays unrecognised and blocks
+    a write."""
     if not isinstance(cart, dict):
         return None
+    if (
+        cart.get("successful") is True
+        and cart.get("statusCode") == 0
+        and ("data" in cart and cart["data"] is None)
+    ):
+        return []  # Food: the observed empty-cart reply
     for holder in (cart, cart.get("cart"), cart.get("data")):
         if isinstance(holder, dict):
             for key in ("items", "cartItems"):

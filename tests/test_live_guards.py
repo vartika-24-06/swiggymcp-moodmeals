@@ -382,3 +382,36 @@ def test_approval_screen_warns_about_the_real_cart_and_unsafe_states():
     conn.fail["get_cart"] = RuntimeError("x")
     ui_text, _, state = _screen(conn, COOK)
     assert ui_text.approval_text(state)["blocked"]
+
+
+# --------------------------------------------------------------------------- Food cart shapes
+
+FOOD_EMPTY = {"statusCode": 0, "statusMessage": "CART", "data": None, "successful": True}
+
+
+def test_food_empty_cart_reply_is_recognised_and_other_envelopes_are_not():
+    conn = LiveFake()
+    p = SwiggyProvider(conn, "live")
+    args = {"cart": "food", "address_id": "a1"}
+    conn.cart_reply = dict(FOOD_EMPTY)
+    assert p.call("get_cart_state", args).data == {"empty": True}
+    conn.cart_reply = {**FOOD_EMPTY, "data": {"cartItems": [{"menu_item_id": "d1"}]}}
+    assert p.call("get_cart_state", args).data == {"empty": False}
+    for odd in (
+        {**FOOD_EMPTY, "successful": False},  # a failed call is not an empty cart
+        {**FOOD_EMPTY, "statusCode": 1},
+        {"statusCode": 0, "successful": True},  # no data key at all
+        {**FOOD_EMPTY, "data": {"somethingNew": 1}},  # a shape not seen yet
+    ):
+        conn.cart_reply = odd
+        assert p.call("get_cart_state", args).error.kind == "error", odd
+
+
+def test_food_plan_with_the_real_empty_cart_reply_writes_once():
+    conn = LiveFake()
+    conn.cart_reply = dict(FOOD_EMPTY)
+    agent, state, _ = live_run(conn, [SEARCH, MENU, ORDER])
+    assert state.cart_check == "empty"
+    agent.approve(state)
+    assert [c[1] for c in conn.writes] == ["update_food_cart"]
+    assert state.outcome["kind"] == "cart_updated"
