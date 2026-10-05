@@ -15,8 +15,11 @@ Read first, in this order: `specs/requirements.md`, `specs/design.md`, `specs/ta
   ruff. Hand-written agent loop, no agent framework.
 - Never write real personal data into the repo: no addresses, phone numbers,
   names of other people, order history, or API keys. Fixtures must be synthetic.
-- Never call any Swiggy write tool (cart, order, checkout, address changes) or
-  any payment tool. Read-only only.
+- Claude Code never calls a Swiggy write tool itself (cart, order, checkout, address changes) or
+  any payment tool: its own Swiggy calls are read-only. The code may contain live cart updates
+  (`update_food_cart`, `update_cart`) only behind the WriteGate (live mode, one approval per
+  action, existing-cart check), tested against fake servers only. No order, checkout or payment
+  tool is ever implemented in v1.
 - Keep the core package (`moodmeals/`) UI-independent (design.md section 2):
   no Streamlit imports outside `app/`.
 - Commit small, with clear messages. Committing directly to `main` is fine for now.

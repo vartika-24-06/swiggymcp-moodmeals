@@ -126,6 +126,9 @@ The go-out path (Swiggy Dineout) was dropped from v1. The number is kept so othe
 - R10.5 The public site SHALL only run mock mode.
 - R10.6 Orders made through Swiggy's tools may not be reversible through the tools themselves (Swiggy's README says food orders cannot be cancelled). The approval screen SHALL say so in live mode.
 - R10.7 In v1, THE SYSTEM SHALL NOT call any payment tool (payment options, payment status, confirm order).
+- R10.9 In live mode v1 changes the cart only: it places no order and calls no payment tool. The person reviews the real bill (which adds fees and taxes to the item total) and places the order in the Swiggy app. The approval screen says so, together with the R10.6 warning.
+- R10.10 Before an approved live cart update, code reads the cart the plan will change (Instamart for cook, Food for order-in) and shows only whether it is empty. A cart with items needs the person's separate explicit confirmation; a cart that cannot be read stops the run with nothing written. The check runs again just before the write (design DQ6).
+- R10.11 In live mode, order-in plans use dishes without variants only, because a cart update cannot carry a variant choice.
 - R10.8 In dry-run, THE SYSTEM SHALL show the item total only and SHALL display on every plan: "Item total only. Delivery fees, taxes and discounts are not shown in dry-run. The final bill is shown only in live mode, before you place an order." It SHALL NOT estimate fees or taxes.
 
 ### R11 Run guardrails *(proposed)*

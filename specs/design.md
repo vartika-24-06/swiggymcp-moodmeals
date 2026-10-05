@@ -150,9 +150,10 @@ Tiers: **read** (free to call), **amber** (cart changes, reversible), **red** (p
 | `search_dish(query, restaurant_id)` | Food `search_menu` | read | Needed for variants and add-ons before a cart update. |
 | `search_products(query, offset)` | Instamart `search_products` | read | Address handle injected by code. |
 | `update_food_cart(items)` | Food `update_food_cart` | amber | Live only, per approval. |
-| `update_cart(items)` | Instamart `update_cart` | amber | Replaces the whole cart; code merges safely. |
-| `place_food_order()` | Food `place_food_order` | red | Live only, per approval. |
-| `checkout()` | Instamart `checkout` | red | Live only, per approval. |
+| `update_cart(items)` | Instamart `update_cart` | amber | Replaces the whole cart; code asks before replacing (DQ6). |
+| `place_food_order()` | Food `place_food_order` | red | **Not implemented in v1** (R10.9): the person orders in the Swiggy app. |
+| `checkout()` | Instamart `checkout` | red | **Not implemented in v1** (R10.9). |
+| `get_cart_state(cart)` | Food `get_food_cart` / Instamart `get_cart` | read | Code only. Returns only `{"empty": bool}`; contents never leave the provider. |
 
 Not exposed in v1: payment options, payment status, confirm order, create or delete address, order history, "go-to items" (unless the user permits, R7.2), coupon tools *(proposed: add later as read-only)*.
 
@@ -457,3 +458,13 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 - Run limits for real modes are wider (`RunBudget.for_mode`): 300 s, 14 iterations, 45 s per tool call (Spike A: one call took about 16 s). This revises section 10.1's 15 s.
 - Dry-run in the app: set `MOODMEALS_MODE=dry_run`, press "Connect to Swiggy" in the sidebar (two sign-ins), then plan as usual. Address text is hidden by default for screen recording.
 - Unverified until the owner's check run: real field names inside `addresses[]`, whether Instamart accepts the Food address id, and the real menu shapes through the provider.
+
+### Phase 6, T6.3 implementation notes (2026-10-05)
+
+- Live mode needs `MOODMEALS_MODE=live` and `MOODMEALS_ALLOW_LIVE=1` (never on the public site), and a sidebar box ticked each session. Live changes the cart only (R10.9): after one approved cart update the run ends with `cart_updated`, and the person reviews the real bill and orders in the Swiggy app. Payment tools are never called (R10.7).
+- `SwiggyProvider` has two live-only writes, `update_food_cart` and `update_cart`, translated from the plan and sent only after the `WriteGate` approves; its reply is dropped (it can hold the address and the bill). `place_food_order` and `checkout` are not in any allowlist.
+- DQ6 is implemented in `Agent`: the cart for the chosen path is read when the plan reaches approval and again just before the write (`_cart_guard`). Status only (`empty`, `not_empty`, `unknown`) goes into the state. `not_empty` needs `confirm_replace` first; `unknown` stops the run (`cart_unverified`). The Instamart cart is read for cook plans and the Food cart for order-in plans, never both.
+- The validator rejects live order-in dishes with variants (`variants_unsupported`), R10.11.
+- Real shapes: the Instamart cart reply has a top-level `items` list (observed read-only, 2026-10-05). The Food cart reply shape is NOT yet confirmed; an unrecognised shape reads as `unknown`, so a Food write fails closed. `scripts/swiggy_check.py` step 5 shows whether both carts are read, and prints field names if not.
+- Tested with a fake connection only (`tests/test_live_guards.py`); no real write has been made.
+
