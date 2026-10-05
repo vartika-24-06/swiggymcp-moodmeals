@@ -441,3 +441,11 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 | R14 model providers | 7.4 |
 | R15 replay and demo | 12.2, 13, 11 |
 | N1–N5 | 3, 11, 16 |
+
+### Phase 3 implementation notes (2026-10-05)
+
+- The loop is `moodmeals/core/loop.py` (`Agent`): `run_until_pause` yields events and returns at a question, address pick, approval or end. The UI calls `provide_answer`, `choose_address`, `approve`, `reject` or `change_constraints`, then resumes.
+- The model view is a whitelist (`core/view.py`); tool results sit under `untrusted_data`. Address text is held in private attributes and is not serialised.
+- Cart and order are two separate approvals (R10.3). In dry-run, the first approval ends the run with a preview and nothing is written.
+- Plans are built by code from the ledger; the model supplies ids and quantities only.
+- Write tools are not in the model's action set: a `tool_call` for one is a protocol error; a second consecutive protocol error stops the run.

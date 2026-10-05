@@ -14,12 +14,15 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
 from moodmeals.core.events import Actor, Event, EventType, make_event
+from moodmeals.core.ledger import Ledger
+from moodmeals.core.validator import Constraints
 from moodmeals.models.types import Plan
 
 Phase = Literal[
     "CHECKIN", "GATHER", "PROPOSE", "VALIDATE", "AWAITING_APPROVAL", "EXECUTE", "DONE", "STOPPED"
 ]
 Mode = Literal["mock", "dry_run", "live"]
+Waiting = Literal["answer", "address"]
 
 
 class RunState(BaseModel):
@@ -37,11 +40,36 @@ class RunState(BaseModel):
     cancelled: bool = False
     stop_reason: str | None = None
     address_handle: str | None = None  # opaque, e.g. "address_1"; never the text
+    address_label: str | None = None  # "Home", "Work": a label, never address text
     plan: Plan | None = None
     events: list[Event] = Field(default_factory=list)
 
+    # What the person said and decided (hard constraints are code-owned, design 9.1).
+    user_text: str = ""
+    constraints: Constraints = Field(default_factory=Constraints)
+    answers: list[dict[str, str]] = Field(default_factory=list)  # {"q": ..., "a": ...}
+    missing_signals: list[str] = Field(default_factory=list)
+    waiting: Waiting | None = None  # the run is paused for the person (not for approval)
+    pending_question: dict[str, Any] | None = None
+
+    # What the agent has seen and tried.
+    ledger: Ledger = Field(default_factory=Ledger)
+    tool_log: list[dict[str, Any]] = Field(default_factory=list)  # compact results for the model
+    notes: list[str] = Field(default_factory=list)  # corrective messages for the next turn
+    validation_errors: list[dict[str, Any]] = Field(default_factory=list)
+    warnings: list[dict[str, Any]] = Field(default_factory=list)
+    rejected_plans: list[dict[str, Any]] = Field(default_factory=list)
+    protocol_errors: int = 0
+
+    # Approval flow: the plan is approved first (cart), then the order separately (R10.3).
+    pending_write: Literal["cart", "order"] | None = None
+    outcome: dict[str, Any] | None = None
+
     # Real strings to scrub from every event (e.g. the chosen address). Not serialised.
     _sensitive: set[str] = PrivateAttr(default_factory=set)
+    # handle -> real id, and handle -> address text for the UI picker. Memory only (R12.2).
+    _address_ids: dict[str, str] = PrivateAttr(default_factory=dict)
+    _address_display: list[dict[str, str]] = PrivateAttr(default_factory=list)
 
     def register_sensitive(self, *values: str) -> None:
         self._sensitive.update(v for v in values if v)

@@ -53,13 +53,13 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T3.1 | State machine: CHECKIN, GATHER, PROPOSE, VALIDATE, AWAITING_APPROVAL, EXECUTE, DONE, STOPPED; `run_until_pause` generator and `resume` | CC | L | Transition tests; a run pauses at approval and resumes | design 4 |
-| T3.2 | `model_view()` PII firewall and the three action types with protocol-error handling | CC | M | PII tests: no address text, phone or cart contents in any model message | DD4, R12.1 |
-| T3.3 | Address handling: single address uses it and tells the user; several go to a UI picker; never auto-selected | CC | S | Tests for both cases; the question budget counts the picker | R3 |
-| T3.4 | `FakeLLM` and scripted loop tests: happy path, infeasible, tool failure, mid-run change, "another idea", validation retry, limit breach | CC | L | All scenarios pass with no model cost | R4, R8.4, R9, R11 |
-| T3.5 | Prompt injection test: a dish description containing an instruction changes nothing | CC | S | Test passes | design 10.4 |
+| T3.1 ✅ done 2026-10-05 | State machine: CHECKIN, GATHER, PROPOSE, VALIDATE, AWAITING_APPROVAL, EXECUTE, DONE, STOPPED; `run_until_pause` generator and `resume` | CC | L | Transition tests; a run pauses at approval and resumes | design 4 |
+| T3.2 ✅ done 2026-10-05 | `model_view()` PII firewall and the three action types with protocol-error handling | CC | M | PII tests: no address text, phone or cart contents in any model message | DD4, R12.1 |
+| T3.3 ✅ done 2026-10-05 | Address handling: single address uses it and tells the user; several go to a UI picker; never auto-selected | CC | S | Tests for both cases; the question budget counts the picker | R3 |
+| T3.4 ✅ done 2026-10-05 | `FakeLLM` and scripted loop tests: happy path, infeasible, tool failure, mid-run change, "another idea", validation retry, limit breach | CC | L | All scenarios pass with no model cost | R4, R8.4, R9, R11 |
+| T3.5 ✅ done 2026-10-05 | Prompt injection test: a dish description containing an instruction changes nothing | CC | S | Test passes | design 10.4 |
 
-**M1 reached here.**
+**M1 reached here (2026-10-05).** Note: the loop tests use a scripted `FakeLLM`; real models arrive in Phase 4.
 
 ## Phase 4: Real model
 
