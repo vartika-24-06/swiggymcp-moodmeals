@@ -337,3 +337,14 @@ def test_state_round_trip_keeps_run_resumable_but_drops_address_text():
     restored = RunState.from_json(state.to_json())
     assert restored.waiting == "answer" and restored.questions_asked == 1
     assert restored._address_display == []
+
+
+def test_model_error_detail_is_kept_for_diagnosis():
+    def boom(_view):
+        raise LLMError("http 400: tool use failed")
+
+    agent, state, _, _ = make([boom])
+    agent.run(state)
+    err = next(e for e in state.events if e.type == "error")
+    assert "http 400" in err.payload["detail"]
+    assert "http 400" in state.outcome["message"]

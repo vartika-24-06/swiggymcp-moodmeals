@@ -237,9 +237,10 @@ class Agent:
         except ProtocolError as e:
             self._protocol_error(state, str(e))
             return
-        except LLMError:
-            state.add_event("error", "code", {"kind": "model_error"})
-            self._stop(state, "model_error")
+        except LLMError as e:
+            detail = str(e)[:200]  # adapters never put keys or request bodies in this text
+            state.add_event("error", "code", {"kind": "model_error", "detail": detail})
+            self._stop(state, "model_error", f"{STOP_MESSAGES['model_error']} ({detail})")
             return
         if isinstance(action, ToolCallAction):
             self._tool_call(state, action)
