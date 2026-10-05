@@ -28,3 +28,4 @@ spikes/captures/
 .idea/
 .DS_Store
 Thumbs.db
+scripts/_out/
