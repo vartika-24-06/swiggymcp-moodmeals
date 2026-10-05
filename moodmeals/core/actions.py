@@ -63,6 +63,8 @@ def _text(value: Any, name: str, required: bool = True) -> str:
 def parse_action(raw: Any) -> Action:
     if not isinstance(raw, dict):
         raise ProtocolError("Reply with one JSON object: {action, args, rationale}")
+    if isinstance(raw.get("error"), str):  # an adapter could not read the reply
+        raise ProtocolError(raw["error"])
     kind, args = raw.get("action"), raw.get("args")
     if kind not in ("tool_call", "ask_user", "propose_plan"):
         raise ProtocolError("action must be one of tool_call, ask_user, propose_plan")
