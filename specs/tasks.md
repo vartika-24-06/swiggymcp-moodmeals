@@ -73,14 +73,14 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T5.1 | Plan page: prompt, quick-pick questions, address picker (mock addresses), plan card, "another idea", cancel | CC | L | A full run works in the browser on the mock world | R1, R4, N1 |
-| T5.2 | Approval card showing exactly what the action will do; dry-run disclaimer; one action per approval | CC | M | Approve and reject both work; nothing executes without approval | R10 |
-| T5.3 | Trace panel with rationale, tool calls, validation, tokens, cost and time | CC | M | Every event type renders; cost shown before and after a run | R13, R14.3 |
-| T5.4 | Key input (password field, memory only), pass-through notice, mode check that refuses dry-run and live on the public deployment | CC | S | Test for the startup refusal; notice visible | R12.5, R10.5 |
-| T5.5 | About page: limits, disclaimer, privacy, cost, no Swiggy endorsement | Both | S | You approve the wording | R2.3, R15.3 |
-| T5.6 | Replay page and "export run" in mock mode | CC | M | A recorded run plays with no model or tool calls | R15.1 |
+| T5.1 ✅ done 2026-10-05 | Plan page: prompt, quick-pick questions, address picker (mock addresses), plan card, "another idea", cancel | CC | L | A full run works in the browser on the mock world | R1, R4, N1 |
+| T5.2 ✅ done 2026-10-05 | Approval card showing exactly what the action will do; dry-run disclaimer; one action per approval | CC | M | Approve and reject both work; nothing executes without approval | R10 |
+| T5.3 ✅ done 2026-10-05 | Trace panel with rationale, tool calls, validation, tokens, cost and time | CC | M | Every event type renders; cost shown before and after a run | R13, R14.3 |
+| T5.4 ✅ done 2026-10-05 | Key input (password field, memory only), pass-through notice, mode check that refuses dry-run and live on the public deployment | CC | S | Test for the startup refusal; notice visible | R12.5, R10.5 |
+| T5.5 draft written 2026-10-05, wording approval pending | About page: limits, disclaimer, privacy, cost, no Swiggy endorsement | Both | S | You approve the wording | R2.3, R15.3 |
+| T5.6 ✅ done 2026-10-05 | Replay page and "export run" in mock mode | CC | M | A recorded run plays with no model or tool calls | R15.1 |
 
-**M2 reached here.**
+**M2 reached here (2026-10-05), apart from the About wording approval.**
 
 ## Phase 6: Real Swiggy (your machine only)
 

@@ -348,3 +348,13 @@ def test_model_error_detail_is_kept_for_diagnosis():
     err = next(e for e in state.events if e.type == "error")
     assert "http 400" in err.payload["detail"]
     assert "http 400" in state.outcome["message"]
+
+
+def test_cancel_at_approval_stops_without_writing():
+    agent, state, _, provider = make(ORDER_FLOW)
+    agent.run(state)
+    agent.cancel(state)
+    assert state.stop_reason == "cancelled" and state.phase == "STOPPED"
+    assert not (set(provider.calls) & {"update_food_cart", "place_food_order"})
+    with pytest.raises(ValueError):
+        agent.approve(state)

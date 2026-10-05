@@ -127,6 +127,15 @@ class Agent:
         state.plan, state.pending_write, state.phase = None, None, "PROPOSE"
         state.notes.append("The person rejected that plan. Propose a different option.")
 
+    def cancel(self, state: RunState) -> None:
+        """Stop now, wherever the run is paused. Nothing is written (R9)."""
+        if state.phase in ("DONE", "STOPPED"):
+            return
+        state.cancelled = True
+        if state.plan:
+            state.add_event("approval", "user", {"decision": "cancelled"})
+        self._stop(state, "cancelled")
+
     def approve(self, state: RunState) -> None:
         """Approve the one write shown on screen. The cart step and the order step are separate."""
         if state.phase != "AWAITING_APPROVAL" or state.plan is None or not state.pending_write:
