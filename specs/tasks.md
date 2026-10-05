@@ -67,7 +67,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 |---|---|---|---|---|---|
 | T4.1 ✅ built 2026-10-05, live smoke test pending | `LLMClient` adapters: OpenAI-compatible and Anthropic; pricing table with a last-checked date; cost estimate | CC | M | A live smoke test on the mock world returns a valid action sequence on at least one free-tier model | R14 |
 | T4.2 v1 drafted 2026-10-05, wording review pending | System prompt v1 as a versioned file (SCOPE, ALLOWED, PROHIBITED, GROUNDING, TONE, ESCALATION), including the R4.4 heuristics as guidance | Both | M | Prompt committed with a version; you review the tone and wording of the check-in (Q8) | R1, R4, design 9.4 |
-| T4.3 | Run 5 manual scenarios on the mock world with a real model; fix the obvious prompt problems | Both | M | Notes on failures kept (they feed the case study) | design 13 |
+| T4.3 first pass 2026-10-05 (5 of 5 planned, prompt v3 pending rerun) | Run 5 manual scenarios on the mock world with a real model; fix the obvious prompt problems | Both | M | Notes on failures kept (they feed the case study) | design 13 |
 
 ## Phase 5: Streamlit app (mock only)
 
