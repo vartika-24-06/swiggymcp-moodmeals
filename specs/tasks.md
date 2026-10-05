@@ -45,9 +45,9 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T2.1 | Synthetic fixtures with invented names, matching the observed real shapes (restaurants, menus, products with variants) | CC | M | Fixtures validate against the normalised types; a scan finds no real names or addresses | A4, A5, R12.3 |
-| T2.2 | Failure switches: timeout, empty result, partial menu, out of stock, "(Ad)" entries, invalid veg classifier, quantity limits | CC | M | Each switch has a test showing the intended behaviour | R9, section 16 |
-| T2.3 | `MockProvider` implementing `ActionProvider`, deterministic from a seed | CC | M | Same seed gives the same world; simulated writes live in memory only | design 7.1 |
+| T2.1 ✅ done 2026-10-05 | Synthetic fixtures with invented names, matching the observed real shapes (restaurants, menus, products with variants) | CC | M | Fixtures validate against the normalised types; a scan finds no real names or addresses | A4, A5, R12.3 |
+| T2.2 ✅ done 2026-10-05 | Failure switches: timeout, empty result, partial menu, out of stock, "(Ad)" entries, invalid veg classifier, quantity limits | CC | M | Each switch has a test showing the intended behaviour | R9, section 16 |
+| T2.3 ✅ done 2026-10-05 | `MockProvider` implementing `ActionProvider`, deterministic from a seed | CC | M | Same seed gives the same world; simulated writes live in memory only | design 7.1 |
 
 ## Phase 3: The agent loop (fake model)
 

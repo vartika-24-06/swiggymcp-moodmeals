@@ -196,6 +196,7 @@ class ToolResult:  ok:bool, data:dict|None, error:ToolError|None, latency_ms:int
 - `MockProvider` serves a seeded synthetic world: restaurants, menus, products, with switches for failure injection (timeout, empty result, partial menu, out of stock, "(Ad)" entries, invalid veg classifier, max-quantity limits). The same shapes as the observed real responses (requirements A4, A5).
 - `SwiggyProvider` wraps the MCP client. It normalises results into section 5.2 types. In dry-run it **refuses** amber and red tools and returns a preview object instead.
 - The provider is called only through `WriteGate` for amber and red tools.
+- **Built in T2.1 to T2.3** (`moodmeals/providers/`: `base.py`, `world.py`, `switches.py`, `mock.py`). Providers return payloads in the **raw shapes Swiggy's tools return** (observed 2026-10-04), and the tool layer converts them with `moodmeals.tools.normalise`, so the mock exercises the same parsers as the real provider. The world is a pure function of the seed; the switches (`Switches`) are `fail_tools` (timeout or error), `empty_search`, `partial_menu`, `all_closed`, `out_of_stock`, `ad_rate`, `invalid_veg_rate`, `max_qty`, `buy_again_badges` and `price_scale`. **Assumption to confirm:** the keys inside a mock address (`id`, `category`, `tag`, `address`, `phone`) are guesses, because the shape report does not read address fields. They only matter for the picker in T3.3.
 
 ### 7.2 `WriteGate`
 A small standalone class, tested on its own:
