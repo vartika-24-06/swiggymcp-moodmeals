@@ -64,6 +64,9 @@ class RunState(BaseModel):
     # Approval flow: the plan is approved first (cart), then the order separately (R10.3).
     pending_write: Literal["cart", "order"] | None = None
     outcome: dict[str, Any] | None = None
+    # Live mode only: was the cart empty when last checked? A status, never the contents (DQ6).
+    cart_check: Literal["empty", "not_empty", "unknown"] | None = None
+    replace_confirmed: bool = False  # the person agreed to change a cart that has items
 
     # Real strings to scrub from every event (e.g. the chosen address). Not serialised.
     _sensitive: set[str] = PrivateAttr(default_factory=set)

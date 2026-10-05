@@ -64,6 +64,8 @@ def approval_text(state: RunState) -> dict[str, Any]:
             else "Put these items in your Instamart cart (this replaces what is already there)"
         )
         button, step = "Approve: update cart", "Step 1 of 2"
+        if live:
+            step = "Cart update (no order is placed)"
     else:
         what = "Place the order for the items in your cart"
         button, step = "Approve: place order", "Step 2 of 2"
@@ -73,8 +75,36 @@ def approval_text(state: RunState) -> dict[str, Any]:
         sim = "Dry-run: approving only shows what would happen. Nothing is sent to Swiggy."
     else:
         sim = "Simulated: nothing is sent to Swiggy in this mode."
-    warn = "Orders may not be reversible through these tools." if live else ""
-    return {"step": step, "what": what, "button": button, "note": sim, "warning": warn}
+    warn = ""
+    if live:
+        warn = (
+            "This changes your real Swiggy cart. Orders placed through Swiggy may not be "
+            "cancellable. MoodMeals does not place orders: you review the bill and order in "
+            "the Swiggy app."
+        )
+    needs_confirm = blocked = False
+    if live and state.pending_write == "cart":
+        cart = "Food" if plan.path == "order_in" else "Instamart"
+        if state.cart_check == "not_empty":
+            needs_confirm = not state.replace_confirmed
+            warn += (
+                f" Your {cart} cart already has items, and approving will "
+                + ("add to or change" if plan.path == "order_in" else "replace")
+                + " them."
+            )
+        elif state.cart_check == "unknown":
+            blocked = True
+            warn += f" Your {cart} cart could not be checked, so approving will stop the run."
+    return {
+        "step": step,
+        "what": what,
+        "button": button,
+        "note": sim,
+        "warning": warn.strip(),
+        "needs_confirm": needs_confirm,
+        "replace_button": "I understand: change my existing cart",
+        "blocked": blocked,
+    }
 
 
 def run_summary(state: RunState, llm: Any, elapsed_s: float) -> dict[str, Any]:

@@ -41,6 +41,9 @@ def resolve_mode(env: dict[str, str] | None = None) -> str:
         raise ModeRefused(f"Unknown mode: {requested}")
     if is_public(e) and requested != "mock":
         raise ModeRefused("The public site runs mock mode only.")
-    if requested == "live":
-        raise ModeRefused("Live mode arrives with its guard rails (T6.3). Use dry_run.")
+    if requested == "live" and e.get("MOODMEALS_ALLOW_LIVE") != "1":
+        raise ModeRefused(
+            "Live mode changes your real Swiggy cart. Opt in for this session by setting "
+            "MOODMEALS_ALLOW_LIVE=1, or use dry_run."
+        )
     return requested

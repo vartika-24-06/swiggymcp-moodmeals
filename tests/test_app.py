@@ -147,8 +147,63 @@ def test_dry_run_requires_connecting_first(monkeypatch):
     assert any("Connect to Swiggy" in e.value for e in at.error)
 
 
-def test_live_mode_is_refused(monkeypatch):
+def test_live_mode_is_refused_without_the_opt_in(monkeypatch):
     monkeypatch.setenv("MOODMEALS_MODE", "live")
+    monkeypatch.delenv("MOODMEALS_ALLOW_LIVE", raising=False)
     at = AppTest.from_file(APP, default_timeout=30)
     at.run()
     assert any("Live mode" in e.value for e in at.error)
+
+
+def test_live_mode_needs_the_flag_and_never_runs_on_the_public_site():
+    assert config.resolve_mode({"MOODMEALS_MODE": "live", "MOODMEALS_ALLOW_LIVE": "1"}) == "live"
+    for env in (
+        {"MOODMEALS_MODE": "live"},
+        {"MOODMEALS_MODE": "live", "MOODMEALS_ALLOW_LIVE": "yes"},
+        {"MOODMEALS_MODE": "live", "MOODMEALS_ALLOW_LIVE": "1", "MOODMEALS_DEPLOY": "public"},
+    ):
+        with pytest.raises(config.ModeRefused):
+            config.resolve_mode(env)
+
+
+def _live_app(monkeypatch, conn):
+    monkeypatch.setenv("MOODMEALS_MODE", "live")
+    monkeypatch.setenv("MOODMEALS_ALLOW_LIVE", "1")
+    at = AppTest.from_file(APP, default_timeout=30)
+    at.session_state["conn"] = conn
+    at.run()
+    assert not at.exception, at.exception
+    return at
+
+
+def test_live_mode_needs_the_session_acknowledgement(monkeypatch):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from test_live_guards import LiveFake
+
+    conn = LiveFake()
+    at = _live_app(monkeypatch, conn)
+    click(at, "Plan my meal")
+    assert any("live-mode box" in e.value for e in at.error)
+    assert conn.calls == []
+
+
+def test_live_app_existing_cart_needs_confirmation_then_ends_without_an_order(monkeypatch):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from test_live_guards import CART_ITEM, LiveFake
+
+    conn = LiveFake(im_items=[CART_ITEM], food_items=[CART_ITEM])
+    at = _live_app(monkeypatch, conn)
+    at.checkbox(key="live_ack").set_value(True).run()
+    at.checkbox(key="veg_in").set_value(True)
+    click(at, "Plan my meal")
+    assert any("Cart update (no order is placed)" in m.value for m in at.markdown)
+    assert any("already has items" in w.value for w in at.warning)
+    approve = next(b for b in at.button if b.label == "Approve: update cart")
+    assert approve.disabled  # cannot approve over an existing cart until confirmed
+    click(at, ui_text.approval_text(at.session_state["state"])["replace_button"])
+    click(at, "Approve: update cart")
+    assert [c[1] for c in conn.writes] and len(conn.writes) == 1
+    assert at.session_state["state"].outcome["kind"] == "cart_updated"
+    assert not any(b.label == "Approve: place order" for b in at.button)
+    page = texts(at) + " ".join(i.value for i in at.info) + " ".join(i.value for i in at.success)
+    assert "Zzyzx" not in page and "Synthetic Lane" not in page

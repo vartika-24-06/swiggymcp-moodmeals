@@ -65,13 +65,16 @@ def start() -> None:
     S["start_error"] = ""
     budget = S.get("budget_in") or None
     cons = Constraints(veg=bool(S.get("veg_in")), budget=int(budget) if budget else None)
-    if MODE == "dry_run":
+    if MODE in ("dry_run", "live"):
         if S.get("conn") is None:
             S["start_error"] = "Connect to Swiggy first (sidebar)."
             return
+        if MODE == "live" and not S.get("live_ack"):
+            S["start_error"] = "Tick the live-mode box in the sidebar first."
+            return
         from moodmeals.providers.swiggy import SwiggyProvider
 
-        provider_obj = SwiggyProvider(S.conn, "dry_run")
+        provider_obj = SwiggyProvider(S.conn, MODE)
     else:
         provider_obj = MockProvider(seed=SEED, n_addresses=int(S.get("n_addr", 1)))
     S.llm = llm
@@ -95,6 +98,10 @@ def approve() -> None:
     S.needs_run = S.state.phase not in ("DONE", "STOPPED", "AWAITING_APPROVAL")
 
 
+def confirm_replace() -> None:
+    S.agent.confirm_replace(S.state)
+
+
 def another_idea() -> None:
     S.agent.reject(S.state)
     S.needs_run = True
@@ -111,9 +118,20 @@ with st.sidebar:
     if MODE == "mock":
         st.caption("Mode: **mock** (simulated data, nothing is sent to Swiggy)")
     else:
-        st.caption(
-            "Mode: **dry-run**. Real read-only Swiggy data. Nothing is added to a cart or ordered."
-        )
+        if MODE == "live":
+            st.caption(
+                "Mode: **LIVE**. Real Swiggy data. An approved step changes your real cart. "
+                "No order is placed and nothing is paid from here."
+            )
+            st.checkbox(
+                "I understand: approving changes my real Swiggy cart (this session only)",
+                key="live_ack",
+            )
+        else:
+            st.caption(
+                "Mode: **dry-run**. Real read-only Swiggy data. "
+                "Nothing is added to a cart or ordered."
+            )
         if S.conn is None:
             if st.button("Connect to Swiggy"):
                 from moodmeals.providers.mcp_connection import ConnectionFailed, McpConnection
@@ -245,8 +263,16 @@ if state.plan and state.phase == "AWAITING_APPROVAL":
             st.caption(a["note"])
         if a["warning"]:
             st.warning(a["warning"])
+        if a["needs_confirm"]:
+            st.button(a["replace_button"], on_click=confirm_replace)
         b1, b2, b3 = st.columns(3)
-        b1.button(a["button"], type="primary", on_click=approve, width="stretch")
+        b1.button(
+            a["button"],
+            type="primary",
+            on_click=approve,
+            width="stretch",
+            disabled=a["needs_confirm"],
+        )
         b2.button("Another idea", on_click=another_idea, width="stretch")
         b3.button("Stop", on_click=stop_run, width="stretch")
 

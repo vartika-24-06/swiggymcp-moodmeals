@@ -43,6 +43,12 @@ from moodmeals.tools.normalise import (
     parse_restaurants,
 )
 
+CART_UPDATED_MESSAGE = (
+    "Your Swiggy cart was updated. Open the Swiggy app to see the real bill (it will be higher "
+    "than the item total once fees and taxes are added) and to place the order there. "
+    "MoodMeals does not place orders or take payment."
+)
+
 STOP_MESSAGES: dict[str, str] = {
     "cancelled": "Stopped at your request.",
     "max_iterations": "I ran out of steps before I could verify a plan.",
@@ -54,6 +60,7 @@ STOP_MESSAGES: dict[str, str] = {
     "no_address": "No saved delivery address was found.",
     "address_error": "I could not read your saved addresses.",
     "write_failed": "The action did not go through. Nothing was retried.",
+    "cart_unverified": "I could not check your existing cart, so I changed nothing.",
 }
 
 
@@ -141,6 +148,9 @@ class Agent:
         if state.phase != "AWAITING_APPROVAL" or state.plan is None or not state.pending_write:
             raise ValueError("There is nothing waiting for approval")
         action = _write_action(state)
+        self._address_id = state._address_ids.get(state.address_handle or "")
+        if state.mode == "live" and not self._cart_guard(state, action):
+            return  # blocked or stopped: no approval is issued and nothing is written
         approval = self.gate.issue_approval(action)
         state.add_event(
             "approval",
@@ -162,7 +172,11 @@ class Agent:
             }
             state.phase, state.pending_write = "DONE", None
         elif outcome.status in ("executed", "simulated"):
-            if state.pending_write == "cart":
+            if state.pending_write == "cart" and state.mode == "live":
+                # Live mode only updates the cart: no order, no payment tool (R10.7).
+                state.outcome = {"kind": "cart_updated", "message": CART_UPDATED_MESSAGE}
+                state.phase, state.pending_write = "DONE", None
+            elif state.pending_write == "cart":
                 state.pending_write = "order"  # a separate approval for the order (R10.3)
             else:
                 state.outcome = {"kind": "order_placed", "simulated": outcome.status == "simulated"}
@@ -387,6 +401,10 @@ class Agent:
             for i in result.warnings
         ]
         state.phase, state.pending_write = "AWAITING_APPROVAL", "cart"
+        state.replace_confirmed = False
+        state.cart_check = None
+        if state.mode == "live":
+            self._check_cart(state)
         state.add_event(
             "validation", "code", {"ok": True, "warnings": [i.code for i in result.warnings]}
         )
@@ -404,6 +422,55 @@ class Agent:
             "best_plan": state.plan.model_dump() if state.plan else None,
         }
         state.add_event("stop", "code", {"reason": reason})
+
+    def confirm_replace(self, state: RunState) -> None:
+        """The person agrees to change a cart that already has items (DQ6). Does not write."""
+        if (
+            state.mode != "live"
+            or state.phase != "AWAITING_APPROVAL"
+            or state.pending_write != "cart"
+            or state.cart_check != "not_empty"
+        ):
+            raise ValueError("There is no existing cart waiting for confirmation")
+        state.replace_confirmed = True
+        state.add_event("approval", "user", {"decision": "replace_confirmed", "step": "cart"})
+
+    def _check_cart(self, state: RunState) -> None:
+        """Read whether the cart this plan will change is empty. Status only (DQ6)."""
+        assert state.plan is not None
+        food = state.plan.path == "order_in"
+        params: dict[str, Any] = {"cart": "food" if food else "im"}
+        if food:
+            params["address_id"] = self._address_id
+        result = self.provider.call("get_cart_state", params)
+        empty = result.data.get("empty") if result.ok and result.data else None
+        state.cart_check = "unknown" if not isinstance(empty, bool) else (
+            "empty" if empty else "not_empty"
+        )  # fmt: skip
+        words = {"empty": "is empty", "not_empty": "already has items", "unknown": "was not read"}
+        state.add_event(
+            "tool_result_summary",
+            "code",
+            {"note": f"Your {'Food' if food else 'Instamart'} cart {words[state.cart_check]}"},
+        )
+
+    def _cart_guard(self, state: RunState, action: WriteAction) -> bool:
+        """Live cart updates only: check the cart again just before writing. An unreadable cart
+        stops the run; a cart with items needs the person's explicit confirmation."""
+        if state.pending_write != "cart":
+            return True
+        self._check_cart(state)
+        if state.cart_check == "unknown":
+            self._stop(state, "cart_unverified")
+            return False
+        if state.cart_check == "not_empty" and not state.replace_confirmed:
+            state.add_event(
+                "write_blocked",
+                "code",
+                {"tool": action.tool, "status": "blocked", "reason": "cart_not_empty"},
+            )
+            return False
+        return True
 
     def _execute_write(self, tool: str, params: dict[str, Any]) -> Any:
         result = self.provider.call(tool, {**params, "address_id": self._address_id})

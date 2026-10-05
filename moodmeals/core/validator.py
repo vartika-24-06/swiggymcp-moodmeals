@@ -91,6 +91,21 @@ def validate_plan(
         if r:
             resolved.append(r)
 
+    # V1 (live only): a cart write cannot carry a variant choice, so dishes with variants are out
+    if mode == "live" and plan.path == "order_in":
+        for it in plan.items:
+            m = ledger.menu_items.get(it.entity_id)
+            if m is not None and m.has_variants:
+                err.append(
+                    Issue(
+                        "V1",
+                        "variants_unsupported",
+                        f"{m.name} needs an option choice that cannot be sent. Pick a dish "
+                        "without variants.",
+                        it.entity_id,
+                    )
+                )
+
     restaurants = {r.restaurant_id for r in resolved if r.restaurant_id}
     # V5 single basket
     if plan.path == "order_in":
