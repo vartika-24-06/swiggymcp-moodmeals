@@ -2,6 +2,14 @@
 
 Raw material for the write-up. Newest first. All runs are on the synthetic mock world.
 
+## T4.3 rerun, gpt-5-mini, prompt v3 (2026-10-05)
+Result: 5 of 5 validated plans again, 0 protocol errors, 0 validation retries, about $0.04.
+The two fixes held: cook plans dropped to 2 to 5 items (pantry basics listed as an assumption, not bought), and questions and reasons came back in Hinglish for Hinglish prompts and English for English.
+Still imperfect (left as is for now):
+- In the all-closed scenario the model asked a second question ("chicken, egg, veg, or order-in?") before it had searched, so it spent a question offering a path that was closed. A prompt rule "search before asking about options" would likely fix it; untested.
+- Reasons sometimes attribute canned answers to the person ("veg chahiye tha"), which is true here only because the test script answered.
+Still one run per scenario: this is a smoke test, not a reliability number.
+
 ## T4.3, five scenarios, gpt-5-mini, prompt v2 (2026-10-05)
 Result: 5 of 5 reached a validated plan. 0 protocol errors, 0 validation retries, about $0.04 for all five.
 One run per scenario, so this shows the loop works, not how reliable it is (evals come later).
