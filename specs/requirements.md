@@ -84,7 +84,7 @@ A Python agent loop (no framework) calls tools through an **action-provider inte
 ### R4 Path decision
 - R4.1 THE SYSTEM SHALL choose between Order in and Cook using the check-in signals and tool results, and SHALL show a one-sentence reason.
 - R4.2 THE SYSTEM SHALL support "another idea", which proposes a different path or a different option within the path.
-- R4.3 WHEN a path is infeasible (nothing open, no stock), THE SYSTEM SHALL say so and move to another path rather than force a plan.
+- R4.3 WHEN ordering in is infeasible (nothing open, search failing, nothing within the hard constraints), THE SYSTEM SHALL say so and either offer a ready-to-eat or quick-cook meal from Instamart (a plan whose reason states why ordering is not possible), or stop the search with a one-sentence reason. It SHALL NOT force a plan, invent items, or turn the fallback into a full recipe shopping list unless the person chose to cook. A stop is allowed only after at least one real search.
 - R4.4 Default heuristics *(proposed, to be tested by evals)*: low energy, low willingness to cook or little time lean to Order in; enough energy and time, or a stated "want to cook" or recipe intent, lean to Cook; a simple few-ingredient meal is preferred when energy is low but the user still wants to cook.
 
 ### R5 Order-in path (Swiggy Food tools)
@@ -114,7 +114,7 @@ The go-out path (Swiggy Dineout) was dropped from v1. The number is kept so othe
 - R8.4 WHEN validation fails, THE SYSTEM SHALL retry up to 2 times, then show "I could not produce a verified plan" with the reason.
 
 ### R9 Replanning and failure
-- R9.1 WHEN a tool errors or returns nothing, THE SYSTEM SHALL retry once, then try an alternative (other restaurant, other path).
+- R9.1 WHEN a tool errors or returns nothing, THE SYSTEM SHALL retry once, then try an alternative (other restaurant, or the ready-to-eat and quick-cook Instamart fallback of R4.3), or stop with a reason.
 - R9.2 WHEN the user changes constraints mid-run, THE SYSTEM SHALL update the plan without restarting the check-in.
 - R9.3 THE SYSTEM SHALL tell the user what changed and why, in one sentence.
 

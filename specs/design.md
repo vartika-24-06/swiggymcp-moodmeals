@@ -94,10 +94,11 @@ CHECKIN → GATHER → PROPOSE → VALIDATE → AWAITING_APPROVAL → EXECUTE �
 | EXECUTE | WriteGate allows or blocks the write per mode and approval. | Code |
 
 ### 4.2 What the model may output each turn
-Exactly one of three action types (structured, validated by code):
+Exactly one of four action types (structured, validated by code):
 1. `tool_call(name, params)`: a read tool from the catalogue for the current state.
 2. `ask_user(question, options?)`: refused by code once the question budget is spent.
 3. `propose_plan(path, reason, items[], assumptions[])`: moves to VALIDATE.
+4. `stop_search(reason)`: gives up with a one-sentence reason; refused (protocol error) until at least one tool call has been made (R4.3).
 
 Anything else is a protocol error: the model gets one corrective message, then the run stops cleanly.
 
@@ -222,7 +223,7 @@ class LLMClient(Protocol):
     def next_action(self, view: ModelView) -> Action: ...      # parsed and validated
     def usage(self) -> Usage: ...                               # tokens in/out for cost
 ```
-- Two adapters *(proposed)*: an OpenAI-compatible one (OpenAI, Groq, OpenRouter, Gemini through its compatible endpoint) and an Anthropic one. Each converts the model's native tool-calling into the three action types of section 4.2.
+- Two adapters *(proposed)*: an OpenAI-compatible one (OpenAI, Groq, OpenRouter, Gemini through its compatible endpoint) and an Anthropic one. Each converts the model's native tool-calling into the four action types of section 4.2.
 - A pricing table (`pricing.py`) turns token counts into a cost estimate shown before a run (R14.3). Prices are config, with a "last checked" date, and the UI says they are estimates.
 - The key is held in the session and passed only to the chosen vendor (R12.5).
 
@@ -259,10 +260,10 @@ A `Signals` object: craving or cuisine, energy (low/ok/high), willingness to coo
 
 ### 9.3 Path decision
 - The model proposes a path with a one-sentence `rationale`. The heuristics from R4.4 live in the system prompt as guidance, not as code, so evals can test whether the model follows them.
-- "Another idea" re-enters GATHER with the previous plan marked as rejected (R4.2). An infeasible path (nothing open, nothing in stock) triggers a switch with a one-sentence explanation (R4.3, R9).
+- "Another idea" re-enters GATHER with the previous plan marked as rejected (R4.2). An infeasible order-in path (nothing open, search failing, nothing within the constraints) triggers an offer of a ready-to-eat or quick-cook Instamart meal, with a one-sentence reason, or a `stop_search` with a one-sentence reason (R4.3, R9).
 
 ### 9.4 Prompt as a specification
-The system prompt is a versioned file (`prompts/agent_vN.md`) with fixed sections, so it can be tested and diffed: **SCOPE**, **ALLOWED ACTIONS** (the three action types), **PROHIBITED ACTIONS**, **GROUNDING RULES** (only use entities from tool results), **TONE** (short, no medical talk), **ESCALATION** (when to stop and say it can't produce a verified plan). The prompt version is stored with every run and eval result.
+The system prompt is a versioned file (`prompts/agent_vN.md`) with fixed sections, so it can be tested and diffed: **SCOPE**, **ALLOWED ACTIONS** (the four action types), **PROHIBITED ACTIONS**, **GROUNDING RULES** (only use entities from tool results), **TONE** (short, no medical talk), **ESCALATION** (when to stop and say it can't produce a verified plan). The prompt version is stored with every run and eval result.
 
 ## 10. Guardrails and safety
 
@@ -391,7 +392,7 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 |---|---|---|
 | DD1 | The model decides next steps; deterministic code owns limits, checks and writes (section 4.4) | Proposed |
 | DD2 | Resumable state machine over a serialisable `RunState`, driven by a generator | Proposed |
-| DD3 | The model outputs one of three action types per turn | Proposed |
+| DD3 | The model outputs one of four action types per turn (a fourth, `stop_search`, was added 2026-10-05 for R4.3) | Proposed |
 | DD4 | **PII firewall:** the model never sees addresses, phones, other people's names, order history or cart contents | Locked |
 | DD5 | `WriteGate` approvals bind to one exact action (params hash); no automatic retries of writes | Proposed |
 | DD6 | Dry-run shows an item total only, with a disclaimer that the final bill is shown only in live mode | Locked |
@@ -403,7 +404,7 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 
 | Situation | Response | Req |
 |---|---|---|
-| Tool timeout or error (read) | Retry once, then alternative or switch path; trace both | R9.1 |
+| Tool timeout or error (read) | Retry once, then an alternative, the quick-meal Instamart offer, or `stop_search` with a reason; trace both | R9.1, R4.3 |
 | Tool returns nothing | Treat as "nothing found"; never invent; try alternative | R9.1 |
 | Partial or malformed data | Drop the unusable entries; if nothing usable remains, treat as nothing found | R9.1 |
 | Validator failure | Errors to the model, max 2 retries, then clear stop | R8.4 |
@@ -472,4 +473,11 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 
 - Scenarios are YAML in `evals/scenarios/` (format and the "appropriate path" rubric in its README); `evals/scenario.py` loads and validates them strictly. Compared with the sketch in 13.1: `world` takes `addresses` and the real switch names; `user_script` adds `address` (index), `constraints` and `mid_run`; `expect.paths_acceptable` is the rubric; `smoke: true` marks the smoke set; `rationale` is required so the owner can review each expectation; runs always stop at the approval screen (`approve` is fixed to false).
 - `pyyaml` is now a dependency.
+
+### Order-in fallback and the fourth action (2026-10-05)
+
+- Owner rule (R4.3): when ordering in is not possible, offer a ready-to-eat or quick-cook Instamart meal (a `cook`-path plan whose reason says why), or stop with a reason.
+- The model gets a fourth action, `stop_search(reason)` (section 4.2 now lists four: `tool_call`, `ask_user`, `propose_plan`, `stop_search`). The loop accepts it only after at least one tool call (otherwise it is a protocol error), redacts the reason, and ends the run as `STOPPED` with stop reason `no_option` and that sentence as the message.
+- Prompt `agent_v4` adds the section WHEN ORDERING IN IS NOT POSSIBLE; v3 stays in `prompts/` for the record. The mock world gained four synthetic ready-to-eat and quick-cook products (appended, so existing ids and seeds are unchanged). `DemoLLM` follows the rule.
+- Not yet done: the plan card still says "Cook at home" for a quick-meal fallback plan; the eval scorer must check `blocked_reason` and `quick_meal` with explicit word lists (T7.2).
 
