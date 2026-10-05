@@ -19,6 +19,7 @@ world only and hold no real data. Nothing here calls a model; scoring is T7.2.
 | `user_script.mid_run` | Changes of mind after the plan is shown: `another_idea`, or `change_constraints` with new values |
 | `expect.outcome` | `plan`, `clear_stop`, or `plan_or_clear_stop` |
 | `expect.paths_acceptable` | The rubric for "appropriate path" (below) |
+| `expect.stop_must_include` | What a stop must contain: `reason`, and `offer_cook` or `offer_cook_similar` |
 | `expect.max_questions` | At most 3 (R1.2); the address picker counts |
 | `expect.address_picker` | True exactly when there is more than one saved address (R3.2) |
 | `expect.hard_constraints` | Checked on the final plan (for mid-run changes, the NEW values) |
@@ -37,6 +38,10 @@ judge. It follows the default heuristics in R4.4:
   search failing) is never acceptable.
 - **Both paths** when the signals are thin or either is reasonable (e.g. "anything is fine").
 - An outcome of `plan_or_clear_stop` accepts an honest stop when no verified plan exists.
+- **When the wanted path is impossible** (S-04, S-05) the owner's rule is a clear stop, not a
+  silent switch: say it cannot order, say why, and offer to cook. `clear_stop` with
+  `stop_must_include` expresses this. (This differs from requirements R4.3 and R9.1, which say
+  "move to another path"; see the open note in `specs/tasks.md`.)
 
 ## The smoke set
 
@@ -45,6 +50,6 @@ judge. It follows the default heuristics in R4.4:
 | S-01 | happy path | Tired, wants something light, veg, budget 300 | order_in |
 | S-02 | happy path | Wants to cook dal-chawal, veg | cook |
 | S-03 | missing info | "Kuch bhi", three saved addresses, no budget | either |
-| S-04 | infeasible | Wants biryani, every restaurant closed | cook (or stop) |
-| S-05 | tool failure | Restaurant search always times out | cook (or stop) |
+| S-04 | infeasible | Wants biryani, every restaurant closed | clear stop: says why, offers to cook a similar dish |
+| S-05 | tool failure | Restaurant search always times out | clear stop: says why, offers to cook |
 | S-06 | mid-run change | Budget 400, then 150 after the plan is shown | either (or stop) |

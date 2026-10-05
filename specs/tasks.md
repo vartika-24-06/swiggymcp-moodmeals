@@ -95,7 +95,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T7.1 built 2026-10-05, your review of the six scenarios and the path rubric pending (Q5; see evals/scenarios/README.md) | Scenario format and the first 6 scenarios (smoke set) | Both | M | You review the scenarios and the expected paths (Q5) | R15, E |
+| T7.1 built 2026-10-05; S-04 and S-05 revised per your review (clear stop with reason and a cook offer, which differs from R4.3 and R9.1: open); other scenarios and the rubric approval pending (Q5; see evals/scenarios/README.md) | Scenario format and the first 6 scenarios (smoke set) | Both | M | You review the scenarios and the expected paths (Q5) | R15, E |
 | T7.2 | Scripted user, scoring functions, strategies `one_shot`, `fixed_workflow`, `agent` | CC | L | Scoring unit-tested on hand-made runs | 13.2, 13.3 |
 | T7.3 | Runner with a spend cap (default ₹1,500), results JSON with model, prompt version and commit | CC | M | A capped run stops at the cap; results file written | E2 |
 | T7.4 | Smoke run (6 scenarios, 1 run each), read the failures, fix what is a bug | Both | M | Failures sorted into bugs and genuine limits | 13.4 |

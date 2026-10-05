@@ -92,6 +92,16 @@ def test_world_switches_do_what_the_smoke_scenarios_say():
     assert by_id["S-03"].expect.address_picker and by_id["S-03"].world.addresses == 3
 
 
+def test_blocked_order_scenarios_expect_a_clear_stop_with_reason_and_a_cook_offer():
+    by_id = {s.id: s for s in load_scenarios()}
+    s04, s05 = by_id["S-04"].expect, by_id["S-05"].expect
+    for e in (s04, s05):
+        assert e.outcome == "clear_stop" and not e.paths_acceptable  # no silent switch to cook
+        assert "reason" in e.stop_must_include
+    assert "offer_cook_similar" in s04.stop_must_include
+    assert "offer_cook" in s05.stop_must_include
+
+
 def test_mid_run_change_scenario_lowers_the_budget():
     s = next(s for s in load_scenarios() if s.group == "mid_run_change")
     step = s.user_script.mid_run[0]
@@ -110,6 +120,17 @@ def test_mid_run_change_scenario_lowers_the_budget():
         ("paths_acceptable: [order_in]", "paths_acceptable: []", "plan needs a path"),
         ("outcome: plan,", "outcome: clear_stop,", "clear_stop with a path"),
         ("paths_acceptable: [order_in]", "paths_acceptable: [order_in], max_questions: 4", "4"),
+        ("outcome: plan,", "outcome: clear_stop, stop_must_include: [offer_cook],", "no reason"),
+        (
+            "paths_acceptable: [order_in]",
+            "paths_acceptable: [order_in], stop_must_include: [reason]",
+            "plan",
+        ),
+        (
+            "outcome: plan,",
+            "outcome: plan_or_clear_stop, stop_must_include: [offer_cook, offer_cook_similar],",
+            "both offers",
+        ),
         (
             "paths_acceptable: [order_in]",
             "paths_acceptable: [order_in], address_picker: true",

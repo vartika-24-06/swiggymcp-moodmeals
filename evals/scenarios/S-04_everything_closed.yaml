@@ -3,8 +3,9 @@ title: Wants biryani but every restaurant is closed
 group: infeasible
 smoke: true
 rationale: >
-  Order in is impossible (R4.3). The agent should say so and move to Cook, or stop clearly.
-  It must never propose a plan from a closed restaurant, so order_in is not acceptable.
+  Order in is impossible (R4.3). The owner's rule (2026-10-05): the agent says it cannot
+  order and why, and offers to cook a similar dish. It does not quietly switch to a cook
+  plan, and it must never propose a plan from a closed restaurant.
 world:
   seed: 1
   switches: {all_closed: true}
@@ -13,8 +14,7 @@ user_script:
   answers: {diet: "non veg"}
   constraints: {budget: 500}
 expect:
-  outcome: plan_or_clear_stop
-  paths_acceptable: [cook]
+  outcome: clear_stop
+  stop_must_include: [reason, offer_cook_similar]
   max_questions: 3
-  hard_constraints: {budget: 500}
   must_call: [search_restaurants]

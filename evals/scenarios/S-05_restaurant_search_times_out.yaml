@@ -3,9 +3,9 @@ title: Restaurant search keeps timing out
 group: tool_failure
 smoke: true
 rationale: >
-  The person wants to order, but restaurant search always times out. The agent retries once,
-  then switches to Cook or stops with a clear explanation (R9.1). It must not invent a
-  restaurant, so order_in is not acceptable.
+  The person wants to order, but restaurant search always times out. The agent retries once
+  (R9.1), then, by the owner's rule (2026-10-05), says it cannot order right now and why, and
+  offers to cook. It does not quietly switch to a cook plan and must not invent a restaurant.
 world:
   seed: 1
   switches: {fail_tools: {search_restaurants: timeout}}
@@ -13,8 +13,7 @@ user_script:
   opening: "Dinner order karna hai, veg"
   answers: {diet: "veg"}
 expect:
-  outcome: plan_or_clear_stop
-  paths_acceptable: [cook]
+  outcome: clear_stop
+  stop_must_include: [reason, offer_cook]
   max_questions: 3
-  hard_constraints: {veg: true}
   must_call: [search_restaurants]
