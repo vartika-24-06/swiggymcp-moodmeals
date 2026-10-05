@@ -337,6 +337,18 @@ def schema_summary(tool: Any) -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 
 
+def unique_payloads(payloads: list[Any]) -> list[Any]:
+    """The structured result and its JSON text copy are the same data; keep one."""
+    seen: set[str] = set()
+    out: list[Any] = []
+    for p in payloads:
+        key = json.dumps(p, sort_keys=True, ensure_ascii=False)
+        if key not in seen:
+            seen.add(key)
+            out.append(p)
+    return out
+
+
 async def call(client: Client, tool: str, args: dict[str, Any]) -> Any:
     step(f"call_tool {tool} started")
     try:
@@ -397,7 +409,7 @@ async def capture(server: str, port: int, open_browser: bool, cap_dir: Path) -> 
                 entry["status"] = "tool error"
                 entry["error"] = scrub(" ".join(texts))[:300]
                 continue
-            payloads = payloads_from(result)
+            payloads = unique_payloads(payloads_from(result))
             (cap_dir / f"{name}.json").write_text(
                 json.dumps(payloads, ensure_ascii=False), encoding="utf-8"
             )
@@ -466,6 +478,7 @@ def selftest() -> None:
         assert leaked not in blob, leaked
     assert "VEG" in blob and "NON_VEG" in blob
     assert flags_in([sample])["ad_marker"] == 1
+    assert len(unique_payloads([sample, json.loads(json.dumps(sample))])) == 1
     rows = find_restaurant_list(sample)
     assert first_id(rows) == "r1"
     schema = {

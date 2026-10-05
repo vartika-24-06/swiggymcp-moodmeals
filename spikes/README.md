@@ -230,3 +230,16 @@ It calls no cart, order, checkout, address-changing, order-history or payment to
 
 The summary the script prints (tool names, status, rough token counts), and whether
 any tool says `skipped` or `tool error`. Do not paste anything from `spikes\captures\`.
+
+### Spike C, part 2: compaction numbers (offline, no sign-in)
+
+After `capture_shapes.py` has run for `food` and `im`, run:
+
+```powershell
+python spikes\compact_check.py
+```
+
+It reads your local raw captures, applies the real parsers and the model view, and
+prints only numbers: size before and after, items parsed versus items in the raw
+response, and counts of veg and sponsored values. It prints no names, ids or text and
+writes nothing. Send me the output.
