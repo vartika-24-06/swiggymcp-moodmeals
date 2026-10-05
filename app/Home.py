@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent))  # lets `config` and `ui_text` im
 import config  # noqa: E402
 import ui_text  # noqa: E402
 
-from moodmeals.core.guard import Guard  # noqa: E402
+from moodmeals.core.guard import Guard, RunBudget  # noqa: E402
 from moodmeals.core.loop import Agent  # noqa: E402
 from moodmeals.core.replay import export_run  # noqa: E402
 from moodmeals.core.validator import Constraints  # noqa: E402
@@ -43,6 +43,7 @@ S.setdefault("t0", 0.0)
 S.setdefault("elapsed", 0.0)
 S.setdefault("needs_run", False)
 S.setdefault("draft", "")
+S.setdefault("conn", None)
 
 
 def reset() -> None:
@@ -64,8 +65,17 @@ def start() -> None:
     S["start_error"] = ""
     budget = S.get("budget_in") or None
     cons = Constraints(veg=bool(S.get("veg_in")), budget=int(budget) if budget else None)
+    if MODE == "dry_run":
+        if S.get("conn") is None:
+            S["start_error"] = "Connect to Swiggy first (sidebar)."
+            return
+        from moodmeals.providers.swiggy import SwiggyProvider
+
+        provider_obj = SwiggyProvider(S.conn, "dry_run")
+    else:
+        provider_obj = MockProvider(seed=SEED, n_addresses=int(S.get("n_addr", 1)))
     S.llm = llm
-    S.agent = Agent(llm, MockProvider(seed=SEED, n_addresses=int(S.get("n_addr", 1))), Guard())
+    S.agent = Agent(llm, provider_obj, Guard(RunBudget.for_mode(MODE)))
     S.state = S.agent.start(S["draft"] or "Kya khana hai, batao", cons)
     S.t0, S.needs_run = time.time(), True
 
@@ -98,7 +108,30 @@ def stop_run() -> None:
 
 with st.sidebar:
     st.header("Setup")
-    st.caption(f"Mode: **{MODE}** (simulated data, nothing is sent to Swiggy)")
+    if MODE == "mock":
+        st.caption("Mode: **mock** (simulated data, nothing is sent to Swiggy)")
+    else:
+        st.caption(
+            "Mode: **dry-run**. Real read-only Swiggy data. Nothing is added to a cart or ordered."
+        )
+        if S.conn is None:
+            if st.button("Connect to Swiggy"):
+                from moodmeals.providers.mcp_connection import ConnectionFailed, McpConnection
+
+                st.info("Sign in in the browser tab that opens: once for Food, once for Instamart.")
+                conn = McpConnection()
+                try:
+                    with st.spinner("Waiting for sign-in…"):
+                        conn.connect("food")
+                        conn.connect("im")
+                    S.conn = conn
+                    st.rerun()
+                except ConnectionFailed as e:
+                    conn.close()
+                    st.error(str(e))
+        else:
+            st.success("Connected to Swiggy (Food and Instamart)")
+        st.checkbox("Hide address text (for screen recording)", value=True, key="hide_addr")
     st.selectbox("Model provider", list(config.PROVIDERS), key="provider_label")
     prov = config.PROVIDERS[S["provider_label"]]
     if prov == "demo":
@@ -114,7 +147,8 @@ with st.sidebar:
             + ("unknown for this model" if est is None else f"about ${est:.3f}")
             + " (an estimate; prices may be out of date)"
         )
-    st.number_input("Saved addresses in the mock world", 1, 5, 1, key="n_addr")
+    if MODE == "mock":
+        st.number_input("Saved addresses in the mock world", 1, 5, 1, key="n_addr")
     st.caption(f"Prompt version: {PROMPT_VERSION}")
 
 # ---------------------------------------------------------------- main
@@ -175,10 +209,14 @@ if state.waiting == "answer" and state.pending_question:
 
 elif state.waiting == "address":
     st.subheader("Which address should I use?")
-    st.caption("Counts as one of your questions. Mock addresses only.")
-    for opt in agent.address_options(state):
+    st.caption("Counts as one of your questions.")
+    hide = MODE != "mock" and S.get("hide_addr", True)
+    for i, opt in enumerate(agent.address_options(state), 1):
+        shown = (
+            f"{opt['label']} (address hidden, #{i})" if hide else f"{opt['label']}: {opt['text']}"
+        )
         st.button(
-            f"{opt['label']}: {opt['text']}", key=opt["handle"],
+            shown, key=opt["handle"],
             on_click=pick_address, args=(opt["handle"],), width="stretch",
         )  # fmt: skip
 
@@ -224,15 +262,19 @@ if state.phase in ("DONE", "STOPPED") and state.outcome:
     else:
         st.info(out.get("message", "Done."))
     st.button("Start over", on_click=reset)
-    run = export_run(
-        state, seed=SEED, model=getattr(S.llm, "model", "?"), prompt_version=PROMPT_VERSION
-    )
-    st.download_button(
-        "Export this run (mock only)",
-        json.dumps(run, indent=1, default=str),
-        file_name=f"moodmeals_{state.run_id}.json",
-        mime="application/json",
-    )
+    if out.get("would_do"):
+        with st.expander("What would have happened"):
+            st.json(out["would_do"])
+    if state.mode == "mock":
+        run = export_run(
+            state, seed=SEED, model=getattr(S.llm, "model", "?"), prompt_version=PROMPT_VERSION
+        )
+        st.download_button(
+            "Export this run (mock only)",
+            json.dumps(run, indent=1, default=str),
+            file_name=f"moodmeals_{state.run_id}.json",
+            mime="application/json",
+        )
 elif state.phase not in ("AWAITING_APPROVAL",) and state.waiting is None and state.plan is None:
     st.button("Stop", on_click=stop_run, key="stop2")
 

@@ -23,8 +23,15 @@ class RunBudget:
     max_seconds: int = 90
     max_questions: int = 3
     max_validation_retries: int = 2
-    # To revisit: one real Swiggy call took about 16 s in Spike A (design 10.1).
-    tool_timeout_s: int = 15
+    # One real Swiggy call took about 16 s in Spike A (design 10.1), so real-mode limits are wider.
+    tool_timeout_s: int = 45
+
+    @classmethod
+    def for_mode(cls, mode: str) -> RunBudget:
+        """Mock runs are fast; real Swiggy runs need room for slow tool calls."""
+        if mode == "mock":
+            return cls()
+        return cls(max_iterations=14, max_tool_calls=20, max_seconds=300)
 
 
 class Guard:

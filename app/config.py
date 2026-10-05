@@ -41,6 +41,6 @@ def resolve_mode(env: dict[str, str] | None = None) -> str:
         raise ModeRefused(f"Unknown mode: {requested}")
     if is_public(e) and requested != "mock":
         raise ModeRefused("The public site runs mock mode only.")
-    if requested != "mock":
-        raise ModeRefused("Dry-run and live modes arrive with the Swiggy connection (Phase 6).")
+    if requested == "live":
+        raise ModeRefused("Live mode arrives with its guard rails (T6.3). Use dry_run.")
     return requested

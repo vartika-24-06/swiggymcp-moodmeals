@@ -449,3 +449,11 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 - Cart and order are two separate approvals (R10.3). In dry-run, the first approval ends the run with a preview and nothing is written.
 - Plans are built by code from the ledger; the model supplies ids and quantities only.
 - Write tools are not in the model's action set: a `tool_call` for one is a protocol error; a second consecutive protocol error stops the run.
+
+### Phase 6 implementation notes (2026-10-05)
+
+- `providers/mcp_connection.py` is the real MCP link (sign-in as in Spike A; tokens in memory only). `providers/swiggy.py` translates normalised tools to Swiggy's and refuses anything outside a read allowlist before it reaches the network. Writes are not implemented in the provider until T6.3.
+- Names mapped: `get_menu` to `get_restaurant_menu` (`restaurantId`, `pageSize` max 8), `search_dish` to `search_menu` (`restaurantIdOfAddedItem`, `vegFilter` 0/1), `list_addresses` to `get_addresses` (paged, up to 3 pages), `search_products` to the Instamart server.
+- Run limits for real modes are wider (`RunBudget.for_mode`): 300 s, 14 iterations, 45 s per tool call (Spike A: one call took about 16 s). This revises section 10.1's 15 s.
+- Dry-run in the app: set `MOODMEALS_MODE=dry_run`, press "Connect to Swiggy" in the sidebar (two sign-ins), then plan as usual. Address text is hidden by default for screen recording.
+- Unverified until the owner's check run: real field names inside `addresses[]`, whether Instamart accepts the Food address id, and the real menu shapes through the provider.

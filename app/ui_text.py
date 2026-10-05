@@ -67,7 +67,12 @@ def approval_text(state: RunState) -> dict[str, Any]:
     else:
         what = "Place the order for the items in your cart"
         button, step = "Approve: place order", "Step 2 of 2"
-    sim = "" if live else "Simulated: nothing is sent to Swiggy in this mode."
+    if live:
+        sim = ""
+    elif state.mode == "dry_run":
+        sim = "Dry-run: approving only shows what would happen. Nothing is sent to Swiggy."
+    else:
+        sim = "Simulated: nothing is sent to Swiggy in this mode."
     warn = "Orders may not be reversible through these tools." if live else ""
     return {"step": step, "what": what, "button": button, "note": sim, "warning": warn}
 

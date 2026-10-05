@@ -86,8 +86,8 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T6.1 | `SwiggyProvider`: MCP client, normalisers built against the redacted fixtures from T0.4, error mapping | CC | L | Normaliser tests pass on fixtures; no real data in the repo | design 7.3 |
-| T6.2 | Dry-run mode end to end: real read-only searches and menus, writes previewed only | Both | M | On your machine, a run from check-in to approval screen works on real data, with no cart or order touched | R10.2, D5 |
+| T6.1 built 2026-10-05, real-connection check pending (scripts/swiggy_check.py) | `SwiggyProvider`: MCP client, normalisers built against the redacted fixtures from T0.4, error mapping | CC | L | Normaliser tests pass on fixtures; no real data in the repo | design 7.3 |
+| T6.2 app wiring built 2026-10-05, your dry-run pending | Dry-run mode end to end: real read-only searches and menus, writes previewed only | Both | M | On your machine, a run from check-in to approval screen works on real data, with no cart or order touched | R10.2, D5 |
 | T6.3 | Live-mode guard rails: opt-in flag, existing-cart check and warning before an Instamart cart update, approval screen reversibility warning | CC | M | Tests with a fake MCP server: no write without approval; the cart check blocks silent overwrite | R10.6, DQ6 |
 | T6.4 | Optional: one live cart update on your machine to confirm the real bill appears (you choose; no order placed) | You | S | Result noted; skip is fine | design 3 |
 

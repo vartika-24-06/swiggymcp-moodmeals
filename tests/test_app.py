@@ -119,3 +119,36 @@ def test_mode_resolution():
         config.resolve_mode({"MOODMEALS_DEPLOY": "public", "MOODMEALS_MODE": "live"})
     with pytest.raises(config.ModeRefused):
         config.resolve_mode({"MOODMEALS_MODE": "bogus"})
+
+
+def test_dry_run_mode_with_fake_swiggy_connection(monkeypatch):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from test_swiggy_provider import FakeConnection
+
+    monkeypatch.setenv("MOODMEALS_MODE", "dry_run")
+    at = AppTest.from_file(APP, default_timeout=30)
+    at.session_state["conn"] = FakeConnection()
+    at.run()
+    assert not at.exception, at.exception
+    at.checkbox(key="veg_in").set_value(True)
+    click(at, "Plan my meal")
+    assert any("Step 1 of 2" in m.value for m in at.markdown)
+    assert any("Dry-run: approving only shows" in c.value for c in at.caption)
+    click(at, "Approve: update cart")
+    assert any("Dry-run" in i.value for i in at.info)  # a preview, nothing written
+    assert not any(b.label == "Approve: place order" for b in at.button)
+
+
+def test_dry_run_requires_connecting_first(monkeypatch):
+    monkeypatch.setenv("MOODMEALS_MODE", "dry_run")
+    at = AppTest.from_file(APP, default_timeout=30)
+    at.run()
+    click(at, "Plan my meal")
+    assert any("Connect to Swiggy" in e.value for e in at.error)
+
+
+def test_live_mode_is_refused(monkeypatch):
+    monkeypatch.setenv("MOODMEALS_MODE", "live")
+    at = AppTest.from_file(APP, default_timeout=30)
+    at.run()
+    assert any("Live mode" in e.value for e in at.error)
