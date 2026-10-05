@@ -105,6 +105,21 @@ def main() -> int:
     say(f"  ok={r.ok} products parsed={len(ps)} error={r.error.kind if r.error else None}")
     ok &= bool(ps)
 
+    say("[5] Cart checks (read-only: prints only empty or not empty, never contents)")
+    for cart in ("im", "food"):
+        params = {"cart": cart, **({"address_id": aid} if cart == "food" else {})}
+        r = timed(f"get_cart_state {cart}", lambda p=params: prov.call("get_cart_state", p))
+        state = {True: "empty", False: "has items"}.get(r.data.get("empty")) if r.ok else None
+        say(f"  {cart} cart: ok={r.ok} state={state} error={r.error.kind if r.error else None}")
+        if not r.ok:  # show the reply's key NAMES only, so the parser can be fixed
+            raw, args = ("get_cart", {}) if cart == "im" else ("get_food_cart", {"addressId": aid})
+            try:
+                names = keys_of(conn.call(cart, raw, args, 45))
+                say(f"  {cart} cart reply field names and types: {names}")
+            except Exception as e:  # noqa: BLE001
+                say(f"  {cart} cart raw read failed: {type(e).__name__}")
+        ok &= r.ok
+
     say(f"\nRESULT: {'ALL READS WORKED' if ok else 'SOME READS FAILED (see above)'}")
     say(f"Tools called (normalised names): {sorted(set(prov.calls))}")
     conn.close()
