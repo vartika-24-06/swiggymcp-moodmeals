@@ -1,0 +1,17 @@
+id: S-02
+title: Wants to cook something simple
+group: happy_path
+smoke: true
+rationale: >
+  A stated intent to cook, with a simple dal-and-rice idea, is the clearest Cook signal
+  (R4.4), so only cook is appropriate. Ingredients must come from Instamart search results.
+world: {seed: 1}
+user_script:
+  opening: "Aaj ghar pe kuch simple banana hai, dal chawal jaisa"
+  answers: {diet: "veg"}
+expect:
+  outcome: plan
+  paths_acceptable: [cook]
+  max_questions: 3
+  hard_constraints: {veg: true}
+  must_call: [search_products]

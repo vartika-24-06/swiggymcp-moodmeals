@@ -1,0 +1,20 @@
+id: S-06
+title: Budget drops after the plan is shown
+group: mid_run_change
+smoke: true
+rationale: >
+  The person lowers the budget once a plan is on screen (R9.2). The run must update, not
+  restart: the final plan fits the new budget, or the agent stops clearly if nothing fits.
+  Both paths can fit a low budget, so either is acceptable.
+world: {seed: 1}
+user_script:
+  opening: "Lunch for me, veg, budget around 400"
+  answers: {diet: "veg", budget: "400"}
+  constraints: {veg: true, budget: 400}
+  mid_run:
+    - {when: plan_shown, do: change_constraints, with: {budget: 150}}
+expect:
+  outcome: plan_or_clear_stop
+  paths_acceptable: [order_in, cook]
+  max_questions: 3
+  hard_constraints: {veg: true, budget: 150}

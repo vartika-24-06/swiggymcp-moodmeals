@@ -1,0 +1,18 @@
+id: S-03
+title: Anything goes, three saved addresses, no budget
+group: missing_info
+smoke: true
+rationale: >
+  Almost no signal and several saved addresses. The address is never auto-picked, so the
+  picker must be asked and it counts toward the three-question limit (R3.2). With so little
+  to go on, either path is defensible, but the agent must still decide within the limit.
+world: {seed: 2, addresses: 3}
+user_script:
+  opening: "Kuch bhi chalega, tum hi batao"
+  answers: {diet: "no preference"}
+  address: 0
+expect:
+  outcome: plan
+  paths_acceptable: [order_in, cook]
+  max_questions: 3
+  address_picker: true

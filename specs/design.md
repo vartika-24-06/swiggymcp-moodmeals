@@ -468,3 +468,8 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 - Real shapes: the Instamart cart reply has a top-level `items` list (observed read-only, 2026-10-05). Food's empty-cart reply (observed 2026-10-05) is an envelope: `statusCode` 0, `successful` true, `data` null. A Food cart WITH items has not been seen, so any other shape reads as `unknown` and a Food write fails closed. `scripts/swiggy_check.py` step 5 shows whether both carts are read.
 - Tested with a fake connection only (`tests/test_live_guards.py`); no real write has been made.
 
+### Phase 7, T7.1 implementation notes (2026-10-05)
+
+- Scenarios are YAML in `evals/scenarios/` (format and the "appropriate path" rubric in its README); `evals/scenario.py` loads and validates them strictly. Compared with the sketch in 13.1: `world` takes `addresses` and the real switch names; `user_script` adds `address` (index), `constraints` and `mid_run`; `expect.paths_acceptable` is the rubric; `smoke: true` marks the smoke set; `rationale` is required so the owner can review each expectation; runs always stop at the approval screen (`approve` is fixed to false).
+- `pyyaml` is now a dependency.
+

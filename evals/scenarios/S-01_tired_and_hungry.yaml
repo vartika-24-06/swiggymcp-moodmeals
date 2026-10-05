@@ -1,0 +1,17 @@
+id: S-01
+title: Tired and hungry, veg, modest budget
+group: happy_path
+smoke: true
+rationale: >
+  Low energy is the clearest Order in signal (R4.4), so only order_in is appropriate. The
+  person states veg and a budget, so the plan must respect both.
+world: {seed: 1}
+user_script:
+  opening: "Bahut thaka hua hoon, kuch halka chahiye"
+  answers: {diet: "veg", budget: "300"}
+expect:
+  outcome: plan
+  paths_acceptable: [order_in]
+  max_questions: 3
+  hard_constraints: {veg: true, budget: 300}
+  must_call: [search_restaurants, get_menu]
