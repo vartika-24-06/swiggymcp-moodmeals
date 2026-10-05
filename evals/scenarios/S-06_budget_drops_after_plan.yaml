@@ -16,5 +16,6 @@ user_script:
 expect:
   outcome: plan_or_clear_stop
   paths_acceptable: [order_in, cook]
+  stop_must_include: [reason]
   max_questions: 3
   hard_constraints: {veg: true, budget: 150}

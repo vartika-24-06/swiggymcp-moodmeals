@@ -122,11 +122,12 @@ class Expect(_Strict):
     # The rubric for "appropriate path" (requirements Q5): the paths that are defensible here.
     # One path when the heuristics (R4.4) point clearly; both when either is fine.
     paths_acceptable: list[PlanPath] = Field(default_factory=list)
-    # What a clear stop must contain: the reason, and an offer to cook (a similar dish, or
-    # just cooking). Applies when the run stops instead of producing a plan.
-    stop_must_include: list[Literal["reason", "offer_cook", "offer_cook_similar"]] = Field(
-        default_factory=list
-    )
+    # When ordering in is impossible (requirements R4.3): the agent offers a ready-to-eat or
+    # quick-cook Instamart meal, or stops. A fallback PLAN must state why ordering is not
+    # possible (`blocked_reason`) and be a quick meal, not a full recipe (`quick_meal`); a STOP
+    # must say why (`reason`). T7.2 scores these with explicit word lists.
+    plan_must_include: list[Literal["blocked_reason", "quick_meal"]] = Field(default_factory=list)
+    stop_must_include: list[Literal["reason"]] = Field(default_factory=list)
     max_questions: int = Field(default=MAX_QUESTIONS, ge=0, le=MAX_QUESTIONS)
     address_picker: bool = False  # a saved-address question must be asked (R3.2)
     hard_constraints: dict[str, Any] = Field(default_factory=dict)  # checked on the final plan
@@ -174,12 +175,14 @@ class Scenario(_Strict):
             raise ValueError("expect.paths_acceptable is required unless the outcome is clear_stop")
         if e.outcome == "clear_stop" and e.paths_acceptable:
             raise ValueError("a clear_stop outcome has no acceptable path")
-        if e.outcome == "clear_stop" and "reason" not in e.stop_must_include:
-            raise ValueError("a clear stop must say why: add reason to stop_must_include")
+        if e.outcome != "plan" and "reason" not in e.stop_must_include:
+            raise ValueError("a possible stop must say why: add reason to stop_must_include")
         if e.outcome == "plan" and e.stop_must_include:
             raise ValueError("stop_must_include applies only when the run may stop")
-        if {"offer_cook", "offer_cook_similar"} <= set(e.stop_must_include):
-            raise ValueError("use offer_cook or offer_cook_similar, not both")
+        if e.outcome == "clear_stop" and e.plan_must_include:
+            raise ValueError("plan_must_include applies only when a plan is possible")
+        if e.plan_must_include and e.paths_acceptable != ["cook"]:
+            raise ValueError("a quick-meal fallback plan uses the cook path only")
         if u.address >= w.addresses:
             raise ValueError("user_script.address is beyond world.addresses")
         if e.address_picker != (w.addresses > 1):
