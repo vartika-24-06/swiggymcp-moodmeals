@@ -232,6 +232,34 @@ def test_single_address_is_used_without_asking():
     assert state.questions_asked == 0 and state.address_label
 
 
+def test_real_swiggy_address_keys_give_labels_and_text():
+    """Real get_addresses items use addressLine, addressCategory and addressTag (synthetic)."""
+    agent, state, llm, provider = make([ask(), *ORDER_FLOW])
+    real = provider.call
+    synthetic = [
+        {"id": "addr_aa__X1", "addressLine": "Flat 9, Test Lane, Sample Nagar",
+         "phoneNumber": "****0000", "addressCategory": "Home", "addressTag": "Home"},
+        {"id": "addr_bb__X2", "addressLine": "Desk 4, Example Tower, Demo Park",
+         "phoneNumber": "****0000", "addressCategory": "Work", "addressTag": "Office"},
+        {"id": "addr_cc__X3", "addressLine": "House 7, Placeholder Road",
+         "phoneNumber": "****0000", "addressCategory": "", "addressTag": "Other"},
+    ]  # fmt: skip
+    provider.call = lambda tool, params: (
+        ToolResult(True, {"addresses": synthetic, "total": 3}, None, 5)
+        if tool == "list_addresses"
+        else real(tool, params)
+    )
+    agent.run(state)
+    opts = agent.address_options(state)
+    assert [o["label"] for o in opts] == ["Home", "Work", "Other"]
+    assert opts[1]["text"] == "Desk 4, Example Tower, Demo Park"
+    agent.choose_address(state, "address_2")
+    agent.run(state)
+    assert state.address_label == "Work"
+    sent = json.dumps(llm.views)
+    assert "Example Tower" not in sent and "****0000" not in sent and "addr_bb" not in sent
+
+
 def test_no_address_stops():
     agent, state, _, provider = make([])
     real = provider.call

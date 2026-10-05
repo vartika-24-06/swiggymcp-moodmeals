@@ -422,16 +422,19 @@ def _paused(state: RunState) -> bool:
 
 
 def _parse_addresses(data: dict[str, Any]) -> list[dict[str, str]]:
+    """Real Swiggy keys (seen 2026-10-05): id, addressLine, addressCategory, addressTag.
+    The short keys are the mock world's."""
     out = []
     for a in data.get("addresses") or []:
         aid = a.get("id") or a.get("addressId")
         if aid is None:
             continue
+        label = a.get("addressCategory") or a.get("category") or a.get("addressTag") or a.get("tag")
         out.append(
             {
                 "id": str(aid),
-                "label": str(a.get("category") or a.get("tag") or "Saved address"),
-                "text": str(a.get("address") or a.get("addressLine") or ""),
+                "label": str(label or "Saved address"),
+                "text": str(a.get("addressLine") or a.get("address") or ""),
             }
         )
     return out
