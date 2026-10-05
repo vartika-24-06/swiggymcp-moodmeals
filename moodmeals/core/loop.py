@@ -17,6 +17,7 @@ from moodmeals.core.actions import (
     AskAction,
     ProposeAction,
     ProtocolError,
+    StopAction,
     ToolCallAction,
     check_tool_params,
     parse_action,
@@ -60,6 +61,7 @@ STOP_MESSAGES: dict[str, str] = {
     "no_address": "No saved delivery address was found.",
     "address_error": "I could not read your saved addresses.",
     "write_failed": "The action did not go through. Nothing was retried.",
+    "no_option": "I could not find anything to order or a quick meal to buy right now.",
     "cart_unverified": "I could not check your existing cart, so I changed nothing.",
 }
 
@@ -269,8 +271,20 @@ class Agent:
             self._tool_call(state, action)
         elif isinstance(action, AskAction):
             self._ask(state, action)
+        elif isinstance(action, StopAction):
+            self._stop_search(state, action)
         else:
             self._propose(state, action)
+
+    def _stop_search(self, state: RunState, a: StopAction) -> None:
+        """The model gives up with a reason. Only after at least one real lookup (R4.3)."""
+        if state.tool_calls == 0:
+            self._protocol_error(
+                state, "stop_search comes only after you have searched at least once"
+            )
+            return
+        state.protocol_errors = 0
+        self._stop(state, "no_option", redact_text(a.reason, state._sensitive)[:200])
 
     def _protocol_error(self, state: RunState, detail: str) -> None:
         state.protocol_errors += 1

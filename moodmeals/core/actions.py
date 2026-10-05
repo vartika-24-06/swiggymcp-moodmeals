@@ -1,4 +1,4 @@
-"""The three things the model may do each turn (design.md 4.2), parsed strictly.
+"""The four things the model may do each turn (design.md 4.2), parsed strictly.
 
 The model returns {"action": <kind>, "args": {...}, "rationale": "<one line>"}. Anything
 else is a protocol error: the loop gives one corrective message, then stops cleanly.
@@ -49,7 +49,15 @@ class ProposeAction:
     rationale: str = ""
 
 
-Action = ToolCallAction | AskAction | ProposeAction
+@dataclass(frozen=True)
+class StopAction:
+    """Give up with a reason: neither ordering in nor a quick Instamart meal is possible."""
+
+    reason: str
+    rationale: str = ""
+
+
+Action = ToolCallAction | AskAction | ProposeAction | StopAction
 
 
 def _text(value: Any, name: str, required: bool = True) -> str:
@@ -66,8 +74,8 @@ def parse_action(raw: Any) -> Action:
     if isinstance(raw.get("error"), str):  # an adapter could not read the reply
         raise ProtocolError(raw["error"])
     kind, args = raw.get("action"), raw.get("args")
-    if kind not in ("tool_call", "ask_user", "propose_plan"):
-        raise ProtocolError("action must be one of tool_call, ask_user, propose_plan")
+    if kind not in ("tool_call", "ask_user", "propose_plan", "stop_search"):
+        raise ProtocolError("action must be one of tool_call, ask_user, propose_plan, stop_search")
     if not isinstance(args, dict):
         raise ProtocolError("args must be an object")
     rationale = _text(raw.get("rationale"), "rationale", required=False)
@@ -93,6 +101,9 @@ def parse_action(raw: Any) -> Action:
             [_text(o, "option")[:40] for o in options],
             rationale,
         )
+
+    if kind == "stop_search":
+        return StopAction(_text(args.get("reason"), "reason"), rationale)
 
     path = args.get("path")
     if path not in ("cook", "order_in"):

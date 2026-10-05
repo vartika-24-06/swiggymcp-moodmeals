@@ -1,7 +1,7 @@
-"""The six functions the model may call, and the raw action shape (design 4.2, 7.4).
+"""The seven functions the model may call, and the raw action shape (design 4.2, 7.4).
 
 Native tool calling from every vendor is turned into
-`{"action": "tool_call"|"ask_user"|"propose_plan", "args": {...}, "rationale": "..."}`
+`{"action": "tool_call"|"ask_user"|"propose_plan"|"stop_search", "args": {...}, "rationale": "..."}`
 so the loop sees one contract whatever the vendor.
 """
 
@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-PROMPT_VERSION = "agent_v3"
+PROMPT_VERSION = "agent_v4"
 _PROMPT_DIR = Path(__file__).resolve().parents[2] / "prompts"
 
 RATIONALE = {"type": "string", "description": "One short line: why this action now"}
@@ -95,6 +95,19 @@ FUNCTIONS: list[dict[str, Any]] = [
         ),
     },
 ]
+FUNCTIONS.append(
+    {
+        "name": "stop_search",
+        "description": (
+            "Stop and tell the person why nothing usable was found. Use it only after searching, "
+            "when neither ordering in nor a ready-to-eat or quick-cook Instamart meal is possible."
+        ),
+        "parameters": _obj(
+            {"reason": {"type": "string", "description": "One sentence, in the person's language"}},
+            ["reason"],
+        ),
+    }
+)
 FUNCTION_NAMES = {f["name"] for f in FUNCTIONS}
 _READ = {"search_restaurants", "get_menu", "search_dish", "search_products"}
 

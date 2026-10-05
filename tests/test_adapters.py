@@ -166,3 +166,13 @@ def test_prompt_has_the_required_sections():
         "ASSUMPTIONS",
     ):
         assert f"## {section}" in text
+
+
+def test_stop_search_is_offered_and_passes_through():
+    assert "stop_search" in {f["name"] for f in FUNCTIONS}
+    raw = to_raw_action("stop_search", {"reason": "Nothing to offer.", "rationale": "r"})
+    assert raw["action"] == "stop_search" and raw["args"] == {"reason": "Nothing to offer."}
+    from moodmeals.core.actions import StopAction, parse_action
+
+    assert parse_action(raw) == StopAction("Nothing to offer.", "r")
+    assert "stop_search" in load_system_prompt() and "NOT POSSIBLE" in load_system_prompt()

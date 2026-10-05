@@ -63,6 +63,11 @@ PRODUCTS: list[tuple[str, list[tuple[str, int]], str]] = [
     ("Sunflower Oil", [("1 l", 160), ("5 l", 760)], "VEG"),
     ("Sandwich Bread", [("400 g", 45)], "VEG"),
     ("Farm Eggs", [("6 pcs", 60), ("12 pcs", 115)], "EGG"),
+    # Ready-to-eat and quick-cook items: the fallback when ordering in is not possible.
+    ("Instant Poha Cup", [("80 g", 45)], "VEG"),
+    ("Ready-to-Eat Dal Makhani", [("300 g", 120)], "VEG"),
+    ("Ready-to-Cook Khichdi Mix", [("200 g", 75)], "VEG"),
+    ("Instant Masala Noodles", [("4 pack", 60)], "VEG"),
 ]
 
 FAKE_ADDRESSES = [

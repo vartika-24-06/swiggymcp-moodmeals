@@ -39,12 +39,14 @@ class DemoLLM:
             )
 
         searches = [r for r in results if r["tool"] == "search_restaurants" and "result" in r]
+        if not searches and any(r["tool"] == "search_restaurants" for r in results):
+            return self._quick_meal(view, results, "Restaurant search is not working right now")
         if not searches:
             query = "thali" if veg else "biryani"
             return _tool("search_restaurants", {"query": query}, f"Look for {query} nearby")
         open_rs = [r for r in searches[-1]["result"]["restaurants"] if r["open"]]
         if not open_rs:
-            return self._cook(view, results, veg)
+            return self._quick_meal(view, results, "Every restaurant is closed right now")
         restaurant = open_rs[0]
         menus = [r for r in results if r["tool"] == "get_menu" and "result" in r]
         if not menus:
@@ -64,7 +66,7 @@ class DemoLLM:
             and (budget is None or i["price"] <= budget)
         ]
         if not items:
-            return self._cook(view, results, veg)
+            return self._quick_meal(view, results, "Nothing at the restaurant fits")
         items.sort(key=lambda i: -i["price"])  # mains cost more than sides
         pick = items[len(view["rejected_plans"]) % len(items)]
         return {
@@ -82,26 +84,50 @@ class DemoLLM:
             "rationale": "Open restaurant, item in stock",
         }
 
-    def _cook(
-        self, view: dict[str, Any], results: list[dict[str, Any]], veg: bool
+    def _quick_meal(
+        self, view: dict[str, Any], results: list[dict[str, Any]], why: str
     ) -> dict[str, Any]:
-        found = [r for r in results if r["tool"] == "search_products" and "result" in r]
-        if not found:
-            return _tool(
-                "search_products", {"query": "dal"}, "Nothing to order, so look at cooking"
-            )
-        products = [p for p in found[-1]["result"]["products"] if p["variants"]]
-        pick = products[len(view["rejected_plans"]) % len(products)]
+        """Ordering in is not possible: offer a ready-to-eat or quick-cook Instamart meal,
+        or stop with the reason (requirements R4.3)."""
+        veg = view["hard_constraints"]["vegetarian"]
+        budget = view["hard_constraints"]["budget_inr"]
+        searched = [r["params"].get("query") for r in results if r["tool"] == "search_products"]
+        quick = []
+        for r in results:
+            if r["tool"] == "search_products" and "result" in r:
+                for p in r["result"]["products"]:
+                    cheap = [v for v in p["variants"] if budget is None or v["price"] <= budget]
+                    if _is_quick(p["name"]) and cheap and (p["veg"] == "veg" or not veg):
+                        quick.append((p, cheap[0]))
+        if not quick:
+            for query in ("instant", "ready"):
+                if query not in searched:
+                    return _tool(
+                        "search_products", {"query": query}, f"{why}; look for quick meals"
+                    )
+            return {
+                "action": "stop_search",
+                "args": {
+                    "reason": f"{why}, and I found no ready-to-eat or quick-cook meal to offer."
+                },
+                "rationale": "Neither path has anything usable",
+            }
+        pick, variant = quick[len(view["rejected_plans"]) % len(quick)]
         return {
             "action": "propose_plan",
             "args": {
                 "path": "cook",
-                "reason": f"Nothing suitable to order, so cook with {pick['name']}.",
-                "items": [{"id": pick["id"], "variant_id": pick["variants"][0]["id"], "qty": 1}],
-                "assumptions": ["Pantry basics at home", "Cooking for one"],
+                "reason": f"{why}, so here is a quick meal from Instamart: {pick['name']}.",
+                "items": [{"id": pick["id"], "variant_id": variant["id"], "qty": 1}],
+                "assumptions": ["Eating alone", "Needs little or no cooking"],
             },
-            "rationale": "Order-in not possible",
+            "rationale": "Order-in not possible; offering a quick meal",
         }
+
+
+def _is_quick(name: str) -> bool:
+    low = name.lower()
+    return "instant" in low or "ready" in low
 
 
 def _tool(name: str, params: dict[str, Any], why: str) -> dict[str, Any]:

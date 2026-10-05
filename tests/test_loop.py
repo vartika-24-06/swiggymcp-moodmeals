@@ -386,3 +386,73 @@ def test_cancel_at_approval_stops_without_writing():
     assert not (set(provider.calls) & {"update_food_cart", "place_food_order"})
     with pytest.raises(ValueError):
         agent.approve(state)
+
+
+# ------------------------------------------------------------------ order-in fallback (R4.3)
+
+
+def stop(reason="Restaurants are closed and I found no quick meal either."):
+    return act("stop_search", reason=reason)
+
+
+def test_stop_search_after_a_search_ends_the_run_with_the_reason():
+    agent, state, _, _ = make([search(), stop()])
+    agent.run(state)
+    assert state.phase == "STOPPED" and state.stop_reason == "no_option"
+    assert state.outcome["message"] == "Restaurants are closed and I found no quick meal either."
+    assert state.plan is None
+
+
+def test_stop_search_before_any_search_is_a_protocol_error_not_a_stop():
+    agent, state, llm, _ = make([stop(), search(), stop()])
+    agent.run(state)
+    assert any("at least once" in e.payload.get("detail", "") for e in state.events)
+    assert state.tool_calls == 1 and state.stop_reason == "no_option"  # it searched, then stopped
+
+
+def test_stop_search_twice_early_stops_cleanly_as_a_protocol_error():
+    agent, state, _, _ = make([stop(), stop()])
+    agent.run(state)
+    assert state.stop_reason == "protocol_error"
+
+
+def test_stop_reason_is_redacted_and_capped():
+    agent, state, _, _ = make([search(), stop("Call 9876543210 now. " + "x" * 400)])
+    agent.run(state)
+    msg = state.outcome["message"]
+    assert "9876543210" not in msg and len(msg) <= 200
+
+
+def test_demo_model_offers_a_quick_meal_when_every_restaurant_is_closed():
+    from moodmeals.models.demo import DemoLLM
+
+    provider = MockProvider(seed=1, switches=Switches(all_closed=True))
+    agent = Agent(DemoLLM(), provider, Guard())
+    state = agent.start("Biryani khani hai", Constraints(veg=True))
+    agent.run(state)
+    assert state.phase == "AWAITING_APPROVAL" and state.plan.path == "cook"
+    assert "closed" in state.plan.reason.lower() and "quick meal" in state.plan.reason.lower()
+    name = state.plan.items[0].name.lower()
+    assert "instant" in name or "ready" in name  # not a full recipe shopping list
+
+
+def test_demo_model_offers_a_quick_meal_when_restaurant_search_fails():
+    from moodmeals.models.demo import DemoLLM
+
+    sw = Switches(fail_tools={"search_restaurants": "timeout"})
+    agent = Agent(DemoLLM(), MockProvider(seed=1, switches=sw), Guard())
+    state = agent.start("Dinner order karna hai", Constraints(veg=True))
+    agent.run(state)
+    assert state.plan is not None and state.plan.path == "cook"
+    assert "not working" in state.plan.reason.lower()
+
+
+def test_demo_model_stops_with_a_reason_when_instamart_has_nothing_either():
+    from moodmeals.models.demo import DemoLLM
+
+    sw = Switches(all_closed=True, out_of_stock=frozenset({"*"}))
+    agent = Agent(DemoLLM(), MockProvider(seed=1, switches=sw), Guard())
+    state = agent.start("Biryani khani hai", Constraints(veg=True))
+    agent.run(state)
+    assert state.stop_reason == "no_option" and state.plan is None
+    assert "closed" in state.outcome["message"].lower()
