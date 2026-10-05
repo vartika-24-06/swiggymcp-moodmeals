@@ -95,12 +95,34 @@ def redact_text(text: str, known_sensitive: Iterable[str] = ()) -> str:
     return out
 
 
+_CATALOG_ID_KEYS = {"id", "entityid", "restaurantid", "variantid", "productid", "spinid"}
+_ID_SHAPE = re.compile(r"[A-Za-z0-9_-]{1,24}")
+
+
+def _keep_catalog_id(key: str, value: Any, known: list[str]) -> bool:
+    """Catalogue ids are not personal data and the trace needs them (design 12). A long digit
+    run is only redacted as free text, so ids under these keys are kept, unless the value is
+    one of the known sensitive strings."""
+    return (
+        _norm_key(key) in _CATALOG_ID_KEYS
+        and isinstance(value, str)
+        and bool(_ID_SHAPE.fullmatch(value))
+        and value not in known
+    )
+
+
 def redact_payload(value: Any, known_sensitive: Iterable[str] = ()) -> Any:
     """Return a redacted copy. Never mutates the input."""
     known = list(known_sensitive)
     if isinstance(value, dict):
         return {
-            k: (REDACTED if _norm_key(k) in _SENSITIVE_KEYS else redact_payload(v, known))
+            k: (
+                REDACTED
+                if _norm_key(k) in _SENSITIVE_KEYS
+                else v
+                if _keep_catalog_id(k, v, known)
+                else redact_payload(v, known)
+            )
             for k, v in value.items()
         }
     if isinstance(value, list | tuple):

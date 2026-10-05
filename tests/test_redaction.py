@@ -93,3 +93,10 @@ def test_non_json_values_become_redacted_strings():
             return "9876543210"
 
     assert redact_payload({"x": Odd()}) == {"x": "<phone>"}
+
+
+def test_catalogue_ids_survive_in_event_payloads_but_free_text_digits_do_not():
+    out = redact_payload({"entity_id": "61093009", "name": "call 98765432101 now"})
+    assert out["entity_id"] == "61093009"
+    assert "98765432101" not in out["name"]
+    assert redact_payload({"entity_id": "61093009"}, ["61093009"])["entity_id"] != "61093009"

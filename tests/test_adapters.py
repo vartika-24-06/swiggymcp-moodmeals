@@ -156,5 +156,13 @@ def test_cost_estimates():
 
 def test_prompt_has_the_required_sections():
     text = load_system_prompt()
-    for section in ("SCOPE", "ALLOWED ACTIONS", "PROHIBITED", "GROUNDING", "TONE", "ESCALATION"):
+    for section in (
+        "SCOPE",
+        "ALLOWED ACTIONS",
+        "PROHIBITED",
+        "GROUNDING",
+        "TONE",
+        "ESCALATION",
+        "ASSUMPTIONS",
+    ):
         assert f"## {section}" in text
