@@ -126,5 +126,26 @@ compaction numbers still need an offline run on the local captures.
 whitelisted model view (`moodmeals/tools/compact.py`), the veg-classifier mapping fixed
 for the real strings. Tests use synthetic payloads in the observed shapes.
 
-**Still to do for T0.4:** the offline compaction check on local captures (fix the
-double count in `capture_shapes.py` first), then record the token numbers here.
+**Compaction numbers (measured offline on the local captures, 2026-10-05).** Token
+figures are characters / 4, a rough estimate. Each response is counted once.
+
+| Tool | Raw | Compact | Saved | Parsed |
+|---|---|---|---|---|
+| `search_restaurants` | ~1,236 tok | ~452 tok | 63% | 10/10 |
+| `get_restaurant_menu` (one page) | ~9,281 tok | ~2,742 tok | 70% | 80/80 |
+| `search_menu` | ~2,485 tok | ~355 tok | 86% | 10/10 |
+| `search_products` | ~6,336 tok | ~1,175 tok | 81% | 20/20 |
+
+- The parsers read every item in the real data; none was dropped.
+- Sponsored: 8 of 10 restaurants and 8 of 20 products in these samples.
+- Veg: menu items 65 veg and 15 non-veg; Instamart products 19 veg and 1 unverified.
+  The earlier note that "many" veg products carry an invalid classifier was not
+  reproduced in this one sample of 20, so unverified handling stays but is not common here.
+- A compact menu page is still about 2.7k tokens (80 items). The model should see a
+  capped list (proposed: the first 30 items that pass the person's constraints, plus the
+  total count), not a whole page.
+
+**Decision (DQ2).** The model sees only the whitelisted view built from the normalised
+types. This cuts 63 to 86 percent and removes image URLs, descriptions, "buy again"
+badges, area names and ratings text.
+
