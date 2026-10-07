@@ -1,0 +1,18 @@
+id: S-16
+title: Dinner for four on a tiny budget
+group: contradiction
+rationale: >
+  Four people and Rs 120 total do not fit well. The budget is hard. The agent either offers a
+  small honest plan that lists the portion assumption, or stops clearly.
+world: {seed: 1}
+user_script:
+  opening: "Dinner for 4, budget 120 total, veg"
+  constraints: {party_size: 4, budget: 120, veg: true}
+  answers: {party: "4", diet: "veg"}
+expect:
+  outcome: plan_or_clear_stop
+  paths_acceptable: [order_in, cook]
+  stop_must_include: [reason]
+  max_questions: 3
+  hard_constraints: {veg: true, budget: 120}
+  assumptions_listed: true

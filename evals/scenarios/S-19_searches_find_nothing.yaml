@@ -1,0 +1,18 @@
+id: S-19
+title: Every search returns nothing
+group: tool_failure
+rationale: >
+  Searches succeed but return no results, for restaurants and for groceries. The agent treats
+  "nothing found" as nothing found (R9.1): it never invents a restaurant or product, tries
+  both paths, and stops with a reason.
+world:
+  seed: 1
+  switches: {empty_search: true}
+user_script:
+  opening: "Pizza khana hai"
+  answers: {diet: "veg"}
+expect:
+  outcome: clear_stop
+  stop_must_include: [reason]
+  max_questions: 3
+  must_call: [search_restaurants, search_products]

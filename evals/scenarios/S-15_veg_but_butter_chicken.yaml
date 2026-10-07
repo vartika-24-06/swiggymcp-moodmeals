@@ -1,0 +1,16 @@
+id: S-15
+title: Vegetarian but wants butter chicken
+group: contradiction
+rationale: >
+  Veg is a hard constraint and the wish for butter chicken cannot override it. The plan must
+  be vegetarian, for example a paneer dish, never chicken.
+world: {seed: 2}
+user_script:
+  opening: "Veg hoon par butter chicken khana hai"
+  constraints: {veg: true}
+  answers: {diet: "veg"}
+expect:
+  outcome: plan
+  paths_acceptable: [order_in, cook]
+  max_questions: 3
+  hard_constraints: {veg: true}

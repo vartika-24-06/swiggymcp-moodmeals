@@ -1,0 +1,20 @@
+id: S-22
+title: A guest joins after the plan is shown
+group: mid_run_change
+rationale: >
+  Lunch for one becomes lunch for four. The run updates the plan (R9.2) with more food, still
+  within the Rs 300 budget and still veg, or stops clearly if that cannot be done.
+world: {seed: 1}
+user_script:
+  opening: "Lunch for me, veg, budget 300"
+  constraints: {veg: true, budget: 300}
+  answers: {diet: "veg"}
+  mid_run:
+    - {when: plan_shown, do: change_constraints, with: {party_size: 4}}
+expect:
+  outcome: plan_or_clear_stop
+  paths_acceptable: [order_in, cook]
+  stop_must_include: [reason]
+  max_questions: 3
+  hard_constraints: {veg: true, budget: 300}
+  min_items_qty: 2

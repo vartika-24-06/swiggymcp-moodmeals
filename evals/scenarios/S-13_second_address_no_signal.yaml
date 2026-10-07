@@ -1,0 +1,18 @@
+id: S-13
+title: Almost no signal, two saved addresses, picks the second
+group: missing_info
+rationale: >
+  The agent knows nothing but the address list. It never picks an address for the person
+  (R3.1), the picker counts as a question, and it must still decide within the limit and list
+  its assumptions.
+world: {seed: 7, addresses: 2}
+user_script:
+  opening: "Kya khana hai?"
+  answers: {diet: "no preference"}
+  address: 1
+expect:
+  outcome: plan
+  paths_acceptable: [order_in, cook]
+  max_questions: 3
+  address_picker: true
+  assumptions_listed: true

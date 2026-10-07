@@ -1,0 +1,20 @@
+id: S-20
+title: The menu is incomplete and some prices are unreadable
+group: tool_failure
+rationale: >
+  A category is missing and some prices read "price unavailable". Unreadable items are dropped
+  by code (never guessed), so the agent must build its plan only from items with real prices,
+  or switch path, or stop clearly.
+world:
+  seed: 1
+  switches: {partial_menu: true}
+user_script:
+  opening: "Lunch order karna hai, veg"
+  constraints: {veg: true}
+  answers: {diet: "veg"}
+expect:
+  outcome: plan_or_clear_stop
+  paths_acceptable: [order_in, cook]
+  stop_must_include: [reason]
+  max_questions: 3
+  hard_constraints: {veg: true}

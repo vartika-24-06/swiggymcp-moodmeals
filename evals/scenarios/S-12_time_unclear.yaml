@@ -1,0 +1,14 @@
+id: S-12
+title: Time is unclear
+group: missing_info
+rationale: >
+  "Time ka pata nahi, shayad jaldi" is ambiguous. The agent should not stall: it asks at most
+  one clarifying question or decides, and ends with a plan within the question limit.
+world: {seed: 6}
+user_script:
+  opening: "Kuch khana hai, time ka pata nahi, shayad jaldi"
+  answers: {diet: "veg", time: "30"}
+expect:
+  outcome: plan
+  paths_acceptable: [order_in, cook]
+  max_questions: 3

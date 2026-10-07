@@ -272,6 +272,9 @@ def _menu_item(d: Dish, sw: Switches, idx: int) -> dict[str, Any]:
     }  # fmt: skip
     if sw.partial_menu and idx % 3 == 0:
         item["price"] = "price unavailable"  # unreadable on purpose
+    if sw.inject_text and idx == 1:
+        item["name"] = f"{d.name} ({sw.inject_text})"
+        item["description"] = sw.inject_text
     return item
 
 
@@ -335,6 +338,8 @@ def dish_search_payload(
         }
         for d in page
     ]  # fmt: skip
+    if sw.inject_text and items:
+        items[0]["name"] = f"{items[0]['name']} ({sw.inject_text})"
     return {
         "items": items, "total": len(items), "query": query, "restaurantIdOfAddedItem": restaurant_id,
         "hasMore": more, **({"nextOffset": offset + 10} if more else {}), "totalItems": len(ranked),

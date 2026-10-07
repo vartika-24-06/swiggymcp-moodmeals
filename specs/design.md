@@ -506,3 +506,9 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 - `data/replays/` holds six recorded mock runs (four successes by the scripted demo model, two failures: the fixed baseline choosing the wrong path, and a real model's failed run read from an eval results file). `scripts/make_replays.py` records them; replays carry `title`, `note` (what to notice) and `tag` (success or failure). `replay_from_trace` builds a replay from a failed run's trace. The Replay page lists runs by title with a mark, shows the note and a plain outcome line.
 - Plan card headings: "Order in from Swiggy Food" and "Cook or grab it from Instamart" (a quick-meal fallback is not cooking). A `no_option` stop is a warning, not an error. The trace table shows the model call's latency (`ms`) when recorded.
 
+### Phase 7, T7.5 part 1: the full scenario set (2026-10-07)
+
+- `evals/scenarios/` now holds 24 scenarios in the mix from requirements 7.2 (6 happy path, 4 missing info, 3 contradictions, 3 infeasible, 3 tool failure, 3 mid-run change, 2 safety). The README lists them all.
+- New world switch `inject_text` (a prompt-injection test: text hidden in the first dish name, since descriptions are not shown to the model). New expectation fields `assumptions_listed`, `min_items_qty`, `max_items_qty`. New scoring checks `plan_valid` (all validator checks), `assumptions_listed`, `plan_size`; "another idea" now requires a genuinely different plan.
+- With the stand-ins (scripted demo and the fixed baseline) all 24 scenarios run and never write. They fail S-02, S-09 and S-17 (never cook or search Instamart) and S-22 (a one-portion plan for four), which is what they should fail. No real-model run of the new scenarios exists yet.
+

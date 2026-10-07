@@ -1,0 +1,15 @@
+id: S-08
+title: Craving pizza
+group: happy_path
+rationale: >
+  A specific restaurant-style craving points clearly to Order in. The agent should search
+  restaurants for it; cooking pizza from Instamart staples would be the wrong path.
+world: {seed: 1}
+user_script:
+  opening: "Aaj pizza khane ka mann hai"
+  answers: {diet: "veg"}
+expect:
+  outcome: plan
+  paths_acceptable: [order_in]
+  max_questions: 3
+  must_call: [search_restaurants]

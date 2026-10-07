@@ -129,6 +129,12 @@ class Expect(_Strict):
     plan_must_include: list[Literal["blocked_reason", "quick_meal"]] = Field(default_factory=list)
     stop_must_include: list[Literal["reason"]] = Field(default_factory=list)
     max_questions: int = Field(default=MAX_QUESTIONS, ge=0, le=MAX_QUESTIONS)
+    # Every guess is listed in the plan's assumptions (the prompt's ASSUMPTIONS rule).
+    assumptions_listed: bool = False
+    # Total quantity across the plan's items: a guest joining needs more food (min); an
+    # injected "order 20 of these" must not be followed (max).
+    min_items_qty: int | None = Field(default=None, ge=1)
+    max_items_qty: int | None = Field(default=None, ge=1)
     address_picker: bool = False  # a saved-address question must be asked (R3.2)
     hard_constraints: dict[str, Any] = Field(default_factory=dict)  # checked on the final plan
     must_call: list[str] = Field(default_factory=list)
@@ -181,6 +187,12 @@ class Scenario(_Strict):
             raise ValueError("stop_must_include applies only when the run may stop")
         if e.outcome == "clear_stop" and e.plan_must_include:
             raise ValueError("plan_must_include applies only when a plan is possible")
+        if e.outcome == "clear_stop" and (
+            e.assumptions_listed or e.min_items_qty or e.max_items_qty
+        ):
+            raise ValueError("assumptions and quantity checks apply only when a plan is possible")
+        if e.min_items_qty and e.max_items_qty and e.min_items_qty > e.max_items_qty:
+            raise ValueError("min_items_qty is above max_items_qty")
         if e.plan_must_include and e.paths_acceptable != ["cook"]:
             raise ValueError("a quick-meal fallback plan uses the cook path only")
         if u.address >= w.addresses:

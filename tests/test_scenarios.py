@@ -62,7 +62,9 @@ def test_every_scenario_explains_its_expected_path_and_never_approves_a_write():
 def test_scenarios_hold_no_real_looking_data():
     for path in SCENARIO_DIR.glob("S-*.yaml"):
         text = path.read_text(encoding="utf-8")
-        assert not re.search(r"\d{6,}", text), path.name  # phone-like digit runs
+        # Phone-like runs are 10+ digits. Mock catalogue ids (6 to 8 digits, e.g. in S-17's
+        # out_of_stock switch) are synthetic and allowed.
+        assert not re.search(r"\d{10,}", text), path.name
         assert "@" not in text and "http" not in text, path.name
 
 

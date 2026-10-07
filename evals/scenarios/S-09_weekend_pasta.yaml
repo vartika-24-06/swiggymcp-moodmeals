@@ -1,0 +1,19 @@
+id: S-09
+title: Weekend, wants to make pasta at home
+group: happy_path
+rationale: >
+  A stated wish to cook is the clearest Cook signal (R4.4), so only cook is appropriate. The
+  mock catalogue has no pasta, so the plan uses the closest real items and lists its
+  assumptions (pantry basics, cooking for one).
+world: {seed: 2}
+user_script:
+  opening: "Weekend hai, pasta ghar pe banana hai"
+  constraints: {veg: true}
+  answers: {diet: "veg"}
+expect:
+  outcome: plan
+  paths_acceptable: [cook]
+  max_questions: 3
+  hard_constraints: {veg: true}
+  assumptions_listed: true
+  must_call: [search_products]

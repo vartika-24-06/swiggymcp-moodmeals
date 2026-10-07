@@ -1,0 +1,16 @@
+id: S-07
+title: Budget dinner for two, veg
+group: happy_path
+rationale: >
+  The person states veg, two people and about Rs 300 up front. Neither path is clearly better,
+  so either is acceptable, but the plan must be veg and within the budget.
+world: {seed: 3}
+user_script:
+  opening: "Dinner for two, veg, around 300 total"
+  constraints: {veg: true, budget: 300, party_size: 2}
+  answers: {diet: "veg", budget: "300", party: "2"}
+expect:
+  outcome: plan
+  paths_acceptable: [order_in, cook]
+  max_questions: 3
+  hard_constraints: {veg: true, budget: 300}

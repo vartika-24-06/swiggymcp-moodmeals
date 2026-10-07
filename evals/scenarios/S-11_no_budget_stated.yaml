@@ -1,0 +1,16 @@
+id: S-11
+title: Dinner for two, no budget stated
+group: missing_info
+rationale: >
+  The budget is missing. The agent may ask, but it has only three questions, so it can also
+  decide. Whatever it guesses must be listed in the plan's assumptions.
+world: {seed: 5}
+user_script:
+  opening: "Dinner for two, kuch accha"
+  constraints: {party_size: 2}
+  answers: {diet: "veg"}
+expect:
+  outcome: plan
+  paths_acceptable: [order_in, cook]
+  max_questions: 3
+  assumptions_listed: true

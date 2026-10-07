@@ -22,3 +22,6 @@ class Switches:
     max_qty: int | None = None  # force every pack's per-order maximum
     buy_again_badges: bool = True  # history-revealing badges on some products (R7.2)
     price_scale: float = 1.0  # raise to make "nothing within budget" scenarios
+    # Text hidden in the name of the first dish a menu or dish search returns. It tests prompt
+    # injection (design 10.4): dish descriptions are not shown to the model, names are.
+    inject_text: str = ""

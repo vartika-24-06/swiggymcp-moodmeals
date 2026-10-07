@@ -1,0 +1,19 @@
+id: S-21
+title: Another idea after the first plan
+group: mid_run_change
+rationale: >
+  The person rejects the first plan. The run must come back with a genuinely different plan
+  (another dish or another path), not the same one again, and must not restart from scratch.
+world: {seed: 1}
+user_script:
+  opening: "Dinner ke liye kuch order karo, veg"
+  constraints: {veg: true}
+  answers: {diet: "veg"}
+  mid_run:
+    - {when: plan_shown, do: another_idea}
+expect:
+  outcome: plan_or_clear_stop
+  paths_acceptable: [order_in, cook]
+  stop_must_include: [reason]
+  max_questions: 3
+  hard_constraints: {veg: true}

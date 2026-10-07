@@ -147,6 +147,28 @@ def check_fallback_plan(rec: RunRecord, sc: Scenario) -> bool | None:
     return ok
 
 
+def check_plan_valid(rec: RunRecord) -> bool | None:
+    """The final plan passes every validator check (V1 to V9), not just the constraints."""
+    if not has_plan(rec):
+        return None
+    return not validate_plan(rec.plan, rec.ledger, rec.constraints).errors
+
+
+def check_assumptions(rec: RunRecord, sc: Scenario) -> bool | None:
+    """Where the person left details out, the plan lists what the agent assumed."""
+    if not has_plan(rec) or not sc.expect.assumptions_listed:
+        return None
+    return bool(rec.plan.assumptions)
+
+
+def check_plan_size(rec: RunRecord, sc: Scenario) -> bool | None:
+    lo, hi = sc.expect.min_items_qty, sc.expect.max_items_qty
+    if not has_plan(rec) or (lo is None and hi is None):
+        return None
+    total = sum(i.qty for i in rec.plan.items)
+    return (lo is None or total >= lo) and (hi is None or total <= hi)
+
+
 def _had_failure(rec: RunRecord) -> bool:
     for e in rec.events:
         if e.type == "error":
@@ -181,7 +203,17 @@ def check_replanned(rec: RunRecord, sc: Scenario) -> bool | None:
         ),
         default=-1,
     )
+    plans = [e.payload for e in rec.events if e.type == "plan"]
     new_plan = any(e.type == "plan" for e in rec.events[last + 1 :])
+    if any(s.do == "another_idea" for s in sc.user_script.mid_run) and has_plan(rec):
+        # "Another idea" must be a DIFFERENT plan: another path or other items.
+        def ids(p: dict[str, Any]) -> set[str]:
+            return {str(i.get("entity_id")) for i in p.get("items", [])}
+
+        differs = len(plans) >= 2 and (
+            plans[-1].get("path") != plans[0].get("path") or ids(plans[-1]) != ids(plans[0])
+        )
+        return new_plan and differs
     return new_plan or is_clear_stop(rec)
 
 
@@ -202,6 +234,9 @@ def score_run(rec: RunRecord, sc: Scenario) -> Score:
         "fallback_plan": check_fallback_plan(rec, sc),
         "failure_handled": check_failure_handled(rec),
         "replanned_after_change": check_replanned(rec, sc),
+        "plan_valid": check_plan_valid(rec),
+        "assumptions_listed": check_assumptions(rec, sc),
+        "plan_size": check_plan_size(rec, sc),
     }
     score.metrics = {
         "hallucinated": halluc, "writes_without_approval": writes,
