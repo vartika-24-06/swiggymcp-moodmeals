@@ -23,6 +23,15 @@ $env:GROQ_API_KEY = "..."
 python -m evals.runner --set smoke --strategies agent,fixed_workflow --provider groq --model openai/gpt-oss-20b --runs 1
 ```
 
+## Rate limits and invalid runs
+
+Free tiers limit tokens per minute. Calls are paced (`--min-interval-s`, default 20 s for Groq,
+0 for others) and a rate-limit error is waited out and retried (`--rate-limit-retries`,
+`--rate-limit-wait-s`). A run where the model could not be reached or answered (rate limit,
+bad key, network) is recorded as `invalid` with a reason and is NOT scored: it says nothing
+about the agent. After 3 invalid runs in a row the eval stops as unreachable (exit code 4) and
+still writes its results. Exit codes: 0 ok, 3 spend cap, 4 model unreachable.
+
 Options: `--set smoke|full`, `--strategies` (comma list of `one_shot`, `fixed_workflow`,
 `agent`), `--runs N` (model strategies only; the fixed workflow is deterministic and runs
 once), `--cap-inr` (default 1500), `--usd-inr`, `--out`, `--dry-plan`.

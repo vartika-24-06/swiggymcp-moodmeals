@@ -21,6 +21,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -46,7 +47,13 @@ KEY_ENV = {
     "openrouter": "OPENROUTER_API_KEY",
     "anthropic": "ANTHROPIC_API_KEY",
 }
-RESULTS_VERSION = 1
+RESULTS_VERSION = 2
+# Groq's free tier limits tokens per minute and one agent turn sends about 2.5k tokens, so
+# pace the calls. Other providers default to no pause. Override with --min-interval-s.
+DEFAULT_MIN_INTERVAL_S = {"groq": 20.0}
+RATE_LIMIT_RETRIES = 3
+RATE_LIMIT_WAIT_S = 30.0
+MAX_CONSECUTIVE_INVALID = 3  # then the model is treated as unreachable and the eval stops
 MAX_TRACE_EVENTS = 80  # events kept for a failed run (mock data only)
 
 
@@ -97,6 +104,61 @@ class CappedClient:
         return self._inner.cost_estimate()
 
 
+class RetryingClient:
+    """Paces model calls and waits out rate limits, so a busy free tier does not turn into
+    "agent failures". Only a rate-limit error is retried, with a growing wait."""
+
+    def __init__(
+        self,
+        inner: Any,
+        *,
+        min_interval_s: float = 0.0,
+        retries: int = RATE_LIMIT_RETRIES,
+        wait_s: float = RATE_LIMIT_WAIT_S,
+        sleep: Callable[[float], None] = time.sleep,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self._inner, self._min, self._retries, self._wait = inner, min_interval_s, retries, wait_s
+        self._sleep, self._clock = sleep, clock
+        self._last: float | None = None
+        for attr in ("provider", "model"):
+            if hasattr(inner, attr):
+                setattr(self, attr, getattr(inner, attr))
+
+    def next_action(self, view: dict[str, Any]) -> Any:
+        for attempt in range(self._retries + 1):
+            if self._last is not None:
+                gap = self._min - (self._clock() - self._last)
+                if gap > 0:
+                    self._sleep(gap)
+            self._last = self._clock()
+            try:
+                return self._inner.next_action(view)
+            except LLMError as e:
+                if not str(e).startswith("rate_limited") or attempt == self._retries:
+                    raise
+                self._sleep(self._wait * (attempt + 1))
+        raise AssertionError("unreachable")
+
+    def usage(self) -> Any:
+        return self._inner.usage()
+
+    def cost_estimate(self) -> float | None:
+        return self._inner.cost_estimate()
+
+
+def infra_error(rec: Any) -> str | None:
+    """Why a run says nothing about the agent: the model could not be reached or answered
+    (rate limit, bad key, network). Such runs are recorded but not scored."""
+    for e in rec.events:
+        if e.type == "error" and e.payload.get("kind") == "model_error":
+            return str(e.payload.get("detail", "model_error"))[:120]
+    for note in rec.notes:
+        if note.startswith("model_error"):
+            return note[:120]
+    return None
+
+
 def git_info() -> dict[str, Any]:
     def run(*args: str) -> str:
         return subprocess.run(
@@ -139,6 +201,8 @@ def run_eval(
     scores: list[Score] = []
     rows: list[dict[str, Any]] = []
     aborted: dict[str, Any] | None = None
+    invalid = consecutive_invalid = 0
+    unreachable = False
 
     for sc in scenarios:
         for strategy in strategies:
@@ -152,6 +216,18 @@ def run_eval(
                     client = CappedClient(client_factory(), meter) if client_factory else None
                 rec = run_strategy(strategy, sc, client)
                 meter.done_usd += rec.cost_usd or 0.0  # an interrupted run still cost money
+                why = None if meter.hit else infra_error(rec)
+                if why and strategy != "fixed_workflow":
+                    invalid += 1
+                    consecutive_invalid += 1
+                    rows.append({"scenario_id": sc.id, "group": sc.group, "strategy": strategy,
+                                 "run": n, "invalid": True, "invalid_reason": why})  # fmt: skip
+                    say(f"{sc.id} {strategy} run {n}: INVALID, not scored ({why})")
+                    if consecutive_invalid >= MAX_CONSECUTIVE_INVALID:
+                        unreachable = True
+                        break
+                    continue
+                consecutive_invalid = 0
                 if meter.hit:  # the cap stopped this run partway: not a model failure
                     aborted = {"scenario_id": sc.id, "strategy": strategy, "run": n}
                     say(f"{sc.id} {strategy} run {n}: stopped by the spend cap, not scored")
@@ -171,9 +247,9 @@ def run_eval(
                     + ("passed" if score.passed else f"FAILED {', '.join(score.failed)}")
                     + f" (spent so far ₹{meter.done_inr:.2f})"
                 )
-            if meter.hit:
+            if meter.hit or unreachable:
                 break
-        if meter.hit:
+        if meter.hit or unreachable:
             break
 
     summary = summarise(scores)
@@ -191,6 +267,8 @@ def run_eval(
         "spent_inr": round(meter.done_inr, 4),
         "aborted_by_cap": meter.hit,
         "aborted_run": aborted,
+        "invalid_runs": invalid,
+        "aborted_unreachable": unreachable,
         "n_runs": len(rows),
         "summary": {
             strat: {name: {**cell, "text": k_of_n(cell)} for name, cell in cells.items()}
@@ -246,6 +324,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--cap-inr", type=float, default=DEFAULT_CAP_INR)
     ap.add_argument("--usd-inr", type=float, default=USD_INR)
+    ap.add_argument(
+        "--min-interval-s",
+        type=float,
+        default=None,
+        help="pause between model calls (default 20 for groq, 0 otherwise)",
+    )
+    ap.add_argument("--rate-limit-retries", type=int, default=RATE_LIMIT_RETRIES)
+    ap.add_argument("--rate-limit-wait-s", type=float, default=RATE_LIMIT_WAIT_S)
     ap.add_argument("--out", type=Path, default=RESULTS_DIR)
     ap.add_argument(
         "--dry-plan", action="store_true", help="print the plan and estimate, run nothing"
@@ -293,7 +379,22 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_plan:
         return 0
 
-    factory = build_factory(provider, model) if uses_model else None
+    inner = build_factory(provider, model) if uses_model else None
+    interval = (
+        args.min_interval_s
+        if args.min_interval_s is not None
+        else DEFAULT_MIN_INTERVAL_S.get(provider, 0.0)
+    )
+    factory = None
+    if inner is not None:
+        factory = lambda: RetryingClient(  # noqa: E731
+            inner(),
+            min_interval_s=interval,
+            retries=args.rate_limit_retries,
+            wait_s=args.rate_limit_wait_s,
+        )
+        if interval:
+            print(f"Pacing model calls at least {interval:.0f}s apart; this will take a while.")
     meta = {"provider": provider, "model": model or "fixed-workflow", "set": args.set,
             "prompt_version": PROMPT_VERSION, "git": git_info(),
             "temperature": "provider default (not set by the runner)"}  # fmt: skip
@@ -303,6 +404,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"\nWrote {path}")
     for strat, cells in doc["summary"].items():
         print(f"{strat}: all checks {cells['all_checks']['text']}")
+    if doc["invalid_runs"]:
+        print(f"{doc['invalid_runs']} run(s) were invalid (model unreachable) and are not scored.")
+    if doc["aborted_unreachable"]:
+        print("STOPPED: the model failed to answer several runs in a row. Check the key, the "
+              "model name and the rate limits, then rerun. Partial results saved.")  # fmt: skip
+        return 4
     if doc["aborted_by_cap"]:
         print(f"STOPPED by the spend cap (₹{doc['spent_inr']:.2f} spent). Partial results saved.")
         return 3

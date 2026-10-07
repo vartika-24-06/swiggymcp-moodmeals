@@ -192,3 +192,107 @@ def test_main_exits_with_3_when_the_cap_stops_it_and_still_writes_results(
 def test_git_info_never_raises():
     info = runner.git_info()
     assert isinstance(info["commit"], str) and info["commit"]
+
+
+# ---------------------------------------------------------------- rate limits and invalid runs
+
+
+class Flaky:
+    """A client whose first `fail_first` calls raise the given error."""
+
+    provider, model = "groq", "m"
+
+    def __init__(self, fail_first, error="rate_limited"):
+        self.fail_first, self.error, self.calls = fail_first, error, 0
+
+    def next_action(self, view):
+        self.calls += 1
+        if self.calls <= self.fail_first:
+            raise runner.LLMError(self.error)
+        return {"action": "ask_user", "args": {"question": "q", "field": "diet"}, "rationale": ""}
+
+    def usage(self):
+        return Usage(calls=self.calls)
+
+    def cost_estimate(self):
+        return 0.0
+
+
+def test_rate_limits_are_waited_out_with_a_growing_pause_then_retried():
+    sleeps = []
+    c = runner.RetryingClient(Flaky(2), retries=3, wait_s=10, sleep=sleeps.append)
+    assert c.next_action({})["action"] == "ask_user"
+    assert sleeps == [10, 20] and c.model == "m"
+
+
+def test_after_the_retries_a_rate_limit_is_raised_and_other_errors_are_not_retried():
+    sleeps = []
+    c = runner.RetryingClient(Flaky(99), retries=2, wait_s=1, sleep=sleeps.append)
+    with pytest.raises(runner.LLMError, match="rate_limited"):
+        c.next_action({})
+    assert len(sleeps) == 2 and c._inner.calls == 3
+    bad_key = runner.RetryingClient(Flaky(99, "http 401"), retries=3, wait_s=1, sleep=sleeps.append)
+    with pytest.raises(runner.LLMError):
+        bad_key.next_action({})
+    assert bad_key._inner.calls == 1  # a bad key is not retried
+
+
+def test_calls_are_paced_at_the_minimum_interval():
+    t, sleeps = [100.0], []
+
+    def sleep(s):
+        sleeps.append(s)
+        t[0] += s
+
+    c = runner.RetryingClient(Flaky(0), min_interval_s=20, sleep=sleep, clock=lambda: t[0])
+    c.next_action({})
+    t[0] += 5  # 5 s later
+    c.next_action({})
+    assert sleeps == [15]  # waits only the remaining 15 s
+
+
+def test_unreachable_model_runs_are_invalid_not_agent_failures():
+    doc = runner.run_eval(SMOKE[:2], ["agent", "fixed_workflow"], lambda: Flaky(99))
+    agent_rows = [r for r in doc["results"] if r["strategy"] == "agent"]
+    assert agent_rows and all(
+        r["invalid"] and "rate_limited" in r["invalid_reason"] for r in agent_rows
+    )
+    assert doc["invalid_runs"] == len(agent_rows)
+    assert "agent" not in doc["summary"]  # nothing was scored for the agent
+    fixed = [r for r in doc["results"] if r["strategy"] == "fixed_workflow"]
+    assert fixed and all("invalid" not in r for r in fixed)  # the baseline is unaffected
+
+
+def test_several_invalid_runs_in_a_row_stop_the_eval_as_unreachable():
+    doc = runner.run_eval(SMOKE, ["agent"], lambda: Flaky(99))
+    assert (
+        doc["aborted_unreachable"] is True and doc["invalid_runs"] == runner.MAX_CONSECUTIVE_INVALID
+    )
+    assert doc["n_runs"] == runner.MAX_CONSECUTIVE_INVALID  # it did not grind through all six
+
+
+def test_a_good_run_resets_the_unreachable_counter():
+    clients = iter([Flaky(99), Flaky(99), DemoLLM(), Flaky(99), Flaky(99), DemoLLM()])
+    doc = runner.run_eval(SMOKE, ["agent"], lambda: next(clients))
+    assert doc["aborted_unreachable"] is False and doc["invalid_runs"] == 4
+
+
+def test_main_exits_with_4_when_the_model_is_unreachable(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("GROQ_API_KEY", "gsk-test")
+    monkeypatch.setattr(runner, "make_client", lambda provider, model, key: Flaky(99))
+    code = runner.main(["--provider", "groq", "--model", "qwen/qwen3.8-27b", "--strategies", "agent",
+                        "--min-interval-s", "0", "--rate-limit-wait-s", "0", "--out", str(tmp_path)])  # fmt: skip
+    out = capsys.readouterr().out
+    assert code == 4 and "INVALID" in out and "failed to answer several runs" in out
+    [path] = list(tmp_path.glob("*.json"))
+    assert json.loads(path.read_text(encoding="utf-8"))["aborted_unreachable"] is True
+
+
+def test_groq_is_paced_by_default_and_others_are_not(capsys, tmp_path, monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "gsk-test")
+    monkeypatch.setattr(runner, "make_client", lambda provider, model, key: Flaky(99))
+    runner.main(["--provider", "groq", "--model", "m", "--strategies", "agent", "--rate-limit-wait-s", "0",
+                 "--rate-limit-retries", "0", "--out", str(tmp_path), "--set", "smoke"])  # fmt: skip
+    # the first call of each client is never delayed, so this finishes at once even when paced
+    assert "Pacing model calls at least 20s apart" in capsys.readouterr().out
+    assert runner.DEFAULT_MIN_INTERVAL_S == {"groq": 20.0}
