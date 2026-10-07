@@ -39,7 +39,7 @@ class FixedWorkflowLLM:
         if not ok:
             return _stop("Restaurant search failed.")
         open_rs = sorted(
-            (r for r in ok[-1]["result"]["restaurants"] if r["open"]),
+            (r for r in ok[-1]["result"].get("restaurants", []) if r["open"]),
             key=lambda r: -(r["rating"] or 0),
         )
         if not open_rs:
@@ -50,7 +50,7 @@ class FixedWorkflowLLM:
             return _tool("get_menu", {"restaurant_id": pick["id"]})
         items = [
             i
-            for i in menus[-1]["result"]["items"]
+            for i in menus[-1]["result"].get("items", [])
             if i["in_stock"]
             and not i["variants"]
             and (i["veg"] == "veg" or not veg)

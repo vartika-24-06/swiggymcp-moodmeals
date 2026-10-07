@@ -44,7 +44,7 @@ class DemoLLM:
         if not searches:
             query = "thali" if veg else "biryani"
             return _tool("search_restaurants", {"query": query}, f"Look for {query} nearby")
-        open_rs = [r for r in searches[-1]["result"]["restaurants"] if r["open"]]
+        open_rs = [r for r in searches[-1]["result"].get("restaurants", []) if r["open"]]
         if not open_rs:
             return self._quick_meal(view, results, "Every restaurant is closed right now")
         restaurant = open_rs[0]
@@ -58,7 +58,7 @@ class DemoLLM:
         budget = view["hard_constraints"]["budget_inr"]
         items = [
             i
-            for i in menus[-1]["result"]["items"]
+            for i in menus[-1]["result"].get("items", [])
             if i["in_stock"]
             and not i["variants"]
             and not i["addons"]
@@ -95,7 +95,7 @@ class DemoLLM:
         quick = []
         for r in results:
             if r["tool"] == "search_products" and "result" in r:
-                for p in r["result"]["products"]:
+                for p in r["result"].get("products", []):
                     cheap = [v for v in p["variants"] if budget is None or v["price"] <= budget]
                     if _is_quick(p["name"]) and cheap and (p["veg"] == "veg" or not veg):
                         quick.append((p, cheap[0]))

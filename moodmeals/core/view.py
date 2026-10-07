@@ -17,7 +17,12 @@ from moodmeals.core.state import RunState
 from moodmeals.models.types import MenuItem, Product, Restaurant
 from moodmeals.tools.compact import view_menu_items, view_products, view_restaurants
 
-MAX_ITEMS_IN_VIEW = 30  # design DQ2: a menu page is about 2.7k tokens uncapped
+MAX_ITEMS_IN_VIEW = 24  # menu items; design DQ2: a menu page is about 2.7k tokens uncapped
+MAX_PRODUCTS_IN_VIEW = 12
+MAX_RESTAURANTS_IN_VIEW = 8
+# Older tool results shrink to a one-line note, so a request does not grow with every turn.
+# Free tiers cap one request at about 6k tokens (Groq returned HTTP 413 at about 8k).
+RECENT_RESULTS_IN_FULL = 3
 
 TOOL_SPECS = {
     "search_restaurants": {"query": "dish or cuisine, up to 60 chars", "offset": "optional"},
@@ -48,13 +53,39 @@ def summarise_menu_items(items: list[MenuItem], state: RunState) -> dict[str, An
 def summarise_products(items: list[Product], state: RunState) -> dict[str, Any]:
     kept = [p for p in items if _keep_for_constraints(p.veg, state)]
     return {
-        "total": len(items), "shown": min(len(kept), MAX_ITEMS_IN_VIEW),
-        "products": view_products(kept[:MAX_ITEMS_IN_VIEW]),
+        "total": len(items), "shown": min(len(kept), MAX_PRODUCTS_IN_VIEW),
+        "products": view_products(kept[:MAX_PRODUCTS_IN_VIEW]),
     }  # fmt: skip
 
 
 def summarise_restaurants(items: list[Restaurant]) -> dict[str, Any]:
-    return {"total": len(items), "restaurants": view_restaurants(items)}
+    return {
+        "total": len(items),
+        "shown": min(len(items), MAX_RESTAURANTS_IN_VIEW),
+        "restaurants": view_restaurants(items[:MAX_RESTAURANTS_IN_VIEW]),
+    }
+
+
+def trim_tool_log(log: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The last few results in full; older ones as a note (their items stay valid in the
+    ledger, but the model must search again to see them)."""
+    cutoff = len(log) - RECENT_RESULTS_IN_FULL
+    out: list[dict[str, Any]] = []
+    for i, entry in enumerate(log):
+        if i >= cutoff or "result" not in entry:
+            out.append(entry)
+            continue
+        out.append(
+            {
+                "tool": entry["tool"],
+                "params": entry["params"],
+                "result": {
+                    "total": entry["result"].get("total", 0),
+                    "omitted": "older result, no longer shown; search again to see it",
+                },
+            }
+        )
+    return out
 
 
 def build_model_view(state: RunState, budget: RunBudget | None = None) -> dict[str, Any]:
@@ -82,7 +113,7 @@ def build_model_view(state: RunState, budget: RunBudget | None = None) -> dict[s
             "iterations": max(0, b.max_iterations - state.iterations),
         },
         "available_tools": {name: TOOL_SPECS[name] for name in READ_TOOLS},
-        "untrusted_data": {"tool_results": list(state.tool_log)},
+        "untrusted_data": {"tool_results": trim_tool_log(state.tool_log)},
         "rejected_plans": state.rejected_plans,
         "validation_errors": state.validation_errors,
         "notes": list(state.notes),

@@ -161,10 +161,10 @@ def infra_error(rec: Any) -> str | None:
     (rate limit, bad key, network). Such runs are recorded but not scored."""
     for e in rec.events:
         if e.type == "error" and e.payload.get("kind") == "model_error":
-            return str(e.payload.get("detail", "model_error"))[:120]
+            return str(e.payload.get("detail", "model_error"))[:300]
     for note in rec.notes:
         if note.startswith("model_error"):
-            return note[:120]
+            return note[:300]
     return None
 
 
