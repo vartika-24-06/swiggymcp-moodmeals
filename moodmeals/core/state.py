@@ -23,6 +23,7 @@ Phase = Literal[
 ]
 Mode = Literal["mock", "dry_run", "live"]
 Waiting = Literal["answer", "address"]
+KEY_SIGNALS = ("budget", "party size", "diet")  # what R1.5 means by "required information"
 
 
 class RunState(BaseModel):
@@ -48,7 +49,11 @@ class RunState(BaseModel):
     user_text: str = ""
     constraints: Constraints = Field(default_factory=Constraints)
     answers: list[dict[str, str]] = Field(default_factory=list)  # {"q": ..., "a": ...}
-    missing_signals: list[str] = Field(default_factory=list)
+    # Key details the person has stated or answered (budget, party size, diet) and the ones still
+    # missing. Code-owned (R1.5): the validator requires listed assumptions when questions run out
+    # with something missing, and the model sees `missing_signals`.
+    stated_signals: list[str] = Field(default_factory=list)
+    missing_signals: list[str] = Field(default_factory=lambda: list(KEY_SIGNALS))
     waiting: Waiting | None = None  # the run is paused for the person (not for approval)
     pending_question: dict[str, Any] | None = None
 

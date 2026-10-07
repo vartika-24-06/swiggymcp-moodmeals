@@ -62,6 +62,11 @@ def make(script, mode="mock", switches=None, n_addresses=1, budget=None, **cons)
 
 
 ORDER_FLOW = [search(), menu(), propose_order()]
+ASSUMED_FLOW = [
+    search(),
+    menu(),
+    propose_order(assumptions=["Budget not stated", "Eating alone", "Diet not stated"]),
+]
 
 
 def test_order_in_happy_path_two_step_approval():
@@ -201,7 +206,7 @@ def test_diet_answer_makes_veg_a_hard_constraint():
 
 
 def test_question_budget_is_three_and_fourth_is_refused():
-    script = [ask(), ask(), ask(), ask(), *ORDER_FLOW]
+    script = [ask(), ask(), ask(), ask(), *ASSUMED_FLOW]
     agent, state, llm, _ = make(script)
     for _ in range(3):
         agent.run(state)
@@ -213,7 +218,7 @@ def test_question_budget_is_three_and_fourth_is_refused():
 
 
 def test_address_picker_counts_as_a_question():
-    agent, state, _, _ = make([ask(), ask(), ask(), *ORDER_FLOW], n_addresses=3)
+    agent, state, _, _ = make([ask(), ask(), ask(), *ASSUMED_FLOW], n_addresses=3)
     agent.run(state)
     assert state.waiting == "address" and state.questions_asked == 1
     assert len(agent.address_options(state)) == 3
@@ -502,3 +507,28 @@ def test_demo_model_stops_with_a_reason_when_instamart_has_nothing_either():
     agent.run(state)
     assert state.stop_reason == "no_option" and state.plan is None
     assert "closed" in state.outcome["message"].lower()
+
+
+def test_missing_signals_start_from_constraints_and_follow_answers():
+    provider = MockProvider(seed=1)
+    stated = Agent(FakeLLM([]), provider, Guard()).start(
+        "kya khana hai", Constraints(budget=300, veg=True)
+    )
+    assert stated.missing_signals == ["party size"]
+    agent, state, _, _ = make([ask("budget"), *ORDER_FLOW])
+    assert state.missing_signals == ["budget", "party size", "diet"]
+    agent.run(state)
+    agent.provide_answer(state, "under 300 rupees")
+    assert state.missing_signals == ["party size", "diet"]
+
+
+def test_assumptions_required_once_questions_are_spent_and_something_is_missing():
+    script = [ask(), ask(), ask(), *ORDER_FLOW]
+    agent, state, llm, _ = make(script)
+    for _ in range(3):
+        agent.run(state)
+        agent.provide_answer(state, "ok")
+    with pytest.raises(AssertionError, match="script exhausted"):
+        agent.run(state)  # the bare plan is rejected, so the loop asks the model again
+    assert state.phase != "AWAITING_APPROVAL"
+    assert any("assumptions" in json.dumps(v) for v in llm.views[-1:])

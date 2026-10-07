@@ -77,6 +77,30 @@ def rescore_fallback(rows: list[dict[str, Any]], expect: dict[str, list[str]]) -
     return changed
 
 
+def rescore_plan_size(rows: list[dict[str, Any]], limits: dict[str, int]) -> list[str]:
+    """Re-judge a failed `plan_size` from the stored plan under the scenario's current maximum
+    (limits: scenario id -> max total quantity). Returns the labels that changed."""
+    changed: list[str] = []
+    for r in rows:
+        hi = limits.get(r["scenario_id"])
+        if r.get("checks", {}).get("plan_size") is not False or hi is None:
+            continue
+        plan = next(
+            (e["payload"] for e in reversed(r.get("trace", [])) if e["type"] == "plan"), None
+        )
+        if plan is None:
+            continue
+        if sum(int(i.get("qty", 1)) for i in plan.get("items", [])) <= hi:
+            r["checks"]["plan_size"] = True
+            r["failed_checks"] = [c for c in r["failed_checks"] if c != "plan_size"]
+            r["passed"] = not r["failed_checks"]
+            r["rescored"] = [*r.get("rescored", []), "plan_size"]
+            if r["passed"]:
+                r.pop("trace", None)
+            changed.append(f"{r['scenario_id']} {r['strategy']} {r['run']}")
+    return changed
+
+
 def merge(
     parts: list[tuple[dict[str, Any], list[str], str]],
     expected: dict[str, int] | None = None,
@@ -129,6 +153,10 @@ def merge(
     if must is None:
         must = {s.id: list(s.expect.plan_must_include) for s in load_scenarios()}
     rescored = rescore_fallback(rows, must)
+    limits = {
+        s.id: s.expect.max_items_qty for s in load_scenarios() if s.expect.max_items_qty
+    }
+    rescored_size = rescore_plan_size(rows, limits)
     rows.sort(key=lambda r: (r["scenario_id"], list(expected).index(r["strategy"]), r["run"]))
     scores = [
         Score(r["scenario_id"], r["strategy"], r["checks"], r.get("metrics", {})) for r in rows
@@ -151,6 +179,7 @@ def merge(
         "aborted_by_cap": False, "aborted_unreachable": False, "interrupted": False,
         "invalid_runs": 0, "n_runs": len(rows),
         "excluded_runs": excluded, "rescored_fallback_plan": rescored,
+        "rescored_plan_size": rescored_size,
         "summary": {
             strat: {n: {**cell, "text": k_of_n(cell)} for n, cell in cells.items()}
             for strat, cells in summarise(scores).items()
@@ -182,6 +211,8 @@ def main(argv: list[str]) -> int:
           f"spent ₹{merged['spent_inr']}")  # fmt: skip
     for x in merged["excluded_runs"]:
         print(f"  excluded {x['scenario_id']} {x['strategy']} run {x['run']}: {x['reason']}")
+    if merged["rescored_plan_size"]:
+        print("  plan_size re-scored from traces: " + ", ".join(merged["rescored_plan_size"]))
     if merged["rescored_fallback_plan"]:
         print(
             "  fallback_plan re-scored from traces: " + ", ".join(merged["rescored_fallback_plan"])

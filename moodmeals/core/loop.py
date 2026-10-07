@@ -26,7 +26,7 @@ from moodmeals.core.actions import (
 from moodmeals.core.events import Event
 from moodmeals.core.guard import Guard, StopReason
 from moodmeals.core.redaction import redact_text
-from moodmeals.core.state import RunState
+from moodmeals.core.state import KEY_SIGNALS, RunState
 from moodmeals.core.validator import (
     DRY_RUN_DISCLAIMER,
     Constraints,
@@ -104,6 +104,11 @@ class Agent:
             user_text=redact_text(user_text)[:500],
             constraints=constraints or Constraints(),
         )
+        c = state.constraints
+        _note_stated(state, *(
+            name for name, given in (("diet", c.veg), ("budget", c.budget is not None),
+                                     ("party size", c.party_size is not None)) if given
+        ))  # fmt: skip
         state.add_event("user_input", "user", {"text": user_text[:500]})
         return state
 
@@ -115,6 +120,7 @@ class Agent:
         state.answers.append({"q": q["question"], "a": answer})
         _apply_answer(state, q.get("field", "other"), answer)
         state.waiting, state.pending_question = None, None
+        _note_stated(state, ANSWER_SIGNALS.get(q.get("field", "other"), ""))
         state.add_event("user_input", "user", {"answer": answer, "field": q.get("field")})
 
     def address_options(self, state: RunState) -> list[dict[str, str]]:
@@ -134,6 +140,7 @@ class Agent:
         if state.phase in ("DONE", "STOPPED"):
             raise ValueError("The run has ended")
         state.constraints = state.constraints.model_copy(update=patch)
+        _note_stated(state, *(CONSTRAINT_SIGNALS.get(k, "") for k in patch))
         state.add_event("user_input", "user", {"changed": sorted(patch)})
         if state.plan is not None:
             state.plan, state.pending_write = None, None
@@ -560,6 +567,18 @@ class Agent:
 
 def _paused(state: RunState) -> bool:
     return state.phase in ("DONE", "STOPPED", "AWAITING_APPROVAL") or state.waiting is not None
+
+
+ANSWER_SIGNALS = {"diet": "diet", "budget": "budget", "party": "party size"}
+CONSTRAINT_SIGNALS = {"veg": "diet", "budget": "budget", "party_size": "party size"}
+
+
+def _note_stated(state: RunState, *names: str) -> None:
+    """Record that the person gave these details and recompute what is still missing (R1.5)."""
+    for n in names:
+        if n and n not in state.stated_signals:
+            state.stated_signals.append(n)
+    state.missing_signals = [s for s in KEY_SIGNALS if s not in state.stated_signals]
 
 
 def _parse_addresses(data: dict[str, Any]) -> list[dict[str, str]]:

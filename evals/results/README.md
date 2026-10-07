@@ -9,6 +9,8 @@ All runs are on the synthetic mock world. Counts are "k of n"; failures are publ
   `scripts/merge_results.py` (see `merged_from` inside). Two runs whose model call stalled while
   the laptop slept are excluded (`excluded_runs`), and three `fallback_plan` failures were
   re-scored from their traces after the scorer's word list was corrected (`rescored_fallback_plan`).
+  One S-23 `plan_size` failure was re-scored after the owner raised that scenario's limit from 2 to 6
+  items (`rescored_plan_size`).
   Total spend about Rs 135 at Rs 97 per dollar.
 - `2026-10-07-qwen-qwen3.8-27b.json`: the first real smoke run (6 scenarios, prompt agent_v4, Groq free tier).
   Kept because its failures led to code changes (see `docs/case-study-notes.md`) and to a replay.
