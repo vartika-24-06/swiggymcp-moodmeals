@@ -207,3 +207,20 @@ def test_live_app_existing_cart_needs_confirmation_then_ends_without_an_order(mo
     assert not any(b.label == "Approve: place order" for b in at.button)
     page = texts(at) + " ".join(i.value for i in at.info) + " ".join(i.value for i in at.success)
     assert "Zzyzx" not in page and "Synthetic Lane" not in page
+
+
+def test_public_deployment_pages_all_render_and_requirements_are_present(monkeypatch):
+    from pathlib import Path
+
+    from streamlit.testing.v1 import AppTest
+
+    root = Path(__file__).resolve().parents[1]
+    assert (root / "requirements.txt").read_text().strip() == "-e ."
+    monkeypatch.setenv("MOODMEALS_DEPLOY", "public")
+    monkeypatch.delenv("MOODMEALS_MODE", raising=False)
+    for page in ("app/Home.py", "app/pages/1_Replay.py", "app/pages/2_About.py",
+                 "app/pages/3_Results.py"):
+        at = AppTest.from_file(str(root / page), default_timeout=30).run()
+        assert not at.exception, page
+    home = AppTest.from_file(str(root / "app/Home.py"), default_timeout=30).run()
+    assert not any("Connect to Swiggy" in b.label for b in home.button)

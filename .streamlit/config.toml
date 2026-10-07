@@ -1,0 +1,6 @@
+[browser]
+gatherUsageStats = false
+
+[server]
+# The public site is stateless: nothing is written to disk.
+fileWatcherType = "none"
