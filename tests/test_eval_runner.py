@@ -440,3 +440,21 @@ def test_key_and_request_errors_are_never_retried(error):
     with pytest.raises(runner.LLMError):
         c.next_action({})
     assert sleeps == [] and c._inner.calls == 1
+
+
+def test_a_run_with_a_stalled_model_call_is_invalid_not_an_agent_failure():
+    from evals.run import run_strategy
+
+    rec = run_strategy("agent", SMOKE[0], DemoLLM())
+    assert runner.infra_error(rec) is None  # a normal run is fine
+    rec.events[2].latency_ms = runner.STALL_MS + 1  # one call took over 3 minutes: the lid was shut
+    assert "stalled" in runner.infra_error(rec)
+
+
+def test_failed_run_traces_keep_latency_and_tokens():
+    doc = runner.run_eval(SMOKE, ["fixed_workflow"], None)
+    failed = [r for r in doc["results"] if not r["passed"]]
+    assert failed and all(
+        {"latency_ms", "tokens_in", "tokens_out"} <= set(e) for e in failed[0]["trace"]
+    )
+    assert "slowest_call_ms" in failed[0]["metrics"] and "validator_errors" in failed[0]["metrics"]

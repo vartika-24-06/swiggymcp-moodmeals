@@ -21,8 +21,9 @@ MIN_STOP_MESSAGE_CHARS = 10
 # Why ordering in is not possible (R4.3): English and Hinglish phrases, lower case.
 BLOCKED_WORDS = (
     "closed", "not working", "isn't working", "can't order", "cannot order", "unable to order",
-    "not available", "unavailable", "not possible", "failing", "failed", "no restaurant",
-    "nothing is open", "band hai", "order nahi", "nahi ho paa",
+    "not available", "unavailable", "not possible", "isn't possible", "can't be ordered",
+    "failing", "failed", "timed out", "timeout", "not responding", "no restaurant",
+    "nothing is open", "band hai", "order nahi", "nahi ho paa", "possible nahi",
 )  # fmt: skip
 # Ready-to-eat and quick-cook items (R4.3): checked against product NAMES from the world.
 QUICK_WORDS = (
@@ -134,24 +135,39 @@ def check_stop_reason(rec: RunRecord, sc: Scenario) -> bool | None:
     return is_clear_stop(rec)
 
 
+def fallback_plan_ok(reason: str, item_names: list[str], must_include: list[str]) -> bool:
+    """The pure rule: the reason says why ordering is not possible, and every item is a quick
+    meal. Typographic apostrophes are normalised ("isn\u2019t" is "isn't")."""
+    text = reason.lower().replace("\u2019", "'").replace("\u2018", "'")
+    ok = True
+    if "blocked_reason" in must_include:
+        ok &= any(w in text for w in BLOCKED_WORDS)
+    if "quick_meal" in must_include:
+        ok &= all(any(w in n.lower() for w in QUICK_WORDS) for n in item_names)
+    return ok
+
+
 def check_fallback_plan(rec: RunRecord, sc: Scenario) -> bool | None:
     """A quick-meal fallback plan must say why ordering is not possible and use quick items."""
     if not has_plan(rec) or not sc.expect.plan_must_include:
         return None
-    ok = True
-    if "blocked_reason" in sc.expect.plan_must_include:
-        reason = rec.plan.reason.lower()
-        ok &= any(w in reason for w in BLOCKED_WORDS)
-    if "quick_meal" in sc.expect.plan_must_include:
-        ok &= all(any(w in i.name.lower() for w in QUICK_WORDS) for i in rec.plan.items)
-    return ok
+    names = [i.name for i in rec.plan.items]
+    return fallback_plan_ok(rec.plan.reason, names, sc.expect.plan_must_include)
+
+
+def validator_error_codes(rec: RunRecord) -> list[str]:
+    """What the plan validator would reject in the final plan (the ablation's evidence)."""
+    if not has_plan(rec):
+        return []
+    res = validate_plan(rec.plan, rec.ledger, rec.constraints)
+    return sorted({f"{i.check}:{i.code}" for i in res.errors})
 
 
 def check_plan_valid(rec: RunRecord) -> bool | None:
     """The final plan passes every validator check (V1 to V9), not just the constraints."""
     if not has_plan(rec):
         return None
-    return not validate_plan(rec.plan, rec.ledger, rec.constraints).errors
+    return not validator_error_codes(rec)
 
 
 def check_assumptions(rec: RunRecord, sc: Scenario) -> bool | None:
@@ -243,6 +259,8 @@ def score_run(rec: RunRecord, sc: Scenario) -> Score:
         "questions": rec.questions_asked, "tool_calls": rec.tool_calls,
         "tokens_in": rec.tokens_in, "tokens_out": rec.tokens_out, "cost_usd": rec.cost_usd,
         "latency_ms": sum(e.latency_ms for e in rec.events),
+        "slowest_call_ms": max((e.latency_ms for e in rec.events), default=0),
+        "validator_errors": validator_error_codes(rec),
         "final": "plan" if has_plan(rec) else (rec.stop_reason or rec.phase),
     }  # fmt: skip
     score.notes = traj_notes

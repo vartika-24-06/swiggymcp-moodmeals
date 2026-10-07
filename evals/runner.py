@@ -57,6 +57,9 @@ RATE_LIMIT_WAIT_S = 30.0
 # request (http 4xx) is not retried. The wait grows (wait_s, 2 x wait_s, ...), so a Wi-Fi blip
 # of a few minutes no longer ends a long run.
 RETRYABLE_ERRORS = ("rate_limited", "network", "timeout")
+# One model call this long means the machine slept or the network stalled (a normal gpt-5-mini
+# call takes seconds); the run says nothing about the agent, so it is marked invalid.
+STALL_MS = 180_000
 MAX_CONSECUTIVE_INVALID = 3  # then the model is treated as unreachable and the eval stops
 MAX_TRACE_EVENTS = 80  # events kept for a failed run (mock data only)
 
@@ -167,6 +170,8 @@ def infra_error(rec: Any) -> str | None:
     for e in rec.events:
         if e.type == "error" and e.payload.get("kind") == "model_error":
             return str(e.payload.get("detail", "model_error"))[:300]
+        if e.latency_ms > STALL_MS:  # a laptop asleep or a network stall, not a slow agent
+            return f"a model call took {e.latency_ms // 1000}s (stalled)"
     for note in rec.notes:
         if note.startswith("model_error"):
             return note[:300]
@@ -189,7 +194,8 @@ def git_info() -> dict[str, Any]:
 def _trace(rec: Any) -> list[dict[str, Any]]:
     return [
         {"step": e.step, "type": e.type, "actor": e.actor, "payload": e.payload,
-         "rationale": e.rationale}
+         "rationale": e.rationale, "latency_ms": e.latency_ms,
+         "tokens_in": e.tokens_in, "tokens_out": e.tokens_out}
         for e in rec.events[:MAX_TRACE_EVENTS]
     ]  # fmt: skip
 

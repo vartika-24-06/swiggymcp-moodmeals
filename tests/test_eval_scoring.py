@@ -311,3 +311,36 @@ def test_summary_counts_k_of_n_per_strategy_and_skips_not_applicable():
 @pytest.mark.parametrize("word", ["closed", "not working", "band hai"])
 def test_blocked_reason_word_list_is_explicit(word):
     assert word in sc_mod.BLOCKED_WORDS
+
+
+def test_blocked_reason_accepts_the_wording_a_real_model_used():
+    from evals.scoring import fallback_plan_ok
+
+    must = ["blocked_reason", "quick_meal"]
+    assert fallback_plan_ok(
+        "Restaurant search repeatedly timed out so ordering in isn’t possible; a khichdi mix.",
+        ["Khichdi Mix"],
+        must,
+    )
+    assert fallback_plan_ok(
+        "Nearby restaurants are closed so ordering-in possible nahi hai.",
+        ["Instant Poha Cup"],
+        must,
+    )
+    assert not fallback_plan_ok(
+        "Here is a nice dinner.", ["Instant Poha Cup"], must
+    )  # no reason given
+    assert not fallback_plan_ok(
+        "Restaurants are closed.", ["Basmati Rice", "Curd"], must
+    )  # staples, not a quick meal
+
+
+def test_scores_record_the_validator_error_codes_and_the_slowest_call():
+    bad = rec(
+        plan=order_plan("D99", "Ghost", 10), events=[ev("tool_call", {"tool": "x"}, latency=2500)]
+    )
+    s = score_run(bad, SCEN["S-01"])
+    assert s.checks["plan_valid"] is False
+    assert any(code.startswith("V1:") for code in s.metrics["validator_errors"])
+    assert s.metrics["slowest_call_ms"] == 2500
+    assert score_run(rec(plan=order_plan()), SCEN["S-01"]).metrics["validator_errors"] == []
