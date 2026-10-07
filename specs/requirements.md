@@ -239,7 +239,7 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 - **Q5.** Final scenario list and the rubric for "appropriate path".
 - **Q6. (Removed 2026-10-04.)** Crisis resources were part of the dropped crisis check (section 12.2).
 - **Q7.** Demo account: a test account or a redaction process for recording.
-- **Q8.** Sign-off on the check-in wording and the heuristics in R4.4.
+- **Q8. (Resolved 2026-10-07: prompt tone approved by the owner.)** Sign-off on the check-in wording and the heuristics in R4.4.
 
 ## 11. Definition of done (v1)
 - R1–R5 and R7–R15 implemented and traceable to tests or eval scenarios.

@@ -66,7 +66,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
 | T4.1 ✅ done 2026-10-05 | `LLMClient` adapters: OpenAI-compatible and Anthropic; pricing table with a last-checked date; cost estimate | CC | M | A live smoke test on the mock world returns a valid action sequence on at least one free-tier model | R14 |
-| T4.2 v1 drafted 2026-10-05, wording review pending | System prompt v1 as a versioned file (SCOPE, ALLOWED, PROHIBITED, GROUNDING, TONE, ESCALATION), including the R4.4 heuristics as guidance | Both | M | Prompt committed with a version; you review the tone and wording of the check-in (Q8) | R1, R4, design 9.4 |
+| T4.2 ✅ done 2026-10-07 (prompt tone approved by the owner; current version agent_v5) | System prompt v1 as a versioned file (SCOPE, ALLOWED, PROHIBITED, GROUNDING, TONE, ESCALATION), including the R4.4 heuristics as guidance | Both | M | Prompt committed with a version; you review the tone and wording of the check-in (Q8) | R1, R4, design 9.4 |
 | T4.3 ✅ done 2026-10-05 (5 of 5 planned on prompt v3) | Run 5 manual scenarios on the mock world with a real model; fix the obvious prompt problems | Both | M | Notes on failures kept (they feed the case study) | design 13 |
 
 ## Phase 5: Streamlit app (mock only)
@@ -122,7 +122,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 - Create the GitHub repo and connect Claude Code (T0.1).
 - Run Spike A on your machine and report the result (T0.2).
-- Approve check-in wording and the prompt tone (T4.2, Q8).
+- ~~Approve check-in wording and the prompt tone (T4.2, Q8).~~ Prompt tone approved 2026-10-07.
 - Run dry-run on your machine (T6.2) and, if you choose, one live cart update (T6.4).
 - Review the scenarios and expected paths (T7.1, Q5).
 - Name and branding check, video recording, public deployment (T8.2, T8.3, T8.6).
