@@ -532,3 +532,10 @@ def test_assumptions_required_once_questions_are_spent_and_something_is_missing(
         agent.run(state)  # the bare plan is rejected, so the loop asks the model again
     assert state.phase != "AWAITING_APPROVAL"
     assert any("assumptions" in json.dumps(v) for v in llm.views[-1:])
+
+
+def test_an_answer_without_a_budget_value_leaves_budget_missing():
+    agent, state, _, _ = make([ask("budget"), *ORDER_FLOW])
+    agent.run(state)
+    agent.provide_answer(state, "no limit, surprise me")
+    assert "budget" in state.missing_signals

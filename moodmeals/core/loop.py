@@ -120,7 +120,13 @@ class Agent:
         state.answers.append({"q": q["question"], "a": answer})
         _apply_answer(state, q.get("field", "other"), answer)
         state.waiting, state.pending_question = None, None
-        _note_stated(state, ANSWER_SIGNALS.get(q.get("field", "other"), ""))
+        signal = ANSWER_SIGNALS.get(q.get("field", "other"), "")
+        # "No budget limit" is an answer, not a budget: only a value that was parsed counts.
+        if signal == "budget" and state.constraints.budget is None:
+            signal = ""
+        if signal == "party size" and state.constraints.party_size is None:
+            signal = ""
+        _note_stated(state, signal)
         state.add_event("user_input", "user", {"answer": answer, "field": q.get("field")})
 
     def address_options(self, state: RunState) -> list[dict[str, str]]:
