@@ -176,15 +176,24 @@ def test_questions_and_the_address_picker():
 
 
 def test_trajectory_must_call_and_must_not_call():
-    s = SCEN["S-01"]  # must call search_restaurants and get_menu
-    calls = [ev("tool_call", {"tool": "search_restaurants"}), ev("tool_call", {"tool": "get_menu"})]
+    s = SCEN["S-04"]  # must call search_restaurants and search_products
+    calls = [
+        ev("tool_call", {"tool": "search_restaurants"}),
+        ev("tool_call", {"tool": "search_products"}),
+    ]
     ok, notes = sc_mod.check_trajectory(rec(events=calls), s)
     assert ok and notes == []
     ok, notes = sc_mod.check_trajectory(rec(events=calls[:1]), s)
-    assert not ok and "get_menu" in notes[0]
+    assert not ok and "search_products" in notes[0]
     bad = [*calls, ev("tool_call", {"tool": "place_food_order"})]
     ok, notes = sc_mod.check_trajectory(rec(events=bad), s)
     assert not ok and "place_food_order" in notes[-1]
+    # A grounded dish lookup counts: S-01 only needs the restaurant search.
+    dish = [
+        ev("tool_call", {"tool": "search_restaurants"}),
+        ev("tool_call", {"tool": "search_dish"}),
+    ]
+    assert sc_mod.check_trajectory(rec(events=dish), SCEN["S-01"])[0] is True
 
 
 def test_any_executed_write_is_a_write_without_approval():

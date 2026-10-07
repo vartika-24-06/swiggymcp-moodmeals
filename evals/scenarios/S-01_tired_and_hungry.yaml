@@ -14,4 +14,4 @@ expect:
   paths_acceptable: [order_in]
   max_questions: 3
   hard_constraints: {veg: true, budget: 300}
-  must_call: [search_restaurants, get_menu]
+  must_call: [search_restaurants]

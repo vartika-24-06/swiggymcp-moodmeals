@@ -9,6 +9,7 @@ baseline) and `one_shot` (no tools, so every entity is a guess). Scoring is in `
 from __future__ import annotations
 
 import dataclasses
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -80,9 +81,15 @@ def _provider(sc: Scenario) -> MockProvider:
     return MockProvider(seed=wd.seed, switches=wd.build_switches(), n_addresses=wd.addresses)
 
 
+def eval_guard(llm: Any) -> Guard:
+    """The run's time limit counts the agent's time, not time spent waiting for a rate limit
+    or pacing calls (`paused_s` on the runner's client wrapper)."""
+    return Guard(clock=lambda: time.time() - getattr(llm, "paused_s", 0.0))
+
+
 def run_scripted(sc: Scenario, llm: Any, strategy: str = "agent", guard: Guard | None = None):
     """The scripted user drives the loop until the approval screen, a stop, or the end."""
-    agent = Agent(llm, _provider(sc), guard or Guard())
+    agent = Agent(llm, _provider(sc), guard or eval_guard(llm))
     state = agent.start(sc.user_script.opening, sc.user_script.hard_constraints())
     steps, applied = list(sc.user_script.mid_run), 0
     for _ in range(MAX_TURNS):

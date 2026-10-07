@@ -296,3 +296,55 @@ def test_groq_is_paced_by_default_and_others_are_not(capsys, tmp_path, monkeypat
     # the first call of each client is never delayed, so this finishes at once even when paced
     assert "Pacing model calls at least 20s apart" in capsys.readouterr().out
     assert runner.DEFAULT_MIN_INTERVAL_S == {"groq": 20.0}
+
+
+# ---------------------------------------------------------------- pacing vs the run's time limit
+
+
+def test_waiting_for_quota_is_tracked_as_paused_time():
+    sleeps = []
+    c = runner.RetryingClient(Flaky(1), retries=2, wait_s=7, min_interval_s=0, sleep=sleeps.append)
+    c.next_action({})
+    assert c.paused_s == 7 == sum(sleeps)
+    assert runner.CappedClient(c, runner.SpendMeter(10, 100)).paused_s == 7
+
+
+def test_the_eval_guard_does_not_count_paused_time_against_the_run():
+    import time
+
+    from evals.run import eval_guard
+    from moodmeals.core.state import RunState
+
+    class Paused:
+        paused_s = 100.0  # the run waited 100 s for quota
+
+    state = RunState(mode="mock")
+    state.started_at = time.time() - 120  # 120 s of wall clock since the start
+    assert eval_guard(Paused()).check(state) is None  # 20 s of real agent time: fine
+    assert eval_guard(object()).check(state) == "max_seconds"  # no pause: the 90 s limit holds
+
+
+def test_pacing_does_not_turn_into_max_seconds_failures():
+    t = [0.0]
+
+    def sleep(s):  # a fake clock: pacing "takes" 20 s each time, instantly
+        t[0] += s
+
+    def factory():
+        return runner.RetryingClient(DemoLLM(), min_interval_s=20, sleep=sleep, clock=lambda: t[0])
+
+    doc = runner.run_eval(SMOKE[:3], ["agent"], factory)
+    assert all(r.get("metrics", {}).get("final") != "max_seconds" for r in doc["results"])
+
+
+def test_only_runs_the_named_scenarios_and_rejects_unknown_ids(tmp_path, capsys):
+    assert (
+        runner.main(
+            ["--only", "s-04, S-06", "--strategies", "fixed_workflow", "--out", str(tmp_path)]
+        )
+        == 0
+    )
+    [path] = list(tmp_path.glob("*.json"))
+    assert json.loads(path.read_text(encoding="utf-8"))["scenarios"] == ["S-04", "S-06"]
+    with pytest.raises(SystemExit, match="Unknown scenario id: S-77"):
+        runner.main(["--only", "S-77", "--out", str(tmp_path)])

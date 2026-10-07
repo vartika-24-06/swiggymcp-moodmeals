@@ -91,6 +91,10 @@ class CappedClient:
             if hasattr(inner, attr):
                 setattr(self, attr, getattr(inner, attr))
 
+    @property
+    def paused_s(self) -> float:
+        return getattr(self._inner, "paused_s", 0.0)
+
     def next_action(self, view: dict[str, Any]) -> Any:
         if self._meter.exhausted(self._inner):
             self._meter.hit = True
@@ -121,23 +125,28 @@ class RetryingClient:
         self._inner, self._min, self._retries, self._wait = inner, min_interval_s, retries, wait_s
         self._sleep, self._clock = sleep, clock
         self._last: float | None = None
+        self.paused_s = 0.0  # time spent waiting for quota: not the agent's time (see eval_guard)
         for attr in ("provider", "model"):
             if hasattr(inner, attr):
                 setattr(self, attr, getattr(inner, attr))
+
+    def _pause(self, seconds: float) -> None:
+        self._sleep(seconds)
+        self.paused_s += seconds
 
     def next_action(self, view: dict[str, Any]) -> Any:
         for attempt in range(self._retries + 1):
             if self._last is not None:
                 gap = self._min - (self._clock() - self._last)
                 if gap > 0:
-                    self._sleep(gap)
+                    self._pause(gap)
             self._last = self._clock()
             try:
                 return self._inner.next_action(view)
             except LLMError as e:
                 if not str(e).startswith("rate_limited") or attempt == self._retries:
                     raise
-                self._sleep(self._wait * (attempt + 1))
+                self._pause(self._wait * (attempt + 1))
         raise AssertionError("unreachable")
 
     def usage(self) -> Any:
@@ -322,6 +331,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--provider", default="demo", help="demo, " + ", ".join(KEY_ENV))
     ap.add_argument("--model", default="")
     ap.add_argument("--runs", type=int, default=1)
+    ap.add_argument("--only", default="", help="comma list of scenario ids, e.g. S-04,S-06")
     ap.add_argument("--cap-inr", type=float, default=DEFAULT_CAP_INR)
     ap.add_argument("--usd-inr", type=float, default=USD_INR)
     ap.add_argument(
@@ -353,6 +363,15 @@ def main(argv: list[str] | None = None) -> int:
         scenarios = load_scenarios(smoke_only=args.set == "smoke")
     except ScenarioError as e:
         raise SystemExit(f"Scenario problem: {e}") from None
+    if args.only.strip():
+        wanted = [x.strip().upper() for x in args.only.split(",") if x.strip()]
+        known = {s.id: s for s in load_scenarios()}
+        unknown = [x for x in wanted if x not in known]
+        if unknown:
+            raise SystemExit(
+                f"Unknown scenario id: {', '.join(unknown)}. Known: {', '.join(known)}."
+            )
+        scenarios = [known[x] for x in sorted(set(wanted))]
     uses_model = any(s != "fixed_workflow" for s in strategies)
     provider, model = (
         args.provider,

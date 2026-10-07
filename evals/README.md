@@ -29,10 +29,10 @@ Free tiers limit tokens per minute. Calls are paced (`--min-interval-s`, default
 0 for others) and a rate-limit error is waited out and retried (`--rate-limit-retries`,
 `--rate-limit-wait-s`). A run where the model could not be reached or answered (rate limit,
 bad key, network) is recorded as `invalid` with a reason and is NOT scored: it says nothing
-about the agent. After 3 invalid runs in a row the eval stops as unreachable (exit code 4) and
+about the agent. Waiting for the quota does not count against a run's 90 s time limit. After 3 invalid runs in a row the eval stops as unreachable (exit code 4) and
 still writes its results. Exit codes: 0 ok, 3 spend cap, 4 model unreachable.
 
-Options: `--set smoke|full`, `--strategies` (comma list of `one_shot`, `fixed_workflow`,
+Options: `--only S-04,S-06` (just those scenarios), `--set smoke|full`, `--strategies` (comma list of `one_shot`, `fixed_workflow`,
 `agent`), `--runs N` (model strategies only; the fixed workflow is deterministic and runs
 once), `--cap-inr` (default 1500), `--usd-inr`, `--out`, `--dry-plan`.
 
