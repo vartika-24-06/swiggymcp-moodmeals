@@ -2,6 +2,8 @@
 
 
 ## Full eval run, gpt-5-mini, prompt v5 (2026-10-07)
+*First-run numbers. After prompt v6 and the `missing_signals` fix, S-04, S-05, S-11 were re-run and the merged file reads agent 71 of 71, validator off 67 of 71, fixed workflow 16 of 24 (see `docs/case-study.md`). The S-23 limit was raised to 6 by the owner.*
+
 24 scenarios x (3 `agent`, 3 `agent_no_validator`, 1 `fixed_workflow`) = 166 scored runs (2 excluded), about Rs 135, about 2 hours of wall clock including interruptions.
 
 | | agent | agent_no_validator | fixed_workflow |
