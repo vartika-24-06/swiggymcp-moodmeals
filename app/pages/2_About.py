@@ -1,4 +1,4 @@
-"""About page (T5.5). Draft wording: the owner approves it."""
+"""About page (T5.5). Wording approved by the owner on 2026-10-07: change it only on request."""
 
 import streamlit as st
 

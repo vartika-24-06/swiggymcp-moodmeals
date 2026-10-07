@@ -77,10 +77,10 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 | T5.2 ✅ done 2026-10-05 | Approval card showing exactly what the action will do; dry-run disclaimer; one action per approval | CC | M | Approve and reject both work; nothing executes without approval | R10 |
 | T5.3 ✅ done 2026-10-05 | Trace panel with rationale, tool calls, validation, tokens, cost and time | CC | M | Every event type renders; cost shown before and after a run | R13, R14.3 |
 | T5.4 ✅ done 2026-10-05 | Key input (password field, memory only), pass-through notice, mode check that refuses dry-run and live on the public deployment | CC | S | Test for the startup refusal; notice visible | R12.5, R10.5 |
-| T5.5 draft written 2026-10-05, wording approval pending | About page: limits, disclaimer, privacy, cost, no Swiggy endorsement | Both | S | You approve the wording | R2.3, R15.3 |
+| T5.5 ✅ done 2026-10-07 (wording approved by the owner) | About page: limits, disclaimer, privacy, cost, no Swiggy endorsement | Both | S | You approve the wording | R2.3, R15.3 |
 | T5.6 ✅ done 2026-10-05 | Replay page and "export run" in mock mode | CC | M | A recorded run plays with no model or tool calls | R15.1 |
 
-**M2 reached here (2026-10-05), apart from the About wording approval.**
+**M2 reached here (2026-10-05); the About wording was approved 2026-10-07.**
 
 ## Phase 6: Real Swiggy (your machine only)
 
