@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-PROMPT_VERSION = "agent_v4"
+PROMPT_VERSION = "agent_v5"
 _PROMPT_DIR = Path(__file__).resolve().parents[2] / "prompts"
 
 RATIONALE = {"type": "string", "description": "One short line: why this action now"}

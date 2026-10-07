@@ -10,6 +10,7 @@ run ends, then returns. The UI calls `provide_answer`, `choose_address`, `approv
 from __future__ import annotations
 
 import re
+import time
 from collections.abc import Iterator
 from typing import Any
 
@@ -67,7 +68,17 @@ STOP_MESSAGES: dict[str, str] = {
 
 
 class Agent:
-    def __init__(self, llm: LLMClient, provider: ActionProvider, guard: Guard | None = None):
+    def __init__(
+        self,
+        llm: LLMClient,
+        provider: ActionProvider,
+        guard: Guard | None = None,
+        *,
+        strict_stop: bool = True,
+    ):
+        # strict_stop: a model may call stop_search only after trying restaurants AND Instamart
+        # (R4.3). The code baseline in the evals opts out: it is a fixed rule, not a model.
+        self.strict_stop = strict_stop
         self.llm = llm
         self.provider = provider
         self.guard = guard or Guard()
@@ -257,16 +268,20 @@ class Agent:
     def _step(self, state: RunState) -> None:
         view = build_model_view(state, self.guard.budget)
         state.notes.clear()
+        first_new, t0, tokens0 = len(state.events), time.monotonic(), self._tokens()
         try:
             action = parse_action(self.llm.next_action(view))
         except ProtocolError as e:
             self._protocol_error(state, str(e))
+            self._stamp(state, first_new, t0, tokens0)
             return
         except LLMError as e:
             detail = str(e)[:200]  # adapters never put keys or request bodies in this text
             state.add_event("error", "code", {"kind": "model_error", "detail": detail})
             self._stop(state, "model_error", f"{STOP_MESSAGES['model_error']} ({detail})")
+            self._stamp(state, first_new, t0, tokens0)
             return
+        ms = int((time.monotonic() - t0) * 1000)
         if isinstance(action, ToolCallAction):
             self._tool_call(state, action)
         elif isinstance(action, AskAction):
@@ -275,12 +290,38 @@ class Agent:
             self._stop_search(state, action)
         else:
             self._propose(state, action)
+        self._stamp(state, first_new, t0, tokens0, ms)
+
+    def _tokens(self) -> tuple[int, int]:
+        usage = self.llm.usage() if hasattr(self.llm, "usage") else None
+        return getattr(usage, "tokens_in", 0), getattr(usage, "tokens_out", 0)
+
+    def _stamp(
+        self,
+        state: RunState,
+        first_new: int,
+        t0: float,
+        tokens0: tuple[int, int],
+        ms: int | None = None,
+    ) -> None:
+        """The first event a model turn produced carries that call's latency and tokens, so
+        a slow or stalled call shows in the trace (R13)."""
+        if len(state.events) <= first_new:
+            return
+        e = state.events[first_new]
+        tin, tout = self._tokens()
+        e.latency_ms = ms if ms is not None else int((time.monotonic() - t0) * 1000)
+        e.tokens_in, e.tokens_out = max(0, tin - tokens0[0]), max(0, tout - tokens0[1])
 
     def _stop_search(self, state: RunState, a: StopAction) -> None:
         """The model gives up with a reason. Only after at least one real lookup (R4.3)."""
-        if state.tool_calls == 0:
+        tried = {t["tool"] for t in state.tool_log}
+        food = tried & {"search_restaurants", "get_menu", "search_dish"}
+        if self.strict_stop and (not food or "search_products" not in tried):
             self._protocol_error(
-                state, "stop_search comes only after you have searched at least once"
+                state,
+                "stop_search comes only after you have tried both restaurants (search_restaurants) "
+                "and ready-to-eat or quick-cook items on Instamart (search_products)",
             )
             return
         state.protocol_errors = 0

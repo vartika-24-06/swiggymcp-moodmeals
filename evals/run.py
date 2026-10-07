@@ -89,7 +89,9 @@ def eval_guard(llm: Any) -> Guard:
 
 def run_scripted(sc: Scenario, llm: Any, strategy: str = "agent", guard: Guard | None = None):
     """The scripted user drives the loop until the approval screen, a stop, or the end."""
-    agent = Agent(llm, _provider(sc), guard or eval_guard(llm))
+    agent = Agent(
+        llm, _provider(sc), guard or eval_guard(llm), strict_stop=strategy != "fixed_workflow"
+    )
     state = agent.start(sc.user_script.opening, sc.user_script.hard_constraints())
     steps, applied = list(sc.user_script.mid_run), 0
     for _ in range(MAX_TURNS):

@@ -175,4 +175,5 @@ def test_stop_search_is_offered_and_passes_through():
     from moodmeals.core.actions import StopAction, parse_action
 
     assert parse_action(raw) == StopAction("Nothing to offer.", "r")
-    assert "stop_search" in load_system_prompt() and "NOT POSSIBLE" in load_system_prompt()
+    prompt = load_system_prompt()
+    assert "stop_search" in prompt and "NOT POSSIBLE" in prompt and "BOTH" in prompt

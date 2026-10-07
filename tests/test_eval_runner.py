@@ -15,6 +15,7 @@ from evals import runner  # noqa: E402
 from evals.scenario import load_scenarios  # noqa: E402
 from moodmeals.models.adapters import Usage  # noqa: E402
 from moodmeals.models.demo import DemoLLM  # noqa: E402
+from moodmeals.models.schema import PROMPT_VERSION  # noqa: E402
 
 SMOKE = load_scenarios(smoke_only=True)
 PER_CALL_USD = 0.01
@@ -145,7 +146,7 @@ def test_main_runs_the_demo_and_writes_a_file(tmp_path, capsys):
     assert code == 0 and "Plan: 6 scenarios" in out and "Wrote" in out
     [path] = list(tmp_path.glob("*.json"))
     data = json.loads(path.read_text(encoding="utf-8"))
-    assert data["prompt_version"] == "agent_v4" and data["git"]["commit"]
+    assert data["prompt_version"] == PROMPT_VERSION and data["git"]["commit"]
     assert data["provider"] == "demo" and "temperature" in data
 
 

@@ -395,19 +395,31 @@ def stop(reason="Restaurants are closed and I found no quick meal either."):
     return act("stop_search", reason=reason)
 
 
-def test_stop_search_after_a_search_ends_the_run_with_the_reason():
-    agent, state, _, _ = make([search(), stop()])
+def products(q="instant"):
+    return act("tool_call", name="search_products", params={"query": q})
+
+
+def test_stop_search_after_trying_both_paths_ends_the_run_with_the_reason():
+    agent, state, _, _ = make([search(), products(), stop()])
     agent.run(state)
     assert state.phase == "STOPPED" and state.stop_reason == "no_option"
     assert state.outcome["message"] == "Restaurants are closed and I found no quick meal either."
     assert state.plan is None
 
 
-def test_stop_search_before_any_search_is_a_protocol_error_not_a_stop():
-    agent, state, llm, _ = make([stop(), search(), stop()])
+def test_stop_search_after_only_restaurants_is_refused_until_instamart_is_tried():
+    agent, state, _, _ = make([search(), stop(), products(), stop()])
     agent.run(state)
-    assert any("at least once" in e.payload.get("detail", "") for e in state.events)
-    assert state.tool_calls == 1 and state.stop_reason == "no_option"  # it searched, then stopped
+    detail = [e.payload.get("detail", "") for e in state.events if e.type == "error"]
+    assert detail and "search_products" in detail[0]
+    assert state.stop_reason == "no_option" and state.tool_calls == 2  # it tried Instamart
+
+
+def test_stop_search_before_any_search_is_a_protocol_error_not_a_stop():
+    agent, state, _, _ = make([stop(), search(), products(), stop()])
+    agent.run(state)
+    assert any("both restaurants" in e.payload.get("detail", "") for e in state.events)
+    assert state.tool_calls == 2 and state.stop_reason == "no_option"
 
 
 def test_stop_search_twice_early_stops_cleanly_as_a_protocol_error():
@@ -416,11 +428,45 @@ def test_stop_search_twice_early_stops_cleanly_as_a_protocol_error():
     assert state.stop_reason == "protocol_error"
 
 
+def test_the_strict_stop_rule_can_be_turned_off_for_code_baselines():
+    provider = MockProvider(seed=1)
+    agent = Agent(FakeLLM([search(), stop()]), provider, Guard(), strict_stop=False)
+    state = agent.start("x")
+    agent.run(state)
+    assert state.stop_reason == "no_option"
+
+
 def test_stop_reason_is_redacted_and_capped():
-    agent, state, _, _ = make([search(), stop("Call 9876543210 now. " + "x" * 400)])
+    agent, state, _, _ = make([search(), products(), stop("Call 9876543210 now. " + "x" * 400)])
     agent.run(state)
     msg = state.outcome["message"]
     assert "9876543210" not in msg and len(msg) <= 200
+
+
+def test_each_model_turn_records_its_latency_and_tokens_on_its_first_event():
+    from moodmeals.models.demo import DemoLLM
+
+    class Slow(DemoLLM):
+        def next_action(self, view):
+            import time
+
+            time.sleep(0.02)
+            self._calls += 1  # DemoLLM counts calls in its own next_action
+            return super().next_action(view)
+
+        def usage(self):
+            from moodmeals.models.adapters import Usage
+
+            return Usage(
+                calls=self._calls, tokens_in=100 * self._calls, tokens_out=10 * self._calls
+            )
+
+    agent = Agent(Slow(), MockProvider(seed=1), Guard())
+    state = agent.start("kya khana hai", Constraints(veg=True))
+    agent.run(state)
+    stamped = [e for e in state.events if e.latency_ms > 0]
+    assert stamped and all(e.latency_ms >= 15 for e in stamped)
+    assert any(e.tokens_in > 0 and e.tokens_out > 0 for e in stamped)
 
 
 def test_demo_model_offers_a_quick_meal_when_every_restaurant_is_closed():
