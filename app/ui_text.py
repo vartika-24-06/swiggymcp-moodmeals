@@ -47,6 +47,7 @@ def trace_rows(events: list[Event]) -> list[dict[str, Any]]:
             "step": e.type,
             "what": event_line(e),
             "why": e.rationale or "",
+            "ms": e.latency_ms or None,  # the model call that produced this step, if recorded
         }
         for e in events
     ]

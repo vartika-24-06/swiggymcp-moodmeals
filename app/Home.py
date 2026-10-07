@@ -242,7 +242,9 @@ elif state.waiting == "address":
 if state.plan and state.phase == "AWAITING_APPROVAL":
     plan = state.plan
     with st.container(border=True):
-        st.subheader("Cook at home" if plan.path == "cook" else "Order in")
+        st.subheader(
+            "Cook or grab it from Instamart" if plan.path == "cook" else "Order in from Swiggy Food"
+        )
         st.write(plan.reason)
         for it in plan.items:
             st.write(f"• {it.qty} × {it.name} — ₹{it.unit_price * it.qty}")
@@ -279,7 +281,9 @@ if state.plan and state.phase == "AWAITING_APPROVAL":
 # ---- the end
 if state.phase in ("DONE", "STOPPED") and state.outcome:
     out = state.outcome
-    if out["kind"] == "stopped":
+    if out["kind"] == "stopped" and out.get("reason") == "no_option":
+        st.warning(out["message"])  # an honest "nothing to offer", not an error
+    elif out["kind"] == "stopped":
         st.error(out["message"])
     elif out["kind"] == "order_placed":
         st.success("Done (simulated). No real order was placed.")

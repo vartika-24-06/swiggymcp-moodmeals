@@ -1,0 +1,256 @@
+{
+ "version": 1,
+ "title": "Every restaurant is closed: a quick meal from Instamart",
+ "note": "Ordering in is impossible, so it says why and offers a ready-to-eat item instead of forcing a plan from a closed restaurant.",
+ "tag": "success",
+ "run_id": "cd63104d6468",
+ "mock_seed": 1,
+ "model": "scripted-demo",
+ "prompt_version": "agent_v5",
+ "date": "2026-10-07",
+ "outcome": {
+  "kind": "order_placed",
+  "simulated": true
+ },
+ "events": [
+  {
+   "run_id": "cd63104d6468",
+   "step": 0,
+   "ts": 1791385967.214435,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "text": "Biryani khani hai"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 1,
+   "ts": 1791385967.2144895,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "note": "Using your saved Home address"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 2,
+   "ts": 1791385967.2145503,
+   "type": "question",
+   "actor": "model",
+   "payload": {
+    "question": "Veg, non-veg, or no preference today?",
+    "field": "diet",
+    "options": [
+     "Veg",
+     "Non-veg",
+     "No preference"
+    ]
+   },
+   "rationale": "Diet is a hard constraint",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 3,
+   "ts": 1791385967.2146757,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "answer": "non veg",
+    "field": "diet"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 4,
+   "ts": 1791385967.2147639,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "biryani"
+    }
+   },
+   "rationale": "Look for biryani nearby",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 5,
+   "ts": 1791385967.2149942,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 6,
+   "ts": 1791385967.2150788,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_products",
+    "params": {
+     "query": "instant"
+    }
+   },
+   "rationale": "Every restaurant is closed right now; look for quick meals",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 7,
+   "ts": 1791385967.215553,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_products",
+    "count": 20
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 8,
+   "ts": 1791385967.2157066,
+   "type": "validation",
+   "actor": "code",
+   "payload": {
+    "ok": true,
+    "warnings": []
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 9,
+   "ts": 1791385967.21575,
+   "type": "plan",
+   "actor": "model",
+   "payload": {
+    "path": "cook",
+    "reason": "Every restaurant is closed right now, so here is a quick meal from Instamart: Mock Dairy Instant Poha Cup.",
+    "items": [
+     {
+      "kind": "product",
+      "entity_id": "600019",
+      "name": "Mock Dairy Instant Poha Cup",
+      "variant_id": "700190",
+      "qty": 1,
+      "unit_price": 45
+     }
+    ],
+    "item_total": 45,
+    "restaurant_id": null,
+    "eta_minutes": null,
+    "assumptions": [
+     "Eating alone",
+     "Needs little or no cooking"
+    ],
+    "mode_notes": []
+   },
+   "rationale": "Order-in not possible; offering a quick meal",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 10,
+   "ts": 1791385967.2159493,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "update_cart",
+    "hash": "05aca816dec0"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 11,
+   "ts": 1791385967.2160068,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "update_cart",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 12,
+   "ts": 1791385967.2160583,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "checkout",
+    "hash": "a8daf5b23593"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "cd63104d6468",
+   "step": 13,
+   "ts": 1791385967.2161028,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "checkout",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  }
+ ]
+}

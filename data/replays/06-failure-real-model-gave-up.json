@@ -1,0 +1,123 @@
+{
+ "version": 1,
+ "title": "Failure (real model): gave up without trying Instamart",
+ "note": "A real model on the free tier stopped after two restaurant searches and never looked at quick meals. This led to a code rule: stop_search is refused until both restaurants and Instamart have been tried.",
+ "tag": "failure",
+ "run_id": "evalrun",
+ "mock_seed": 1,
+ "model": "qwen/qwen3.8-27b",
+ "prompt_version": "agent_v4",
+ "date": "2026-10-07",
+ "outcome": {
+  "kind": "stopped",
+  "message": "Stopped: no_option"
+ },
+ "events": [
+  {
+   "run_id": "evalrun",
+   "step": 0,
+   "ts": 0.0,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "text": "Biryani khani hai"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "evalrun",
+   "step": 1,
+   "ts": 0.0,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "note": "Using your saved Home address"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "evalrun",
+   "step": 2,
+   "ts": 0.0,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "biryani"
+    }
+   },
+   "rationale": "Person wants biryani, so start by finding biryani restaurants near the confirmed address.",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "evalrun",
+   "step": 3,
+   "ts": 0.0,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "evalrun",
+   "step": 4,
+   "ts": 0.0,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "chicken biryani"
+    }
+   },
+   "rationale": "Original search returned no open restaurants; retrying with a more specific dish to find open options.",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "evalrun",
+   "step": 5,
+   "ts": 0.0,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "evalrun",
+   "step": 6,
+   "ts": 0.0,
+   "type": "stop",
+   "actor": "code",
+   "payload": {
+    "reason": "no_option"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  }
+ ]
+}

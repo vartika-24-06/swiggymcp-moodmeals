@@ -108,9 +108,9 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T8.1 | Replay gallery: at least 6 recorded mock runs, including 2 failures | Both | M | Gallery works with no keys | R15.1 |
+| T8.1 ✅ done 2026-10-07 (6 recorded runs, 2 failures; `python scripts/make_replays.py <results.json>` records them) | Replay gallery: at least 6 recorded mock runs, including 2 failures | Both | M | Gallery works with no keys | R15.1 |
 | T8.2 | Check the product name and branding (Q4); remove any wording that implies Swiggy endorsement | You | S | Name settled; no Swiggy logos | R15.3 |
-| T8.3 | Demo video script, then recording on localhost in dry-run with a test account or full redaction (Q7) | You | M | Video shows no addresses, phones or names | R15.2, R12.4 |
+| T8.3 script drafted 2026-10-07 (docs/demo_script.md); recording is yours | Demo video script, then recording on localhost in dry-run with a test account or full redaction (Q7) | You | M | Video shows no addresses, phones or names | R15.2, R12.4 |
 | T8.4 | README: what it is, architecture picture, limits, the Dineout decision, how to run each mode | Both | M | A reader can run mock mode in five minutes | R15.3 |
 | T8.5 | Case study outline: problem, the three-question principle, what the agent decides versus code, eval results including failures, what I would do next | Both | M | Draft you are happy with | goal of the project |
 | T8.6 | Public deployment, mock only, on a free host | You | S | Link works with no key (replay) and with a key | N1, D6 |

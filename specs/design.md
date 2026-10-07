@@ -501,3 +501,8 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
   - The results file is kept as published (failures included, E1).
 - Fourth Groq run (S-04 and S-05 only): S-04 was INVALID with `http 413: Request too large` (Groq's free tier caps one request at roughly 6k tokens). The model view sent every earlier tool result in full on every turn, so a run that searched restaurants and Instamart passed the cap. Fix (also a cost saving for every model, R14): the view keeps only the 3 most recent tool results in full (`RECENT_RESULTS_IN_FULL`, older ones become a one-line note with their count; the ledger still holds every item for the validator), and each result shows at most 8 restaurants, 12 products or 24 menu items. The runner now keeps 300 characters of an invalid run's reason, so a provider's limit numbers are visible.
 
+### Phase 8, T8.1 implementation notes (2026-10-07)
+
+- `data/replays/` holds six recorded mock runs (four successes by the scripted demo model, two failures: the fixed baseline choosing the wrong path, and a real model's failed run read from an eval results file). `scripts/make_replays.py` records them; replays carry `title`, `note` (what to notice) and `tag` (success or failure). `replay_from_trace` builds a replay from a failed run's trace. The Replay page lists runs by title with a mark, shows the note and a plain outcome line.
+- Plan card headings: "Order in from Swiggy Food" and "Cook or grab it from Instamart" (a quick-meal fallback is not cooking). A `no_option` stop is a warning, not an error. The trace table shows the model call's latency (`ms`) when recorded.
+

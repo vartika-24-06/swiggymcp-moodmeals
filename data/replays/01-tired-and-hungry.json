@@ -1,0 +1,256 @@
+{
+ "version": 1,
+ "title": "Tired and hungry: order in",
+ "note": "Low energy points to ordering in. It asks one question (diet), searches, checks the menu, and only then proposes a plan. Cart and order are two separate approvals.",
+ "tag": "success",
+ "run_id": "88ac08bb016c",
+ "mock_seed": 1,
+ "model": "scripted-demo",
+ "prompt_version": "agent_v5",
+ "date": "2026-10-07",
+ "outcome": {
+  "kind": "order_placed",
+  "simulated": true
+ },
+ "events": [
+  {
+   "run_id": "88ac08bb016c",
+   "step": 0,
+   "ts": 1791385967.1714888,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "text": "Bahut thaka hua hoon, kuch halka chahiye"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 1,
+   "ts": 1791385967.1717112,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "note": "Using your saved Home address"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 2,
+   "ts": 1791385967.2088797,
+   "type": "question",
+   "actor": "model",
+   "payload": {
+    "question": "Veg, non-veg, or no preference today?",
+    "field": "diet",
+    "options": [
+     "Veg",
+     "Non-veg",
+     "No preference"
+    ]
+   },
+   "rationale": "Diet is a hard constraint",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 36
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 3,
+   "ts": 1791385967.2090366,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "answer": "veg",
+    "field": "diet"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 4,
+   "ts": 1791385967.2091868,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "thali"
+    }
+   },
+   "rationale": "Look for thali nearby",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 5,
+   "ts": 1791385967.2096488,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 6,
+   "ts": 1791385967.2097528,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "get_menu",
+    "params": {
+     "restaurant_id": "61093"
+    }
+   },
+   "rationale": "See what Test Tiffin Co has",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 7,
+   "ts": 1791385967.2099788,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "get_menu",
+    "count": 12
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 8,
+   "ts": 1791385967.210155,
+   "type": "validation",
+   "actor": "code",
+   "payload": {
+    "ok": true,
+    "warnings": []
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 9,
+   "ts": 1791385967.2102005,
+   "type": "plan",
+   "actor": "model",
+   "payload": {
+    "path": "order_in",
+    "reason": "Kadhi Chawal from Test Tiffin Co is open and quick.",
+    "items": [
+     {
+      "kind": "dish",
+      "entity_id": "61093012",
+      "name": "Kadhi Chawal",
+      "variant_id": null,
+      "qty": 1,
+      "unit_price": 150
+     }
+    ],
+    "item_total": 150,
+    "restaurant_id": "61093",
+    "eta_minutes": 39,
+    "assumptions": [
+     "Eating alone",
+     "Budget not stated"
+    ],
+    "mode_notes": []
+   },
+   "rationale": "Open restaurant, item in stock",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 10,
+   "ts": 1791385967.2104063,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "update_food_cart",
+    "hash": "a<digits>b6a1"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 11,
+   "ts": 1791385967.2104697,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "update_food_cart",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 12,
+   "ts": 1791385967.210528,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "place_food_order",
+    "hash": "5f3867d3bd18"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "88ac08bb016c",
+   "step": 13,
+   "ts": 1791385967.2105815,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "place_food_order",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  }
+ ]
+}

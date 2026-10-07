@@ -1,0 +1,220 @@
+{
+ "version": 1,
+ "title": "Failure: the fixed baseline cannot choose to cook",
+ "note": "The person wants to cook dal-chawal. This baseline always orders in, so it proposes a restaurant dish. It is why the real agent chooses a path.",
+ "tag": "failure",
+ "run_id": "bc4e67092c65",
+ "mock_seed": 1,
+ "model": "fixed-workflow",
+ "prompt_version": "agent_v5",
+ "date": "2026-10-07",
+ "outcome": {
+  "kind": "order_placed",
+  "simulated": true
+ },
+ "events": [
+  {
+   "run_id": "bc4e67092c65",
+   "step": 0,
+   "ts": 1791385967.219459,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "text": "Aaj ghar pe kuch simple banana hai, dal chawal jaisa"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 1,
+   "ts": 1791385967.2195191,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "note": "Using your saved Home address"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 2,
+   "ts": 1791385967.2195904,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "biryani"
+    }
+   },
+   "rationale": "fixed",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 3,
+   "ts": 1791385967.2206228,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 4,
+   "ts": 1791385967.2207093,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "get_menu",
+    "params": {
+     "restaurant_id": "46857"
+    }
+   },
+   "rationale": "fixed",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 5,
+   "ts": 1791385967.2208862,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "get_menu",
+    "count": 7
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 6,
+   "ts": 1791385967.2210007,
+   "type": "validation",
+   "actor": "code",
+   "payload": {
+    "ok": true,
+    "warnings": []
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 7,
+   "ts": 1791385967.221028,
+   "type": "plan",
+   "actor": "model",
+   "payload": {
+    "path": "order_in",
+    "reason": "Paneer Chilli from Faux Falafel.",
+    "items": [
+     {
+      "kind": "dish",
+      "entity_id": "46857007",
+      "name": "Paneer Chilli",
+      "variant_id": null,
+      "qty": 1,
+      "unit_price": 230
+     }
+    ],
+    "item_total": 230,
+    "restaurant_id": "46857",
+    "eta_minutes": 35,
+    "assumptions": [
+     "Eating alone"
+    ],
+    "mode_notes": []
+   },
+   "rationale": "Fixed rule: best open restaurant, one in-budget item",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 8,
+   "ts": 1791385967.2211766,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "update_food_cart",
+    "hash": "1e88b08e08ec"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 9,
+   "ts": 1791385967.2212365,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "update_food_cart",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 10,
+   "ts": 1791385967.2212892,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "place_food_order",
+    "hash": "5f3867d3bd18"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "bc4e67092c65",
+   "step": 11,
+   "ts": 1791385967.2213306,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "place_food_order",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  }
+ ]
+}

@@ -1,0 +1,276 @@
+{
+ "version": 1,
+ "title": "Three saved addresses: the picker is a question",
+ "note": "The address is never chosen for you. Picking one counts toward the three-question limit.",
+ "tag": "success",
+ "run_id": "91f4103d7a0c",
+ "mock_seed": 2,
+ "model": "scripted-demo",
+ "prompt_version": "agent_v5",
+ "date": "2026-10-07",
+ "outcome": {
+  "kind": "order_placed",
+  "simulated": true
+ },
+ "events": [
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 0,
+   "ts": 1791385967.211762,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "text": "Kuch bhi chalega, tum hi batao"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 1,
+   "ts": 1791385967.2118652,
+   "type": "question",
+   "actor": "code",
+   "payload": {
+    "kind": "address_picker",
+    "options": [
+     "Home",
+     "Work",
+     "Other"
+    ]
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 2,
+   "ts": 1791385967.2120683,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "address_choice": "address_1",
+    "label": "Home"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 3,
+   "ts": 1791385967.2121542,
+   "type": "question",
+   "actor": "model",
+   "payload": {
+    "question": "Veg, non-veg, or no preference today?",
+    "field": "diet",
+    "options": [
+     "Veg",
+     "Non-veg",
+     "No preference"
+    ]
+   },
+   "rationale": "Diet is a hard constraint",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 4,
+   "ts": 1791385967.212268,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "answer": "no preference",
+    "field": "diet"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 5,
+   "ts": 1791385967.2123678,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "biryani"
+    }
+   },
+   "rationale": "Look for biryani nearby",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 6,
+   "ts": 1791385967.212601,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 7,
+   "ts": 1791385967.2127059,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "get_menu",
+    "params": {
+     "restaurant_id": "42483"
+    }
+   },
+   "rationale": "See what Sample Dhaba has",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 8,
+   "ts": 1791385967.212884,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "get_menu",
+    "count": 7
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 9,
+   "ts": 1791385967.2130558,
+   "type": "validation",
+   "actor": "code",
+   "payload": {
+    "ok": true,
+    "warnings": []
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 10,
+   "ts": 1791385967.2130842,
+   "type": "plan",
+   "actor": "model",
+   "payload": {
+    "path": "order_in",
+    "reason": "Chicken Biryani from Sample Dhaba is open and quick.",
+    "items": [
+     {
+      "kind": "dish",
+      "entity_id": "42483005",
+      "name": "Chicken Biryani",
+      "variant_id": null,
+      "qty": 1,
+      "unit_price": 265
+     }
+    ],
+    "item_total": 265,
+    "restaurant_id": "42483",
+    "eta_minutes": 22,
+    "assumptions": [
+     "Eating alone",
+     "Budget not stated"
+    ],
+    "mode_notes": []
+   },
+   "rationale": "Open restaurant, item in stock",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 11,
+   "ts": 1791385967.2132711,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "update_food_cart",
+    "hash": "f3db5c92cf83"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 12,
+   "ts": 1791385967.2133412,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "update_food_cart",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 13,
+   "ts": 1791385967.2134066,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "place_food_order",
+    "hash": "5f3867d3bd18"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "91f4103d7a0c",
+   "step": 14,
+   "ts": 1791385967.2134635,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "place_food_order",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  }
+ ]
+}

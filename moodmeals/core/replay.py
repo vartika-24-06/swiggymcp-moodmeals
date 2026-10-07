@@ -19,13 +19,23 @@ class ReplayError(ValueError):
 
 
 def export_run(
-    state: RunState, *, seed: int, model: str, prompt_version: str, title: str = ""
+    state: RunState,
+    *,
+    seed: int,
+    model: str,
+    prompt_version: str,
+    title: str = "",
+    note: str = "",
+    tag: str = "",
 ) -> dict[str, Any]:
+    """`note` says what to notice; `tag` is "success" or "failure" (the replay gallery)."""
     if state.mode != "mock":
         raise ReplayError("Only mock-mode runs can be exported")
     return {
         "version": 1,
         "title": title or state.user_text[:60],
+        **({"note": note} if note else {}),
+        **({"tag": tag} if tag else {}),
         "run_id": state.run_id,
         "mock_seed": seed,
         "model": model,
@@ -33,6 +43,57 @@ def export_run(
         "date": time.strftime("%Y-%m-%d"),
         "outcome": state.outcome,
         "events": [e.model_dump() for e in state.events],
+    }
+
+
+def replay_from_trace(
+    trace: list[dict[str, Any]],
+    *,
+    title: str,
+    note: str,
+    seed: int,
+    model: str,
+    prompt_version: str,
+    date: str,
+    tag: str = "failure",
+) -> dict[str, Any]:
+    """A replay built from a failed run's trace in an eval results file (mock data only).
+
+    The trace keeps step, type, actor, payload and rationale; the rest of an event is filled
+    in. The outcome is read from the last stop event."""
+    events = [
+        {
+            "run_id": "evalrun",
+            "step": e["step"],
+            "ts": 0.0,
+            "type": e["type"],
+            "actor": e["actor"],
+            "payload": e.get("payload") or {},
+            "rationale": e.get("rationale"),
+            "tokens_in": 0,
+            "tokens_out": 0,
+            "latency_ms": 0,
+        }
+        for e in trace
+    ]
+    stop = next((e for e in reversed(trace) if e["type"] == "stop"), None)
+    outcome = (
+        {"kind": "stopped", "message": f"Stopped: {stop['payload'].get('reason', 'unknown')}"}
+        if stop
+        else None
+    )
+    return {
+        "version": 1,
+        "title": title,
+        "note": note,
+        "tag": tag,
+        "run_id": "evalrun",
+        "mock_seed": seed,
+        "model": model,
+        "prompt_version": prompt_version,
+        "date": date,
+        "outcome": outcome,
+        "events": events,
     }
 
 

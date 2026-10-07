@@ -1,0 +1,285 @@
+{
+ "version": 1,
+ "title": "The budget drops after the plan is shown",
+ "note": "The person lowers the budget to Rs 120 once a plan is on screen. The run updates the plan instead of restarting, and the new dish fits the new budget.",
+ "tag": "success",
+ "run_id": "ccd44b4622ea",
+ "mock_seed": 1,
+ "model": "scripted-demo",
+ "prompt_version": "agent_v5",
+ "date": "2026-10-07",
+ "outcome": {
+  "kind": "order_placed",
+  "simulated": true
+ },
+ "events": [
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 0,
+   "ts": 1791385967.2170765,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "text": "Lunch for me, veg, budget around 400"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 1,
+   "ts": 1791385967.2171338,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "note": "Using your saved Home address"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 2,
+   "ts": 1791385967.2172046,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "search_restaurants",
+    "params": {
+     "query": "thali"
+    }
+   },
+   "rationale": "Look for thali nearby",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 3,
+   "ts": 1791385967.2174,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "search_restaurants",
+    "count": 10
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 4,
+   "ts": 1791385967.2174637,
+   "type": "tool_call",
+   "actor": "model",
+   "payload": {
+    "tool": "get_menu",
+    "params": {
+     "restaurant_id": "61093"
+    }
+   },
+   "rationale": "See what Test Tiffin Co has",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 5,
+   "ts": 1791385967.2176147,
+   "type": "tool_result_summary",
+   "actor": "code",
+   "payload": {
+    "tool": "get_menu",
+    "count": 12
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 6,
+   "ts": 1791385967.2177544,
+   "type": "validation",
+   "actor": "code",
+   "payload": {
+    "ok": true,
+    "warnings": []
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 7,
+   "ts": 1791385967.217788,
+   "type": "plan",
+   "actor": "model",
+   "payload": {
+    "path": "order_in",
+    "reason": "Kadhi Chawal from Test Tiffin Co is open and quick.",
+    "items": [
+     {
+      "kind": "dish",
+      "entity_id": "61093012",
+      "name": "Kadhi Chawal",
+      "variant_id": null,
+      "qty": 1,
+      "unit_price": 150
+     }
+    ],
+    "item_total": 150,
+    "restaurant_id": "61093",
+    "eta_minutes": 39,
+    "assumptions": [
+     "Eating alone",
+     "Within budget"
+    ],
+    "mode_notes": []
+   },
+   "rationale": "Open restaurant, item in stock",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 8,
+   "ts": 1791385967.2179728,
+   "type": "user_input",
+   "actor": "user",
+   "payload": {
+    "changed": [
+     "budget"
+    ]
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 9,
+   "ts": 1791385967.2180665,
+   "type": "validation",
+   "actor": "code",
+   "payload": {
+    "ok": true,
+    "warnings": []
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 10,
+   "ts": 1791385967.218088,
+   "type": "plan",
+   "actor": "model",
+   "payload": {
+    "path": "order_in",
+    "reason": "Curd Rice from Test Tiffin Co is open and quick.",
+    "items": [
+     {
+      "kind": "dish",
+      "entity_id": "61093003",
+      "name": "Curd Rice",
+      "variant_id": null,
+      "qty": 1,
+      "unit_price": 105
+     }
+    ],
+    "item_total": 105,
+    "restaurant_id": "61093",
+    "eta_minutes": 39,
+    "assumptions": [
+     "Eating alone",
+     "Within budget"
+    ],
+    "mode_notes": []
+   },
+   "rationale": "Open restaurant, item in stock",
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 11,
+   "ts": 1791385967.218241,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "update_food_cart",
+    "hash": "a734b91cde88"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 12,
+   "ts": 1791385967.2182972,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "update_food_cart",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 13,
+   "ts": 1791385967.2183537,
+   "type": "approval",
+   "actor": "user",
+   "payload": {
+    "decision": "approved",
+    "tool": "place_food_order",
+    "hash": "5f3867d3bd18"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  },
+  {
+   "run_id": "ccd44b4622ea",
+   "step": 14,
+   "ts": 1791385967.2184012,
+   "type": "write_executed",
+   "actor": "code",
+   "payload": {
+    "tool": "place_food_order",
+    "status": "simulated",
+    "reason": "ok"
+   },
+   "rationale": null,
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "latency_ms": 0
+  }
+ ]
+}
