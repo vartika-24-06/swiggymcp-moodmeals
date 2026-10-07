@@ -114,7 +114,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 | T8.4 done 2026-10-08 | README: what it is, architecture picture, limits, the Dineout decision, how to run each mode | Both | M | A reader can run mock mode in five minutes | R15.3 |
 | T8.5 draft written 2026-10-08 (`docs/case-study.md`) | Case study outline: problem, the three-question principle, what the agent decides versus code, eval results including failures, what I would do next | Both | M | Draft you are happy with | goal of the project |
 | T8.6 prepared 2026-10-08 (`docs/deploy.md`, `requirements.txt`); deploying is yours | Public deployment, mock only, on a free host | You | S | Link works with no key (replay) and with a key | N1, D6 |
-| T8.7 | Final pass against the definition of done in requirements section 11 | Both | S | Every box ticked or an honest note | DoD |
+| T8.7 done 2026-10-08 (`docs/definition-of-done.md`) | Final pass against the definition of done in requirements section 11 | Both | S | Every box ticked or an honest note | DoD |
 
 **M4 reached here.**
 
