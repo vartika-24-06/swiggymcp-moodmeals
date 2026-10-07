@@ -100,7 +100,7 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 | T7.3 ✅ done 2026-10-07 (runner, spend cap and results file tested with fakes; no real model run yet) | Runner with a spend cap (default ₹1,500), results JSON with model, prompt version and commit | CC | M | A capped run stops at the cap; results file written | E2 |
 | T7.4 ✅ done 2026-10-07 (smoke runs on Groq and gpt-5-mini; failures sorted in docs/case-study-notes.md) | Smoke run (6 scenarios, 1 run each), read the failures, fix what is a bug | Both | M | Failures sorted into bugs and genuine limits | 13.4 |
 | T7.5 all 24 scenarios written and approved by the owner 2026-10-07 (S-01 kept as written, budget as an answer); `agent_no_validator` built; full run done 2026-10-07 (gpt-5-mini, evals/results/2026-10-07-gpt-5-mini-full.json, about Rs 135); owner decisions made: S-04/S-05 stay strict, S-23 limit raised to 6, S-11 fixed (missing_signals bug, prompt v6); re-run of S-04, S-05, S-11 on v6 done (agent 71 of 71) | Remaining scenarios (24 total), `agent_no_validator`, then the full run (3 runs each) if the budget allows | Both | L | Results committed, including failures | R15, E1, E3 |
-| T7.6 | Evals dashboard page reading the committed results | CC | M | Charts by strategy; failure gallery; counts shown as "k of n" | R15 |
+| T7.6 done 2026-10-08 (`app/pages/3_Results.py`, `evals/report.py`) | Evals dashboard page reading the committed results | CC | M | Charts by strategy; failure gallery; counts shown as "k of n" | R15 |
 
 **M3 reached here.**
 
