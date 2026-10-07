@@ -1,5 +1,7 @@
 # Eval scenarios
 
+Status: all 24 scenarios and the path rubric approved by the owner on 2026-10-07. Change them only on request, and rerun the smoke set after any change (a changed expectation makes earlier results incomparable).
+
 One YAML file per scenario, named `S-NN_short_name.yaml`. The loader is `evals/scenario.py`
 (strict: unknown keys and inconsistent expectations are errors). Scenarios use the **mock**
 world only and hold no real data. Nothing here calls a model; scoring is T7.2.

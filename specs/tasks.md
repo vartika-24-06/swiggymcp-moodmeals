@@ -95,11 +95,11 @@ Order matters: spikes first (they can change the plan), then pure code, then the
 
 | ID | Task | Who | Size | Done when | Covers |
 |---|---|---|---|---|---|
-| T7.1 built 2026-10-05; S-04 and S-05 revised per your review (quick-meal Instamart offer or a stop with a reason; R4.3, R9.1, design and prompt v4 updated); other scenarios and the rubric approval pending (Q5; see evals/scenarios/README.md) | Scenario format and the first 6 scenarios (smoke set) | Both | M | You review the scenarios and the expected paths (Q5) | R15, E |
+| T7.1 ✅ done 2026-10-07 (format, six smoke scenarios and the path rubric approved by the owner) | Scenario format and the first 6 scenarios (smoke set) | Both | M | You review the scenarios and the expected paths (Q5) | R15, E |
 | T7.2 ✅ done 2026-10-05 (scripted user, scoring and three strategies; tested on hand-made runs and the demo model; no real model run yet) | Scripted user, scoring functions, strategies `one_shot`, `fixed_workflow`, `agent` | CC | L | Scoring unit-tested on hand-made runs | 13.2, 13.3 |
 | T7.3 ✅ done 2026-10-07 (runner, spend cap and results file tested with fakes; no real model run yet) | Runner with a spend cap (default ₹1,500), results JSON with model, prompt version and commit | CC | M | A capped run stops at the cap; results file written | E2 |
 | T7.4 | Smoke run (6 scenarios, 1 run each), read the failures, fix what is a bug | Both | M | Failures sorted into bugs and genuine limits | 13.4 |
-| T7.5 scenarios written 2026-10-07 (S-07 to S-24, 24 in total, in the planned mix); your review pending; `agent_no_validator` and the full run still to do | Remaining scenarios (24 total), `agent_no_validator`, then the full run (3 runs each) if the budget allows | Both | L | Results committed, including failures | R15, E1, E3 |
+| T7.5 all 24 scenarios written and approved by the owner 2026-10-07 (S-01 kept as written, budget as an answer); `agent_no_validator` and the full run still to do | Remaining scenarios (24 total), `agent_no_validator`, then the full run (3 runs each) if the budget allows | Both | L | Results committed, including failures | R15, E1, E3 |
 | T7.6 | Evals dashboard page reading the committed results | CC | M | Charts by strategy; failure gallery; counts shown as "k of n" | R15 |
 
 **M3 reached here.**
