@@ -488,3 +488,9 @@ Hard-constraint satisfaction and hallucinated-entity counts are computed by the 
 - Clear stops are `no_option` and `could_not_verify` with a message of at least 10 characters. Limit stops, protocol errors and model errors are failures.
 - Known limits: the scripted demo model never cooks and asks only about diet, so it fails S-02 and never learns a budget that is only available as an answer. Scenarios that expect a budget but state it only as an answer (S-01) are unfair to any agent that does not ask; decide whether to state it up front.
 
+### Phase 7, T7.3 implementation notes (2026-10-07)
+
+- `evals/runner.py` (`python -m evals.runner`, usage in `evals/README.md`) runs scenarios x strategies x runs and writes `evals/results/<date>-<model>.json` (never overwriting: a `-2` suffix is added). A file holds the model, provider, prompt version, git commit and dirty flag, cap, spend, a "k of n" summary and one row per run; failed runs carry a trace.
+- Spend cap (E2, default Rs 1,500): token cost from `pricing.py`, converted at `--usd-inr`, checked before every model call by a wrapper client, so the total passes the cap by at most one call. The run in progress when the cap is hit is dropped from the scores but its cost is counted; the eval stops with exit code 3 and the file is still written. A model with no price is refused. The key is read from the environment and never printed or saved.
+- Not done: temperature is not set (the adapters use the provider default, and some models reject other values), so the file records "provider default" instead of the 0 to 0.2 in 13.4; "cache target answers for repeat runs" (E2) is not built; `USD_INR` (88.0) and the price table are unverified config.
+
