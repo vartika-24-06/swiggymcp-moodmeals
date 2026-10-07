@@ -1,0 +1,50 @@
+{
+ "version": 2,
+ "date": "2026-10-07",
+ "provider": "groq",
+ "model": "qwen/qwen3.8-27b",
+ "set": "smoke",
+ "prompt_version": "agent_v5",
+ "git": {
+  "commit": "e7aab8b",
+  "dirty": true
+ },
+ "temperature": "provider default (not set by the runner)",
+ "strategies": [
+  "agent"
+ ],
+ "runs_per_scenario": 1,
+ "scenarios": [
+  "S-04",
+  "S-05"
+ ],
+ "cap_inr": 1500.0,
+ "usd_inr": 88.0,
+ "usd_inr_checked": "2026-10-07 (unverified)",
+ "prices_checked": "2026-10-05 (unverified)",
+ "spent_inr": 0.0,
+ "aborted_by_cap": false,
+ "aborted_run": null,
+ "invalid_runs": 2,
+ "aborted_unreachable": false,
+ "n_runs": 2,
+ "summary": {},
+ "results": [
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent",
+   "run": 1,
+   "invalid": true,
+   "invalid_reason": "rate_limited"
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 1,
+   "invalid": true,
+   "invalid_reason": "rate_limited"
+  }
+ ]
+}

@@ -1,0 +1,496 @@
+{
+ "version": 2,
+ "date": "2026-10-07",
+ "provider": "openai",
+ "model": "gpt-5-mini",
+ "set": "smoke",
+ "prompt_version": "agent_v5",
+ "git": {
+  "commit": "bd60290",
+  "dirty": true
+ },
+ "temperature": "provider default (not set by the runner)",
+ "strategies": [
+  "agent"
+ ],
+ "runs_per_scenario": 1,
+ "scenarios": [
+  "S-01",
+  "S-02",
+  "S-03",
+  "S-04",
+  "S-05",
+  "S-06"
+ ],
+ "cap_inr": 1500.0,
+ "usd_inr": 97.0,
+ "usd_inr_checked": "2026-10-07 (given by the owner)",
+ "prices_checked": "2026-10-05 (unverified)",
+ "spent_inr": 5.1159,
+ "aborted_by_cap": false,
+ "aborted_run": null,
+ "aborted_unreachable": false,
+ "interrupted": false,
+ "invalid_runs": 0,
+ "n_runs": 6,
+ "summary": {
+  "agent": {
+   "outcome": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "path": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "hard_constraints": {
+    "passed": 5,
+    "applicable": 5,
+    "text": "5 of 5"
+   },
+   "no_hallucinated_entities": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "questions_within_limit": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "address_picker_asked": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "trajectory": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "no_writes_without_approval": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "stop_has_reason": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "fallback_plan": {
+    "passed": 1,
+    "applicable": 2,
+    "text": "1 of 2"
+   },
+   "failure_handled": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "replanned_after_change": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "plan_valid": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "assumptions_listed": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_size": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "all_checks": {
+    "passed": 5,
+    "applicable": 6,
+    "text": "5 of 6"
+   }
+  }
+ },
+ "results": [
+  {
+   "scenario_id": "S-01",
+   "group": "happy_path",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 10668,
+    "tokens_out": 2424,
+    "cost_usd": 0.007515,
+    "latency_ms": 30518,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-02",
+   "group": "happy_path",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 1,
+    "tokens_in": 8651,
+    "tokens_out": 2376,
+    "cost_usd": 0.00691475,
+    "latency_ms": 28096,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-03",
+   "group": "missing_info",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": true,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 10351,
+    "tokens_out": 3096,
+    "cost_usd": 0.00877975,
+    "latency_ms": 35727,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 3,
+    "tokens_in": 16632,
+    "tokens_out": 3089,
+    "cost_usd": 0.010336,
+    "latency_ms": 36551,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "fallback_plan"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": false,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 5,
+    "tokens_in": 10903,
+    "tokens_out": 3204,
+    "cost_usd": 0.00913375,
+    "latency_ms": 39935,
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner order karna hai, veg"
+     },
+     "rationale": null
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian"
+      }
+     },
+     "rationale": "Find open veg dinner options since user said 'veg'"
+    },
+    {
+     "step": 3,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian"
+      }
+     },
+     "rationale": "Find open veg dinner options since user said 'veg'"
+    },
+    {
+     "step": 4,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "error": "timeout"
+     },
+     "rationale": null
+    },
+    {
+     "step": 5,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_products",
+      "params": {
+       "query": "ready to eat veg"
+      }
+     },
+     "rationale": "Restaurant search timed out; check Instamart for veg ready-to-eat/instant dinner options"
+    },
+    {
+     "step": 6,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_products",
+      "count": 20
+     },
+     "rationale": null
+    },
+    {
+     "step": 7,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian"
+      }
+     },
+     "rationale": "Find open vegetarian restaurants for dinner"
+    },
+    {
+     "step": 8,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian"
+      }
+     },
+     "rationale": "Find open vegetarian restaurants for dinner"
+    },
+    {
+     "step": 9,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "error": "timeout"
+     },
+     "rationale": null
+    },
+    {
+     "step": 10,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": []
+     },
+     "rationale": null
+    },
+    {
+     "step": 11,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "cook",
+      "reason": "Restaurant search timeout hua isliye order-in nahin ho pa raha; Instamart se quick ready-to-cook Example Spices Khichdi Mix suggest kar raha hoon.",
+      "items": [
+       {
+        "kind": "product",
+        "entity_id": "600021",
+        "name": "Example Spices Ready-to-Cook Khichdi Mix",
+        "variant_id": "700210",
+        "qty": 1,
+        "unit_price": 75
+       }
+      ],
+      "item_total": 75,
+      "restaurant_id": null,
+      "eta_minutes": null,
+      "assumptions": [
+       "user requested vegetarian",
+       "assume party size = 1",
+       "pantry basics at home",
+       "ordering-in unavailable due to restaurant search timeouts"
+      ],
+      "mode_notes": []
+     },
+     "rationale": "Restaurant searches timed out; offering a quick Instamart ready-to-cook meal instead."
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-06",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 13870,
+    "tokens_out": 3297,
+    "cost_usd": 0.0100615,
+    "latency_ms": 36276,
+    "final": "plan"
+   },
+   "notes": []
+  }
+ ]
+}

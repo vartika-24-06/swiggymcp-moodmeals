@@ -1,0 +1,144 @@
+{
+ "version": 2,
+ "date": "2026-10-07",
+ "provider": "groq",
+ "model": "qwen/qwen3.8-27b",
+ "set": "smoke",
+ "prompt_version": "agent_v5",
+ "git": {
+  "commit": "b3dc80b",
+  "dirty": true
+ },
+ "temperature": "provider default (not set by the runner)",
+ "strategies": [
+  "agent"
+ ],
+ "runs_per_scenario": 1,
+ "scenarios": [
+  "S-04",
+  "S-05"
+ ],
+ "cap_inr": 1500.0,
+ "usd_inr": 88.0,
+ "usd_inr_checked": "2026-10-07 (unverified)",
+ "prices_checked": "2026-10-05 (unverified)",
+ "spent_inr": 0.0,
+ "aborted_by_cap": false,
+ "aborted_run": null,
+ "invalid_runs": 1,
+ "aborted_unreachable": false,
+ "n_runs": 2,
+ "summary": {
+  "agent": {
+   "outcome": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "path": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "hard_constraints": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "no_hallucinated_entities": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "questions_within_limit": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "no_writes_without_approval": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "stop_has_reason": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "fallback_plan": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "failure_handled": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "replanned_after_change": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "all_checks": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   }
+  }
+ },
+ "results": [
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 12131,
+    "tokens_out": 242,
+    "cost_usd": 0.0,
+    "latency_ms": 71500,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 1,
+   "invalid": true,
+   "invalid_reason": "network: ConnectError"
+  }
+ ]
+}
