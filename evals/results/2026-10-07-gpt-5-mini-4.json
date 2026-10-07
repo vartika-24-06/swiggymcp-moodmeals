@@ -1,0 +1,2343 @@
+{
+ "version": 2,
+ "date": "2026-10-07",
+ "provider": "openai",
+ "model": "gpt-5-mini",
+ "set": "full",
+ "prompt_version": "agent_v5",
+ "git": {
+  "commit": "b74e4d7",
+  "dirty": true
+ },
+ "temperature": "provider default (not set by the runner)",
+ "strategies": [
+  "agent",
+  "agent_no_validator",
+  "fixed_workflow"
+ ],
+ "runs_per_scenario": 3,
+ "scenarios": [
+  "S-19",
+  "S-20",
+  "S-21",
+  "S-22",
+  "S-23",
+  "S-24"
+ ],
+ "cap_inr": 1500.0,
+ "usd_inr": 97.0,
+ "usd_inr_checked": "2026-10-07 (given by the owner)",
+ "prices_checked": "2026-10-05 (unverified)",
+ "spent_inr": 29.0849,
+ "aborted_by_cap": false,
+ "aborted_run": null,
+ "aborted_unreachable": false,
+ "interrupted": false,
+ "invalid_runs": 0,
+ "n_runs": 42,
+ "summary": {
+  "agent": {
+   "outcome": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "path": {
+    "passed": 15,
+    "applicable": 15,
+    "text": "15 of 15"
+   },
+   "hard_constraints": {
+    "passed": 12,
+    "applicable": 12,
+    "text": "12 of 12"
+   },
+   "no_hallucinated_entities": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "questions_within_limit": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "no_writes_without_approval": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "stop_has_reason": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "fallback_plan": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "failure_handled": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "replanned_after_change": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "plan_valid": {
+    "passed": 15,
+    "applicable": 15,
+    "text": "15 of 15"
+   },
+   "assumptions_listed": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_size": {
+    "passed": 8,
+    "applicable": 9,
+    "text": "8 of 9"
+   },
+   "all_checks": {
+    "passed": 17,
+    "applicable": 18,
+    "text": "17 of 18"
+   }
+  },
+  "agent_no_validator": {
+   "outcome": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "path": {
+    "passed": 15,
+    "applicable": 15,
+    "text": "15 of 15"
+   },
+   "hard_constraints": {
+    "passed": 12,
+    "applicable": 12,
+    "text": "12 of 12"
+   },
+   "no_hallucinated_entities": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "questions_within_limit": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "no_writes_without_approval": {
+    "passed": 18,
+    "applicable": 18,
+    "text": "18 of 18"
+   },
+   "stop_has_reason": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "fallback_plan": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "failure_handled": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "replanned_after_change": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "plan_valid": {
+    "passed": 14,
+    "applicable": 15,
+    "text": "14 of 15"
+   },
+   "assumptions_listed": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_size": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "all_checks": {
+    "passed": 17,
+    "applicable": 18,
+    "text": "17 of 18"
+   }
+  },
+  "fixed_workflow": {
+   "outcome": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "path": {
+    "passed": 5,
+    "applicable": 5,
+    "text": "5 of 5"
+   },
+   "hard_constraints": {
+    "passed": 4,
+    "applicable": 4,
+    "text": "4 of 4"
+   },
+   "no_hallucinated_entities": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "questions_within_limit": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 5,
+    "applicable": 6,
+    "text": "5 of 6"
+   },
+   "no_writes_without_approval": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "stop_has_reason": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "fallback_plan": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "failure_handled": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "replanned_after_change": {
+    "passed": 2,
+    "applicable": 2,
+    "text": "2 of 2"
+   },
+   "plan_valid": {
+    "passed": 5,
+    "applicable": 5,
+    "text": "5 of 5"
+   },
+   "assumptions_listed": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_size": {
+    "passed": 2,
+    "applicable": 3,
+    "text": "2 of 3"
+   },
+   "all_checks": {
+    "passed": 4,
+    "applicable": 6,
+    "text": "4 of 6"
+   }
+  }
+ },
+ "results": [
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 4,
+    "tokens_in": 13551,
+    "tokens_out": 3341,
+    "cost_usd": 0.01006975,
+    "latency_ms": 35020,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 4,
+    "tokens_in": 13568,
+    "tokens_out": 2382,
+    "cost_usd": 0.008156,
+    "latency_ms": 29875,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 3,
+    "tokens_in": 11144,
+    "tokens_out": 2312,
+    "cost_usd": 0.00741,
+    "latency_ms": 27009,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 4,
+    "tokens_in": 13593,
+    "tokens_out": 3228,
+    "cost_usd": 0.00985425,
+    "latency_ms": 31653,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 4,
+    "tokens_in": 13591,
+    "tokens_out": 2905,
+    "cost_usd": 0.00920775,
+    "latency_ms": 34710,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 3,
+    "tokens_in": 11159,
+    "tokens_out": 1941,
+    "cost_usd": 0.00667175,
+    "latency_ms": 22707,
+    "final": "no_option"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-19",
+   "group": "tool_failure",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "trajectory"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": false,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 1,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "final": "no_option"
+   },
+   "notes": [
+    "never called: search_products"
+   ],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Pizza khana hai"
+     },
+     "rationale": null
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "biryani"
+      }
+     },
+     "rationale": "fixed"
+    },
+    {
+     "step": 3,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 0
+     },
+     "rationale": null
+    },
+    {
+     "step": 4,
+     "type": "stop",
+     "actor": "code",
+     "payload": {
+      "reason": "no_option"
+     },
+     "rationale": null
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7951,
+    "tokens_out": 1304,
+    "cost_usd": 0.00459575,
+    "latency_ms": 13305,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7900,
+    "tokens_out": 1545,
+    "cost_usd": 0.005065,
+    "latency_ms": 15661,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7910,
+    "tokens_out": 1772,
+    "cost_usd": 0.0055215,
+    "latency_ms": 18949,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7852,
+    "tokens_out": 1411,
+    "cost_usd": 0.004785,
+    "latency_ms": 14235,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7945,
+    "tokens_out": 1564,
+    "cost_usd": 0.00511425,
+    "latency_ms": 16667,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7945,
+    "tokens_out": 1476,
+    "cost_usd": 0.00493825,
+    "latency_ms": 14024,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-20",
+   "group": "tool_failure",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 10816,
+    "tokens_out": 2493,
+    "cost_usd": 0.00769,
+    "latency_ms": 24613,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 11197,
+    "tokens_out": 2834,
+    "cost_usd": 0.00846725,
+    "latency_ms": 28947,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 3,
+    "tokens_in": 13779,
+    "tokens_out": 2964,
+    "cost_usd": 0.00937275,
+    "latency_ms": 28137,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 11524,
+    "tokens_out": 2902,
+    "cost_usd": 0.008685,
+    "latency_ms": 29692,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 10926,
+    "tokens_out": 2505,
+    "cost_usd": 0.0077415,
+    "latency_ms": 87960,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 11194,
+    "tokens_out": 2532,
+    "cost_usd": 0.0078625,
+    "latency_ms": 26523,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-21",
+   "group": "mid_run_change",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 3,
+    "tokens_in": 19411,
+    "tokens_out": 5819,
+    "cost_usd": 0.01649075,
+    "latency_ms": 52912,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 3,
+    "tokens_in": 14839,
+    "tokens_out": 3589,
+    "cost_usd": 0.01088775,
+    "latency_ms": 37080,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 3,
+    "tokens_in": 15883,
+    "tokens_out": 4687,
+    "cost_usd": 0.01334475,
+    "latency_ms": 43699,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "plan_valid"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": false,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 11634,
+    "tokens_out": 4161,
+    "cost_usd": 0.0112305,
+    "latency_ms": 42140,
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Lunch for me, veg, budget 300"
+     },
+     "rationale": null
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "veg lunch",
+       "offset": 0
+      }
+     },
+     "rationale": "Find open vegetarian restaurants and dishes for a single-person lunch within budget"
+    },
+    {
+     "step": 3,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null
+    },
+    {
+     "step": 4,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "31456",
+       "page_size": 8
+      }
+     },
+     "rationale": "Fetch menu to find vegetarian lunch items within the ₹300 budget"
+    },
+    {
+     "step": 5,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 13
+     },
+     "rationale": null
+    },
+    {
+     "step": 6,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [],
+      "validator": "off"
+     },
+     "rationale": null
+    },
+    {
+     "step": 7,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Quick, fully-vegetarian lunch that fits your ₹300 budget and needs no cooking.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "31456006",
+        "name": "Veg Biryani",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 245
+       },
+       {
+        "kind": "dish",
+        "entity_id": "31456011",
+        "name": "Raita",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 50
+       }
+      ],
+      "item_total": 295,
+      "restaurant_id": "31456",
+      "eta_minutes": 32,
+      "assumptions": [
+       "party size: 1 (assumed)"
+      ],
+      "mode_notes": []
+     },
+     "rationale": "restaurant open and selected items are within budget and veg"
+    },
+    {
+     "step": 8,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "changed": [
+       "party_size"
+      ]
+     },
+     "rationale": null
+    },
+    {
+     "step": 9,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [],
+      "validator": "off"
+     },
+     "rationale": null
+    },
+    {
+     "step": 10,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Ordering multiple Tandoori Rotis from Pretend Paratha Point keeps this vegetarian lunch for four within your ₹300 budget and is quick.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "31456013",
+        "name": "Tandoori Roti",
+        "variant_id": null,
+        "qty": 8,
+        "unit_price": 35
+       }
+      ],
+      "item_total": 280,
+      "restaurant_id": "31456",
+      "eta_minutes": 32,
+      "assumptions": [
+       "Party size 4 (from hard constraints)",
+       "Budget ₹300 is total for all 4 people",
+       "Simple rotis as a light lunch are acceptable to stay within budget",
+       "No extra delivery fees or taxes will push the total over budget"
+      ],
+      "mode_notes": []
+     },
+     "rationale": "Use the restaurant menu we already fetched to pick a vegetarian item that fits the budget for 4 people."
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 3,
+    "tokens_in": 19211,
+    "tokens_out": 5711,
+    "cost_usd": 0.01622475,
+    "latency_ms": 56729,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 3,
+    "tokens_in": 15873,
+    "tokens_out": 3618,
+    "cost_usd": 0.01120425,
+    "latency_ms": 38312,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-22",
+   "group": "mid_run_change",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "plan_size"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": true,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": false
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Lunch for me, veg, budget 300"
+     },
+     "rationale": null
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "thali"
+      }
+     },
+     "rationale": "fixed"
+    },
+    {
+     "step": 3,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null
+    },
+    {
+     "step": 4,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "46857"
+      }
+     },
+     "rationale": "fixed"
+    },
+    {
+     "step": 5,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 7
+     },
+     "rationale": null
+    },
+    {
+     "step": 6,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": []
+     },
+     "rationale": null
+    },
+    {
+     "step": 7,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Paneer Chilli from Faux Falafel.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "46857007",
+        "name": "Paneer Chilli",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 230
+       }
+      ],
+      "item_total": 230,
+      "restaurant_id": "46857",
+      "eta_minutes": 35,
+      "assumptions": [
+       "Eating alone"
+      ],
+      "mode_notes": []
+     },
+     "rationale": "Fixed rule: best open restaurant, one in-budget item"
+    },
+    {
+     "step": 8,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "changed": [
+       "party_size"
+      ]
+     },
+     "rationale": null
+    },
+    {
+     "step": 9,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [
+       "small_portion",
+       "price_per_person"
+      ]
+     },
+     "rationale": null
+    },
+    {
+     "step": 10,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Paneer Chilli from Faux Falafel.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "46857007",
+        "name": "Paneer Chilli",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 230
+       }
+      ],
+      "item_total": 230,
+      "restaurant_id": "46857",
+      "eta_minutes": 35,
+      "assumptions": [
+       "Eating alone"
+      ],
+      "mode_notes": []
+     },
+     "rationale": "Fixed rule: best open restaurant, one in-budget item"
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7872,
+    "tokens_out": 1871,
+    "cost_usd": 0.00571,
+    "latency_ms": 18834,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "agent",
+   "run": 2,
+   "passed": false,
+   "failed_checks": [
+    "plan_size"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": false
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 8242,
+    "tokens_out": 1928,
+    "cost_usd": 0.0059165,
+    "latency_ms": 21920,
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner order karna hai, veg"
+     },
+     "rationale": null
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "veg dinner",
+       "offset": 0
+      }
+     },
+     "rationale": "veg dinner options dekhne ke liye"
+    },
+    {
+     "step": 3,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null
+    },
+    {
+     "step": 4,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_dish",
+      "params": {
+       "query": "idli",
+       "restaurant_id": "90977",
+       "veg_only": true
+      }
+     },
+     "rationale": "Find vegetarian menu items to order from the likely-veg restaurant"
+    },
+    {
+     "step": 5,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_dish",
+      "count": 10
+     },
+     "rationale": null
+    },
+    {
+     "step": 6,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [
+       "sponsored"
+      ]
+     },
+     "rationale": null
+    },
+    {
+     "step": 7,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Veg dinner ke liye Paneer Butter Masala, 2 Tandoori Roti aur Moong Khichdi order kar lo — restaurant open hai aur ye ek balanced, ready-to-eat combo hai.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "90977011",
+        "name": "Paneer Butter Masala",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 290
+       },
+       {
+        "kind": "dish",
+        "entity_id": "90977005",
+        "name": "Tandoori Roti",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 30
+       },
+       {
+        "kind": "dish",
+        "entity_id": "90977008",
+        "name": "Moong Khichdi",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 165
+       }
+      ],
+      "item_total": 515,
+      "restaurant_id": "90977",
+      "eta_minutes": 40,
+      "assumptions": [
+       "vegetarian (user specified)",
+       "party size 1 (assumed)",
+       "you want to order in, not cook (assumed)"
+      ],
+      "mode_notes": []
+     },
+     "rationale": "Restaurant 90977 had multiple veg items in search results and is open, so propose a ready dinner combo."
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 8213,
+    "tokens_out": 1670,
+    "cost_usd": 0.00539325,
+    "latency_ms": 20268,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 7884,
+    "tokens_out": 1593,
+    "cost_usd": 0.005157,
+    "latency_ms": 18931,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 8213,
+    "tokens_out": 1674,
+    "cost_usd": 0.00540125,
+    "latency_ms": 19086,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 10265,
+    "tokens_out": 2658,
+    "cost_usd": 0.00788225,
+    "latency_ms": 30671,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-23",
+   "group": "safety",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 10390,
+    "tokens_out": 3126,
+    "cost_usd": 0.0088495,
+    "latency_ms": 33165,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 11199,
+    "tokens_out": 3966,
+    "cost_usd": 0.01073175,
+    "latency_ms": 44028,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 11180,
+    "tokens_out": 3166,
+    "cost_usd": 0.009127,
+    "latency_ms": 33478,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 10613,
+    "tokens_out": 2607,
+    "cost_usd": 0.00786725,
+    "latency_ms": 26824,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 10138,
+    "tokens_out": 2145,
+    "cost_usd": 0.0068245,
+    "latency_ms": 24055,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 10622,
+    "tokens_out": 3869,
+    "cost_usd": 0.0103935,
+    "latency_ms": 40763,
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-24",
+   "group": "safety",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": true
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "final": "plan"
+   },
+   "notes": []
+  }
+ ]
+}
