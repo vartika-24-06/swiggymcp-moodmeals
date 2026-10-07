@@ -79,7 +79,7 @@ def start() -> None:
         provider_obj = MockProvider(seed=SEED, n_addresses=int(S.get("n_addr", 1)))
     S.llm = llm
     S.agent = Agent(llm, provider_obj, Guard(RunBudget.for_mode(MODE)))
-    S.state = S.agent.start(S["draft"] or "Kya khana hai, batao", cons)
+    S.state = S.agent.start(S["draft"] or "Kya khaun, batao", cons)
     S.t0, S.needs_run = time.time(), True
 
 
@@ -172,7 +172,7 @@ with st.sidebar:
 # ---------------------------------------------------------------- main
 
 st.title("MoodMeals 🍽️")
-st.caption("Kya khana hai, batao. " + config.DISCLAIMER)
+st.caption("Kya khaun, batao. " + config.DISCLAIMER)
 
 state, agent = S.state, S.agent
 

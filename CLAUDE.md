@@ -1,6 +1,6 @@
 # MoodMeals: rules for Claude Code
 
-MoodMeals is a portfolio project: a "kya khana hai, batao" agent that decides
+MoodMeals is a portfolio project: a "kya khaun, batao" agent that decides
 between cooking (Swiggy Instamart) and ordering in (Swiggy Food).
 
 Read first, in this order: `specs/requirements.md`, `specs/design.md`, `specs/tasks.md`.

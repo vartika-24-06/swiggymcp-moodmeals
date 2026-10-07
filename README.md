@@ -1,6 +1,6 @@
 # MoodMeals
 
-A "kya khana hai, batao" agent. It takes a vague "I don't know what to eat" and turns it into
+A "kya khaun, batao" agent. It takes a vague "I don't know what to eat" and turns it into
 one concrete plan: **cook or grab it from Instamart**, or **order in from Swiggy Food**. It asks
 at most three questions, recommends one plan, checks the plan against what the tools really
 returned, and stops at an approval gate before anything with real-world effect.

@@ -5,7 +5,7 @@ before publishing. Not affiliated with, approved by or endorsed by Swiggy.*
 
 ## The problem
 
-"Kya khana hai?" is the most repeated question in a household and a hard one to answer. The
+"Kya khaun?" is the most repeated question in a household and a hard one to answer. The
 real choice is rarely "which dish". It is *effort*: cook something, grab a ready-to-eat meal
 from Instamart, or order in from a restaurant. I wanted an agent that takes a vague mood and
 makes that decision, explains it, and then stops short of anything irreversible.

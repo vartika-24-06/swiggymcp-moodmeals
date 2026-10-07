@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "moodmeals"
 version = "0.0.1"
-description = "A 'kya khana hai, batao' agent that decides between cooking and ordering in."
+description = "A 'kya khaun, batao' agent that decides between cooking and ordering in."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

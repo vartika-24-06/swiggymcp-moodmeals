@@ -1,7 +1,7 @@
 # Demo video script (T8.3)
 
 A 3 to 4 minute screen recording. Draft: edit freely. The goal is the story the project tells:
-**one vague "kya khana hai" becomes one grounded, approvable plan, and the agent knows its limits.**
+**one vague "kya khaun" becomes one grounded, approvable plan, and the agent knows its limits.**
 
 ## Before you record (privacy, requirement R12.4)
 

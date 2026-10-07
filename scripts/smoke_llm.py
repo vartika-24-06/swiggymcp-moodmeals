@@ -33,7 +33,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("provider", choices=sorted(KEY_ENV))
     ap.add_argument("model")
-    ap.add_argument("text", nargs="?", default="kya khana hai, batao. Thaka hua hoon.")
+    ap.add_argument("text", nargs="?", default="kya khaun, batao. Thaka hua hoon.")
     ap.add_argument("--ask", action="store_true", help="answer questions yourself")
     ap.add_argument("--addresses", type=int, default=1)
     ap.add_argument("--seed", type=int, default=1)

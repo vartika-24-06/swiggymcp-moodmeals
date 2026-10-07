@@ -10,7 +10,7 @@ Everything marked *(proposed)* is a starting number to recalibrate after the fir
 
 ## 1. Overview
 
-People with too many options end up doing nothing. MoodMeals is a "kya khana hai, batao" agent. It takes a vague "I don't know what to eat" and turns it into one concrete, ready-to-approve plan: **cook at home** (Swiggy Instamart) or **order in** (Swiggy Food). It asks at most three questions, recommends one plan, and stops at an approval gate before anything with real-world effect.
+People with too many options end up doing nothing. MoodMeals is a "kya khaun, batao" agent. It takes a vague "I don't know what to eat" and turns it into one concrete, ready-to-approve plan: **cook at home** (Swiggy Instamart) or **order in** (Swiggy Food). It asks at most three questions, recommends one plan, and stops at an approval gate before anything with real-world effect.
 
 It is a portfolio project. Its purpose is to show an agent that decides between genuinely different paths, uses real tools, verifies what it says, handles failure, and is honest about its limits.
 
@@ -206,7 +206,7 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 
 | ID | Decision | Status |
 |---|---|---|
-| D1 | Project is MoodMeals, a "kya khana hai, batao" agent using Swiggy Food and Instamart (Dineout and Scenes out; see D12) | Locked |
+| D1 | Project is MoodMeals, a "kya khaun, batao" agent using Swiggy Food and Instamart (Dineout and Scenes out; see D12) | Locked |
 | D2 | "Mood" is light and non-clinical; no bands, no scores | Locked |
 | D3 | Max 3 questions then one recommended plan | Locked |
 | D4 | Python + Streamlit, hand-written loop, no agent framework, UI-independent core package | Locked |
@@ -252,7 +252,7 @@ Evals run against the **mock provider** with seeded scenarios and score **trajec
 ## 12. Scope change log
 
 ### 12.1 Dineout (go-out path) dropped, 2026-10-04 (D12)
-**What changed.** v1 was planned with three paths (Order in, Go out, Cook). It now has two: Order in (Swiggy Food) and Cook (Swiggy Instamart). Requirement R6 is removed and the product is framed as "kya khana hai, batao".
+**What changed.** v1 was planned with three paths (Order in, Go out, Cook). It now has two: Order in (Swiggy Food) and Cook (Swiggy Instamart). Requirement R6 is removed and the product is framed as "kya khaun, batao".
 
 **Why.**
 1. **Reported defects in Dineout's tools.** Public issues on Swiggy's own manifest repository, all open as of 6 September 2026 with no Swiggy reply shown: #104 (the documented cancel tool is not served, so a booking can be made but not cancelled through the tools), #105 (the slots tool leaves the slot and item ids out of the structured result, so they exist only in prose text and clients must parse sentences), #102 (the docs don't mention the structured result at all). Food and Instamart return structured data properly.
