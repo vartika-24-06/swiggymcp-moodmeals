@@ -92,16 +92,20 @@ def test_invalid_runs_are_dropped_and_a_shortfall_is_reported_not_hidden():
         m.merge([(doc(rows), ["S-01"], "a.json")])
 
 
-def test_a_scenario_cannot_come_from_two_parts_and_parts_must_agree_on_model_and_prompt():
+def test_a_scenario_cannot_come_from_two_parts_and_parts_must_agree_on_model():
     a, b = doc(scenario_rows("S-01")), doc(scenario_rows("S-01"))
     with pytest.raises(m.MergeError, match="two parts"):
         m.merge([(a, ["S-01"], "a"), (b, ["S-01"], "b")])
     c = doc(scenario_rows("S-02"), model="other")
-    with pytest.raises(m.MergeError, match="differ in model or prompt"):
+    with pytest.raises(m.MergeError, match="differ in model"):
         m.merge([(doc(scenario_rows("S-01")), ["S-01"], "a"), (c, ["S-02"], "c")])
-    d = doc(scenario_rows("S-02"), prompt="agent_v4")
-    with pytest.raises(m.MergeError, match="differ in model or prompt"):
-        m.merge([(doc(scenario_rows("S-01")), ["S-01"], "a"), (d, ["S-02"], "d")])
+
+
+def test_a_rerun_on_a_newer_prompt_is_merged_and_labelled_mixed():
+    d = doc(scenario_rows("S-02"), prompt="agent_v6")
+    out = m.merge([(doc(scenario_rows("S-01")), ["S-01"], "a"), (d, ["S-02"], "d")])
+    assert out["prompt_version"] == "mixed"
+    assert out["prompt_versions"] == {"agent_v5": ["S-01"], "agent_v6": ["S-02"]}
 
 
 def test_command_line_writes_the_merged_file_and_reports_failures(tmp_path, capsys):

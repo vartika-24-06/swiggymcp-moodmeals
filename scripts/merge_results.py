@@ -169,10 +169,17 @@ def merge(
     ) if k in first}  # fmt: skip
     models = {d.get("model") for d, _, _ in parts}
     prompts = {d.get("prompt_version") for d, _, _ in parts}
-    if len(models) > 1 or len(prompts) > 1:
-        raise MergeError(f"parts differ in model or prompt: {models} {prompts}")
+    if len(models) > 1:
+        raise MergeError(f"parts differ in model: {models}")
+    # Prompt versions may differ (a re-run of some scenarios after a prompt fix); say so.
+    by_prompt: dict[str, list[str]] = {}
+    for d, ids, _ in parts:
+        by_prompt.setdefault(str(d.get("prompt_version")), []).extend(ids)
+    if len(prompts) > 1:
+        base["prompt_version"] = "mixed"
     return {
         **base,
+        "prompt_versions": {k: sorted(v) for k, v in by_prompt.items()},
         "scenarios": sorted(seen),
         "merged_from": sources,
         "spent_inr": round(sum(s["spent_inr"] or 0 for s in sources), 4),
