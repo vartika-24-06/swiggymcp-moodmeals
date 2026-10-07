@@ -27,7 +27,12 @@ from moodmeals.core.events import Event
 from moodmeals.core.guard import Guard, StopReason
 from moodmeals.core.redaction import redact_text
 from moodmeals.core.state import RunState
-from moodmeals.core.validator import DRY_RUN_DISCLAIMER, Constraints, validate_plan
+from moodmeals.core.validator import (
+    DRY_RUN_DISCLAIMER,
+    Constraints,
+    ValidationResult,
+    validate_plan,
+)
 from moodmeals.core.view import (
     build_model_view,
     summarise_menu_items,
@@ -75,7 +80,11 @@ class Agent:
         guard: Guard | None = None,
         *,
         strict_stop: bool = True,
+        validate: bool = True,
     ):
+        # validate=False turns the plan validator off. Only the `agent_no_validator` eval
+        # strategy does this, to measure what the validator catches. Never in the app.
+        self.validate = validate
         # strict_stop: a model may call stop_search only after trying restaurants AND Instamart
         # (R4.3). The code baseline in the evals opts out: it is a fixed rule, not a model.
         self.strict_stop = strict_stop
@@ -424,12 +433,16 @@ class Agent:
         state.phase = "VALIDATE"
         plan = build_plan(a, state)
         exhausted = state.questions_asked >= self.guard.budget.max_questions
-        result = validate_plan(
-            plan,
-            state.ledger,
-            state.constraints,
-            mode=state.mode,
-            required_assumptions=state.missing_signals if exhausted else [],
+        result = (
+            validate_plan(
+                plan,
+                state.ledger,
+                state.constraints,
+                mode=state.mode,
+                required_assumptions=state.missing_signals if exhausted else [],
+            )
+            if self.validate
+            else ValidationResult()
         )
         if not result.ok:
             state.validation_errors = [
@@ -461,7 +474,13 @@ class Agent:
         if state.mode == "live":
             self._check_cart(state)
         state.add_event(
-            "validation", "code", {"ok": True, "warnings": [i.code for i in result.warnings]}
+            "validation",
+            "code",
+            {
+                "ok": True,
+                "warnings": [i.code for i in result.warnings],
+                **({} if self.validate else {"validator": "off"}),
+            },
         )
         state.add_event("plan", "model", plan.model_dump(), rationale=a.rationale)
 

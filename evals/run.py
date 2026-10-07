@@ -28,7 +28,7 @@ from moodmeals.providers import world as w
 from moodmeals.providers.mock import MockProvider
 from moodmeals.tools.normalise import parse_menu, parse_products, parse_restaurants
 
-STRATEGIES = ("one_shot", "fixed_workflow", "agent")
+STRATEGIES = ("one_shot", "fixed_workflow", "agent", "agent_no_validator")
 MAX_TURNS = 25  # outer loop guard for the scripted user
 
 
@@ -90,7 +90,11 @@ def eval_guard(llm: Any) -> Guard:
 def run_scripted(sc: Scenario, llm: Any, strategy: str = "agent", guard: Guard | None = None):
     """The scripted user drives the loop until the approval screen, a stop, or the end."""
     agent = Agent(
-        llm, _provider(sc), guard or eval_guard(llm), strict_stop=strategy != "fixed_workflow"
+        llm,
+        _provider(sc),
+        guard or eval_guard(llm),
+        strict_stop=strategy != "fixed_workflow",
+        validate=strategy != "agent_no_validator",  # the ablation: no plan validator
     )
     state = agent.start(sc.user_script.opening, sc.user_script.hard_constraints())
     steps, applied = list(sc.user_script.mid_run), 0
@@ -188,8 +192,8 @@ def run_strategy(name: str, sc: Scenario, llm: Any = None) -> RunRecord:
         return run_scripted(sc, FixedWorkflowLLM(), "fixed_workflow")
     if llm is None:
         raise ValueError(f"strategy {name} needs a model client")
-    if name == "agent":
-        return run_scripted(sc, llm, "agent")
+    if name in ("agent", "agent_no_validator"):
+        return run_scripted(sc, llm, name)
     if name == "one_shot":
         return run_one_shot(sc, llm)
     raise ValueError(f"unknown strategy {name}; use one of {', '.join(STRATEGIES)}")

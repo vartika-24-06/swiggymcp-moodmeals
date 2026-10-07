@@ -191,7 +191,7 @@ def test_a_model_error_in_one_shot_is_a_failed_run_not_a_crash():
 
 
 def test_strategy_names_and_errors():
-    assert STRATEGIES == ("one_shot", "fixed_workflow", "agent")
+    assert STRATEGIES == ("one_shot", "fixed_workflow", "agent", "agent_no_validator")
     with pytest.raises(ValueError):
         run_strategy("agent", SCEN["S-01"])  # needs a model client
     with pytest.raises(ValueError):

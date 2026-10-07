@@ -33,7 +33,7 @@ about the agent. Waiting for the quota does not count against a run's 90 s time 
 still writes its results. Exit codes: 0 ok, 3 spend cap, 4 model unreachable.
 
 Options: `--only S-04,S-06` (just those scenarios), `--set smoke|full`, `--strategies` (comma list of `one_shot`, `fixed_workflow`,
-`agent`), `--runs N` (model strategies only; the fixed workflow is deterministic and runs
+`agent`, `agent_no_validator`), `--runs N` (model strategies only; the fixed workflow is deterministic and runs
 once), `--cap-inr` (default 1500), `--usd-inr`, `--out`, `--dry-plan`.
 
 ## The spend cap
@@ -51,3 +51,13 @@ Each file holds the model, provider, prompt version, git commit (and whether the
 dirty), the cap and spend, a "k of n" summary per strategy and check, and one row per run.
 Failed runs carry a trace (mock data only). Results are published including failures
 (requirements E1), and small samples support no calibration claims (E3).
+
+## Strategies
+
+| Strategy | What it is |
+|---|---|
+| `one_shot` | The model answers from the prompt with no tools. Every id it names is a guess, so this measures hallucinated entities. |
+| `fixed_workflow` | Code, no model: always order in, best open restaurant, one in-budget item. Shows what path choice adds. |
+| `agent` | The full loop: tools, questions, the plan validator, replanning. |
+| `agent_no_validator` | The same loop with the plan validator off: whatever the model proposes reaches the approval screen. The scorer still validates the final plan, so `plan_valid`, `hard_constraints` and `no_hallucinated_entities` show what the validator would have caught. Run it next to `agent` on the same model: `--strategies agent,agent_no_validator`. |
+
