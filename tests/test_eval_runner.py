@@ -421,3 +421,22 @@ def test_a_normal_run_leaves_no_partial_file_behind(tmp_path):
 
 def test_the_default_exchange_rate_is_the_owners():
     assert runner.USD_INR == 97.0 and "owner" in runner.USD_INR_CHECKED
+
+
+@pytest.mark.parametrize("error", ["network: ConnectError", "timeout", "rate_limited"])
+def test_dropped_connections_timeouts_and_rate_limits_are_waited_out(error):
+    sleeps = []
+    c = runner.RetryingClient(Flaky(2, error), retries=3, wait_s=10, sleep=sleeps.append)
+    assert c.next_action({})["action"] == "ask_user"
+    assert sleeps == [10, 20]
+
+
+@pytest.mark.parametrize(
+    "error", ["auth: the key was rejected", "http 400: bad request", "http 413"]
+)
+def test_key_and_request_errors_are_never_retried(error):
+    sleeps = []
+    c = runner.RetryingClient(Flaky(99, error), retries=3, wait_s=10, sleep=sleeps.append)
+    with pytest.raises(runner.LLMError):
+        c.next_action({})
+    assert sleeps == [] and c._inner.calls == 1

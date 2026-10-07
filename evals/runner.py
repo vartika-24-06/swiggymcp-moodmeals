@@ -53,6 +53,10 @@ RESULTS_VERSION = 2
 DEFAULT_MIN_INTERVAL_S = {"groq": 20.0}
 RATE_LIMIT_RETRIES = 3
 RATE_LIMIT_WAIT_S = 30.0
+# Errors worth waiting out: a rate limit, a dropped connection or a timeout. A bad key or a bad
+# request (http 4xx) is not retried. The wait grows (wait_s, 2 x wait_s, ...), so a Wi-Fi blip
+# of a few minutes no longer ends a long run.
+RETRYABLE_ERRORS = ("rate_limited", "network", "timeout")
 MAX_CONSECUTIVE_INVALID = 3  # then the model is treated as unreachable and the eval stops
 MAX_TRACE_EVENTS = 80  # events kept for a failed run (mock data only)
 
@@ -109,8 +113,9 @@ class CappedClient:
 
 
 class RetryingClient:
-    """Paces model calls and waits out rate limits, so a busy free tier does not turn into
-    "agent failures". Only a rate-limit error is retried, with a growing wait."""
+    """Paces model calls and waits out rate limits and dropped connections, so a busy free tier
+    or a Wi-Fi blip does not turn into "agent failures". Only RETRYABLE_ERRORS are retried,
+    with a growing wait."""
 
     def __init__(
         self,
@@ -144,7 +149,7 @@ class RetryingClient:
             try:
                 return self._inner.next_action(view)
             except LLMError as e:
-                if not str(e).startswith("rate_limited") or attempt == self._retries:
+                if not str(e).startswith(RETRYABLE_ERRORS) or attempt == self._retries:
                     raise
                 self._pause(self._wait * (attempt + 1))
         raise AssertionError("unreachable")

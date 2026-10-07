@@ -25,6 +25,8 @@ python -m evals.runner --set smoke --strategies agent,fixed_workflow --provider 
 
 ## Rate limits and invalid runs
 
+Free tiers limit tokens per minute, and Wi-Fi drops. Rate limits, dropped connections and timeouts are all waited out and retried (`--rate-limit-retries`, default 3 with waits of 30, 60 and 90 s; use 6 to ride out about 10 minutes). Bad keys and bad requests are not retried.
+
 Free tiers limit tokens per minute. Calls are paced (`--min-interval-s`, default 20 s for Groq,
 0 for others) and a rate-limit error is waited out and retried (`--rate-limit-retries`,
 `--rate-limit-wait-s`). A run where the model could not be reached or answered (rate limit,
