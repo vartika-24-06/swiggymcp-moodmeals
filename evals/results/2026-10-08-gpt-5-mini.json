@@ -1,0 +1,2282 @@
+{
+ "version": 2,
+ "date": "2026-10-08",
+ "provider": "openai",
+ "model": "gpt-5-mini",
+ "set": "full",
+ "prompt_version": "agent_v6",
+ "git": {
+  "commit": "13685b2",
+  "dirty": true
+ },
+ "temperature": "provider default (not set by the runner)",
+ "strategies": [
+  "agent",
+  "agent_no_validator",
+  "fixed_workflow"
+ ],
+ "runs_per_scenario": 3,
+ "scenarios": [
+  "S-04",
+  "S-05",
+  "S-11"
+ ],
+ "cap_inr": 1500.0,
+ "usd_inr": 97.0,
+ "usd_inr_checked": "2026-10-07 (given by the owner)",
+ "prices_checked": "2026-10-05 (unverified)",
+ "spent_inr": 19.4577,
+ "aborted_by_cap": false,
+ "aborted_run": null,
+ "aborted_unreachable": false,
+ "interrupted": false,
+ "invalid_runs": 0,
+ "n_runs": 21,
+ "summary": {
+  "agent": {
+   "outcome": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "path": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "hard_constraints": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "no_hallucinated_entities": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "questions_within_limit": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "no_writes_without_approval": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "stop_has_reason": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "fallback_plan": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "failure_handled": {
+    "passed": 4,
+    "applicable": 4,
+    "text": "4 of 4"
+   },
+   "replanned_after_change": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_valid": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "assumptions_listed": {
+    "passed": 1,
+    "applicable": 3,
+    "text": "1 of 3"
+   },
+   "plan_size": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "all_checks": {
+    "passed": 7,
+    "applicable": 9,
+    "text": "7 of 9"
+   }
+  },
+  "agent_no_validator": {
+   "outcome": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "path": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "hard_constraints": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "no_hallucinated_entities": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "questions_within_limit": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "no_writes_without_approval": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "stop_has_reason": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "fallback_plan": {
+    "passed": 6,
+    "applicable": 6,
+    "text": "6 of 6"
+   },
+   "failure_handled": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "replanned_after_change": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_valid": {
+    "passed": 9,
+    "applicable": 9,
+    "text": "9 of 9"
+   },
+   "assumptions_listed": {
+    "passed": 0,
+    "applicable": 3,
+    "text": "0 of 3"
+   },
+   "plan_size": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "all_checks": {
+    "passed": 6,
+    "applicable": 9,
+    "text": "6 of 9"
+   }
+  },
+  "fixed_workflow": {
+   "outcome": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "path": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "hard_constraints": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "no_hallucinated_entities": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "questions_within_limit": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "address_picker_asked": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "trajectory": {
+    "passed": 1,
+    "applicable": 3,
+    "text": "1 of 3"
+   },
+   "no_writes_without_approval": {
+    "passed": 3,
+    "applicable": 3,
+    "text": "3 of 3"
+   },
+   "stop_has_reason": {
+    "passed": 2,
+    "applicable": 2,
+    "text": "2 of 2"
+   },
+   "fallback_plan": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "failure_handled": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "replanned_after_change": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "plan_valid": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "assumptions_listed": {
+    "passed": 1,
+    "applicable": 1,
+    "text": "1 of 1"
+   },
+   "plan_size": {
+    "passed": 0,
+    "applicable": 0,
+    "text": "0 of 0"
+   },
+   "all_checks": {
+    "passed": 1,
+    "applicable": 3,
+    "text": "1 of 3"
+   }
+  }
+ },
+ "results": [
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 11571,
+    "tokens_out": 3059,
+    "cost_usd": 0.00901075,
+    "latency_ms": 34716,
+    "slowest_call_ms": 13858,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 13944,
+    "tokens_out": 3161,
+    "cost_usd": 0.009808,
+    "latency_ms": 29396,
+    "slowest_call_ms": 13476,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 14562,
+    "tokens_out": 3516,
+    "cost_usd": 0.0106725,
+    "latency_ms": 39514,
+    "slowest_call_ms": 17163,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 3,
+    "tokens_in": 19075,
+    "tokens_out": 3689,
+    "cost_usd": 0.01214675,
+    "latency_ms": 37215,
+    "slowest_call_ms": 13573,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 14572,
+    "tokens_out": 4246,
+    "cost_usd": 0.012135,
+    "latency_ms": 45801,
+    "slowest_call_ms": 21285,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 2,
+    "tokens_in": 11568,
+    "tokens_out": 2735,
+    "cost_usd": 0.008362,
+    "latency_ms": 27815,
+    "slowest_call_ms": 13788,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-04",
+   "group": "infeasible",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "trajectory"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": false,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 1,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "slowest_call_ms": 0,
+    "validator_errors": [],
+    "final": "no_option"
+   },
+   "notes": [
+    "never called: search_products"
+   ],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Biryani khani hai"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "biryani"
+      }
+     },
+     "rationale": "fixed",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 3,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "stop",
+     "actor": "code",
+     "payload": {
+      "reason": "no_option"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 5,
+    "tokens_in": 10420,
+    "tokens_out": 2806,
+    "cost_usd": 0.008217,
+    "latency_ms": 38017,
+    "slowest_call_ms": 15481,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 7,
+    "tokens_in": 12846,
+    "tokens_out": 3640,
+    "cost_usd": 0.0104915,
+    "latency_ms": 38706,
+    "slowest_call_ms": 11710,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 5,
+    "tokens_in": 10452,
+    "tokens_out": 3628,
+    "cost_usd": 0.009869,
+    "latency_ms": 35733,
+    "slowest_call_ms": 15566,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 1,
+    "tool_calls": 7,
+    "tokens_in": 15206,
+    "tokens_out": 5103,
+    "cost_usd": 0.0140075,
+    "latency_ms": 56050,
+    "slowest_call_ms": 16633,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 7,
+    "tokens_in": 12828,
+    "tokens_out": 4567,
+    "cost_usd": 0.012341,
+    "latency_ms": 49419,
+    "slowest_call_ms": 18851,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": true,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": true,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 5,
+    "tokens_in": 10430,
+    "tokens_out": 2964,
+    "cost_usd": 0.0085355,
+    "latency_ms": 31397,
+    "slowest_call_ms": 15539,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-05",
+   "group": "tool_failure",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "trajectory"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": null,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": false,
+    "no_writes_without_approval": true,
+    "stop_has_reason": true,
+    "fallback_plan": null,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": null,
+    "assumptions_listed": null,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "slowest_call_ms": 0,
+    "validator_errors": [],
+    "final": "no_option"
+   },
+   "notes": [
+    "never called: search_products"
+   ],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner order karna hai, veg"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "biryani"
+      }
+     },
+     "rationale": "fixed",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 3,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "biryani"
+      }
+     },
+     "rationale": "fixed",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "error": "timeout"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 5,
+     "type": "stop",
+     "actor": "code",
+     "payload": {
+      "reason": "no_option"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "agent",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": true,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": true,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 16980,
+    "tokens_out": 6193,
+    "cost_usd": 0.016631,
+    "latency_ms": 71968,
+    "slowest_call_ms": 21171,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "agent",
+   "run": 2,
+   "passed": false,
+   "failed_checks": [
+    "assumptions_listed"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": false,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 13343,
+    "tokens_out": 3028,
+    "cost_usd": 0.00939175,
+    "latency_ms": 36173,
+    "slowest_call_ms": 10525,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner for two, kuch accha"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Diet kya chahiye? (ek choose karo)",
+      "field": "diet",
+      "options": [
+       "Vegetarian",
+       "Non-vegetarian",
+       "Eggetarian",
+       "No preference"
+      ]
+     },
+     "rationale": "Diet needed to decide suitable dishes/restaurants for dinner for two",
+     "latency_ms": 6376,
+     "tokens_in": 2296,
+     "tokens_out": 455
+    },
+    {
+     "step": 3,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "veg",
+      "field": "diet"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Budget roughly kya hai dinner for two? (ek choose karo)",
+      "field": "budget",
+      "options": [
+       "Under ₹400",
+       "₹400-800",
+       "No budget limit / Surprise me"
+      ]
+     },
+     "rationale": "Budget will change whether we order in or pick a cook plan and which restaurants/items fit",
+     "latency_ms": 5433,
+     "tokens_in": 2314,
+     "tokens_out": 335
+    },
+    {
+     "step": 5,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "no preference",
+      "field": "budget"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 6,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian dinner"
+      }
+     },
+     "rationale": "Find open vegetarian restaurants for a dinner-for-two option",
+     "latency_ms": 4915,
+     "tokens_in": 2336,
+     "tokens_out": 488
+    },
+    {
+     "step": 7,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 8,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "80567",
+       "page_size": 8
+      }
+     },
+     "rationale": "Veg dinner options ke liye menu le raha hoon",
+     "latency_ms": 8924,
+     "tokens_in": 2944,
+     "tokens_out": 877
+    },
+    {
+     "step": 9,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 11
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 10,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [
+       "price_per_person"
+      ]
+     },
+     "rationale": null,
+     "latency_ms": 10525,
+     "tokens_in": 3453,
+     "tokens_out": 873
+    },
+    {
+     "step": 11,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Veg dinner for two — 2 Masala Dosa and 1 Gulab Jamun from Dummy Dosa Den, tasty and quick delivery.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "80567007",
+        "name": "Masala Dosa",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 120
+       },
+       {
+        "kind": "dish",
+        "entity_id": "80567010",
+        "name": "Gulab Jamun",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 90
+       }
+      ],
+      "item_total": 330,
+      "restaurant_id": "80567",
+      "eta_minutes": 22,
+      "assumptions": [],
+      "mode_notes": []
+     },
+     "rationale": "Restaurant open with suitable veg menu and reasonable ETA.",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "agent",
+   "run": 3,
+   "passed": false,
+   "failed_checks": [
+    "assumptions_listed"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": false,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 13353,
+    "tokens_out": 3244,
+    "cost_usd": 0.00982625,
+    "latency_ms": 34524,
+    "slowest_call_ms": 8831,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner for two, kuch accha"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Diet batao: Vegetarian, Non-vegetarian, ya No preference?",
+      "field": "diet",
+      "options": [
+       "Vegetarian",
+       "Non-vegetarian",
+       "No preference"
+      ]
+     },
+     "rationale": "Diet chahiye taaki veg/non-veg dinner decide karun.",
+     "latency_ms": 7785,
+     "tokens_in": 2296,
+     "tokens_out": 714
+    },
+    {
+     "step": 3,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "veg",
+      "field": "diet"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Budget batao (dinner for 2)?",
+      "field": "budget",
+      "options": [
+       "≤300",
+       "300–700",
+       "700–1500",
+       "No limit"
+      ]
+     },
+     "rationale": "Budget se decide karna hai order ya cook.",
+     "latency_ms": 8591,
+     "tokens_in": 2318,
+     "tokens_out": 708
+    },
+    {
+     "step": 5,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "no preference",
+      "field": "budget"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 6,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian dinner"
+      }
+     },
+     "rationale": "Find veg restaurants for a dinner-for-two option",
+     "latency_ms": 3384,
+     "tokens_in": 2338,
+     "tokens_out": 295
+    },
+    {
+     "step": 7,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 8,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "80567",
+       "page_size": 8
+      }
+     },
+     "rationale": "Fetch menu to choose vegetarian dishes for dinner for two",
+     "latency_ms": 5933,
+     "tokens_in": 2946,
+     "tokens_out": 620
+    },
+    {
+     "step": 9,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 11
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 10,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [
+       "price_per_person"
+      ]
+     },
+     "rationale": null,
+     "latency_ms": 8831,
+     "tokens_in": 3455,
+     "tokens_out": 907
+    },
+    {
+     "step": 11,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Quick, tasty vegetarian dinner for two from Dummy Dosa Den (masala dosas + dessert).",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "80567007",
+        "name": "Masala Dosa",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 120
+       },
+       {
+        "kind": "dish",
+        "entity_id": "80567010",
+        "name": "Gulab Jamun",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 90
+       }
+      ],
+      "item_total": 330,
+      "restaurant_id": "80567",
+      "eta_minutes": 22,
+      "assumptions": [],
+      "mode_notes": []
+     },
+     "rationale": "Restaurant is open, has veg items suitable for two and a short ETA.",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "agent_no_validator",
+   "run": 1,
+   "passed": false,
+   "failed_checks": [
+    "assumptions_listed"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": false,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 13945,
+    "tokens_out": 3366,
+    "cost_usd": 0.01021825,
+    "latency_ms": 40210,
+    "slowest_call_ms": 14116,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner for two, kuch accha"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Vegetarian chalega, non-veg chalega, ya no preference?",
+      "field": "diet",
+      "options": [
+       "Vegetarian",
+       "Non-vegetarian",
+       "No preference"
+      ]
+     },
+     "rationale": "Diet is unknown (hard_constraints.vegetarian is false); ask once before choosing.",
+     "latency_ms": 4296,
+     "tokens_in": 2296,
+     "tokens_out": 396
+    },
+    {
+     "step": 3,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "veg",
+      "field": "diet"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian dinner"
+      }
+     },
+     "rationale": "Find open vegetarian restaurants for a dinner-for-two plan",
+     "latency_ms": 6630,
+     "tokens_in": 2318,
+     "tokens_out": 424
+    },
+    {
+     "step": 5,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 6,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Budget batao: kitna spend karna hai for dinner?",
+      "field": "budget",
+      "options": [
+       "Under ₹300",
+       "₹300-600",
+       "₹600-1000",
+       "No limit"
+      ]
+     },
+     "rationale": "Budget is missing and it changes whether we order in or choose a cook plan",
+     "latency_ms": 5149,
+     "tokens_in": 2926,
+     "tokens_out": 399
+    },
+    {
+     "step": 7,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "no preference",
+      "field": "budget"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 8,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "80567",
+       "page_size": 8
+      }
+     },
+     "rationale": "Check veg menu items and availability for a quick, tasty dinner option",
+     "latency_ms": 10019,
+     "tokens_in": 2948,
+     "tokens_out": 879
+    },
+    {
+     "step": 9,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 11
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 10,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [],
+      "validator": "off"
+     },
+     "rationale": null,
+     "latency_ms": 14116,
+     "tokens_in": 3457,
+     "tokens_out": 1268
+    },
+    {
+     "step": 11,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Vegetarian aur tasty dinner chahiye — Dummy Dosa Den se 2 Masala Dosa aur 1 Gulab Jamun order karte hain kyunki woh open aur quick hai.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "80567007",
+        "name": "Masala Dosa",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 120
+       },
+       {
+        "kind": "dish",
+        "entity_id": "80567010",
+        "name": "Gulab Jamun",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 90
+       }
+      ],
+      "item_total": 330,
+      "restaurant_id": "80567",
+      "eta_minutes": 22,
+      "assumptions": [],
+      "mode_notes": []
+     },
+     "rationale": "Restaurant open, veg menu items in stock and reasonable ETA",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "agent_no_validator",
+   "run": 2,
+   "passed": false,
+   "failed_checks": [
+    "assumptions_listed"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": false,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 2,
+    "tool_calls": 2,
+    "tokens_in": 13945,
+    "tokens_out": 4237,
+    "cost_usd": 0.01196025,
+    "latency_ms": 45246,
+    "slowest_call_ms": 15256,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner for two, kuch accha"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Diet preference? Veg, Non-veg, ya no preference?",
+      "field": "diet",
+      "options": [
+       "Vegetarian",
+       "Non-vegetarian",
+       "No preference"
+      ]
+     },
+     "rationale": "Need diet to choose an appropriate dinner option for two.",
+     "latency_ms": 5737,
+     "tokens_in": 2296,
+     "tokens_out": 452
+    },
+    {
+     "step": 3,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "veg",
+      "field": "diet"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian dinner",
+       "offset": 0
+      }
+     },
+     "rationale": "Find open vegetarian restaurants for a nice dinner for two",
+     "latency_ms": 7017,
+     "tokens_in": 2316,
+     "tokens_out": 684
+    },
+    {
+     "step": 5,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 6,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Dinner ke liye budget kya hai?",
+      "field": "budget",
+      "options": [
+       "Below ₹300",
+       "₹300-600",
+       "Above ₹600"
+      ]
+     },
+     "rationale": "Budget missing and it changes whether we order in or cook",
+     "latency_ms": 7404,
+     "tokens_in": 2930,
+     "tokens_out": 769
+    },
+    {
+     "step": 7,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "no preference",
+      "field": "budget"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 8,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "80567",
+       "page_size": 8
+      }
+     },
+     "rationale": "Fetch veg-friendly menu from Dummy Dosa Den to choose dinner items for two",
+     "latency_ms": 9832,
+     "tokens_in": 2947,
+     "tokens_out": 1009
+    },
+    {
+     "step": 9,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 11
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 10,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [],
+      "validator": "off"
+     },
+     "rationale": null,
+     "latency_ms": 15256,
+     "tokens_in": 3456,
+     "tokens_out": 1323
+    },
+    {
+     "step": 11,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Veg dinner for two — simple aur tasty: Masala Dosa (2) aur Gulab Jamun (2) from Dummy Dosa Den.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "80567007",
+        "name": "Masala Dosa",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 120
+       },
+       {
+        "kind": "dish",
+        "entity_id": "80567010",
+        "name": "Gulab Jamun",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 90
+       }
+      ],
+      "item_total": 420,
+      "restaurant_id": "80567",
+      "eta_minutes": 22,
+      "assumptions": [],
+      "mode_notes": []
+     },
+     "rationale": "Restaurant open with vegetarian mains and desserts available on the menu",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "agent_no_validator",
+   "run": 3,
+   "passed": false,
+   "failed_checks": [
+    "assumptions_listed"
+   ],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": false,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 3,
+    "tool_calls": 2,
+    "tokens_in": 16340,
+    "tokens_out": 6443,
+    "cost_usd": 0.016971,
+    "latency_ms": 72397,
+    "slowest_call_ms": 20583,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": [],
+   "trace": [
+    {
+     "step": 0,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "text": "Dinner for two, kuch accha"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 1,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "note": "Using your saved Home address"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 2,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Diet batao: Vegetarian, Non-vegetarian, ya No preference?",
+      "field": "diet",
+      "options": [
+       "Vegetarian",
+       "Non-vegetarian",
+       "No preference"
+      ]
+     },
+     "rationale": "Diet is missing and decides whether I can include non-veg choices for dinner for two.",
+     "latency_ms": 5935,
+     "tokens_in": 2296,
+     "tokens_out": 333
+    },
+    {
+     "step": 3,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "veg",
+      "field": "diet"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 4,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Budget per person batao?",
+      "field": "budget",
+      "options": [
+       "Low: <=₹300",
+       "Medium: ₹300-700",
+       "High: >₹700",
+       "No preference"
+      ]
+     },
+     "rationale": "Budget will change whether we order in or pick a nicer restaurant or cook at home",
+     "latency_ms": 8604,
+     "tokens_in": 2318,
+     "tokens_out": 653
+    },
+    {
+     "step": 5,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "no preference",
+      "field": "budget"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 6,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "search_restaurants",
+      "params": {
+       "query": "vegetarian",
+       "offset": 0
+      }
+     },
+     "rationale": "Find vegetarian restaurants/options for dinner for two",
+     "latency_ms": 5526,
+     "tokens_in": 2333,
+     "tokens_out": 425
+    },
+    {
+     "step": 7,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "search_restaurants",
+      "count": 10
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 8,
+     "type": "question",
+     "actor": "model",
+     "payload": {
+      "question": "Aaj khud banana hai ya order karna hai?",
+      "field": "preference",
+      "options": [
+       "Cook at home",
+       "Order in"
+      ]
+     },
+     "rationale": "Need to know whether to build a cook plan (Instamart) or choose a restaurant order_in plan for dinner.",
+     "latency_ms": 19251,
+     "tokens_in": 2946,
+     "tokens_out": 1805
+    },
+    {
+     "step": 9,
+     "type": "user_input",
+     "actor": "user",
+     "payload": {
+      "answer": "no preference",
+      "field": "preference"
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 10,
+     "type": "tool_call",
+     "actor": "model",
+     "payload": {
+      "tool": "get_menu",
+      "params": {
+       "restaurant_id": "80567",
+       "page_size": 8
+      }
+     },
+     "rationale": "Get the menu so I can pick vegetarian dishes suitable for dinner for two",
+     "latency_ms": 20583,
+     "tokens_in": 2969,
+     "tokens_out": 1968
+    },
+    {
+     "step": 11,
+     "type": "tool_result_summary",
+     "actor": "code",
+     "payload": {
+      "tool": "get_menu",
+      "count": 11
+     },
+     "rationale": null,
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    },
+    {
+     "step": 12,
+     "type": "validation",
+     "actor": "code",
+     "payload": {
+      "ok": true,
+      "warnings": [],
+      "validator": "off"
+     },
+     "rationale": null,
+     "latency_ms": 12498,
+     "tokens_in": 3478,
+     "tokens_out": 1259
+    },
+    {
+     "step": 13,
+     "type": "plan",
+     "actor": "model",
+     "payload": {
+      "path": "order_in",
+      "reason": "Order karte hain — Dummy Dosa Den se 2 Masala Dosa aur 1 Gulab Jamun; simple aur accha dinner for two.",
+      "items": [
+       {
+        "kind": "dish",
+        "entity_id": "80567007",
+        "name": "Masala Dosa",
+        "variant_id": null,
+        "qty": 2,
+        "unit_price": 120
+       },
+       {
+        "kind": "dish",
+        "entity_id": "80567010",
+        "name": "Gulab Jamun",
+        "variant_id": null,
+        "qty": 1,
+        "unit_price": 90
+       }
+      ],
+      "item_total": 330,
+      "restaurant_id": "80567",
+      "eta_minutes": 22,
+      "assumptions": [],
+      "mode_notes": []
+     },
+     "rationale": "Open vegetarian menu items available and in stock.",
+     "latency_ms": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   ]
+  },
+  {
+   "scenario_id": "S-11",
+   "group": "missing_info",
+   "strategy": "fixed_workflow",
+   "run": 1,
+   "passed": true,
+   "failed_checks": [],
+   "checks": {
+    "outcome": true,
+    "path": true,
+    "hard_constraints": null,
+    "no_hallucinated_entities": true,
+    "questions_within_limit": true,
+    "address_picker_asked": null,
+    "trajectory": true,
+    "no_writes_without_approval": true,
+    "stop_has_reason": null,
+    "fallback_plan": null,
+    "failure_handled": null,
+    "replanned_after_change": null,
+    "plan_valid": true,
+    "assumptions_listed": true,
+    "plan_size": null
+   },
+   "metrics": {
+    "hallucinated": 0,
+    "writes_without_approval": 0,
+    "questions": 0,
+    "tool_calls": 2,
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "slowest_call_ms": 0,
+    "validator_errors": [],
+    "final": "plan"
+   },
+   "notes": []
+  }
+ ]
+}
