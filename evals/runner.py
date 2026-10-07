@@ -38,9 +38,9 @@ from moodmeals.models.schema import PROMPT_VERSION
 
 RESULTS_DIR = Path(__file__).parent / "results"
 DEFAULT_CAP_INR = 1500.0
-# Rupees per US dollar. A config value, not a fact: check it and override with --usd-inr.
-USD_INR = 88.0
-USD_INR_CHECKED = "2026-10-07 (unverified)"
+# Rupees per US dollar. A config value, not a fact: it moves, so override with --usd-inr.
+USD_INR = 97.0
+USD_INR_CHECKED = "2026-10-07 (given by the owner)"
 KEY_ENV = {
     "openai": "OPENAI_API_KEY",
     "groq": "GROQ_API_KEY",
@@ -199,8 +199,12 @@ def run_eval(
     usd_inr: float = USD_INR,
     meta: dict[str, Any] | None = None,
     progress: Callable[[str], None] | None = None,
+    checkpoint: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     """Run every scenario with every strategy and return the results document.
+
+    `checkpoint` is called with the document after every run, so progress can be saved as it goes.
+    Ctrl+C ends the eval cleanly and returns what was done (`interrupted: true`).
 
     `client_factory` makes a fresh model client per run (clean usage and cost); it may be None
     when only `fixed_workflow` is run. Deterministic strategies run once whatever `runs` says.
@@ -211,81 +215,93 @@ def run_eval(
     rows: list[dict[str, Any]] = []
     aborted: dict[str, Any] | None = None
     invalid = consecutive_invalid = 0
-    unreachable = False
+    unreachable = interrupted = False
 
-    for sc in scenarios:
-        for strategy in strategies:
-            for n in range(1, (1 if strategy == "fixed_workflow" else runs) + 1):
-                if meter.exhausted():
-                    meter.hit = True
-                if meter.hit:
-                    break
-                client = None
-                if strategy != "fixed_workflow":
-                    client = CappedClient(client_factory(), meter) if client_factory else None
-                rec = run_strategy(strategy, sc, client)
-                meter.done_usd += rec.cost_usd or 0.0  # an interrupted run still cost money
-                why = None if meter.hit else infra_error(rec)
-                if why and strategy != "fixed_workflow":
-                    invalid += 1
-                    consecutive_invalid += 1
-                    rows.append({"scenario_id": sc.id, "group": sc.group, "strategy": strategy,
-                                 "run": n, "invalid": True, "invalid_reason": why})  # fmt: skip
-                    say(f"{sc.id} {strategy} run {n}: INVALID, not scored ({why})")
-                    if consecutive_invalid >= MAX_CONSECUTIVE_INVALID:
-                        unreachable = True
+    def snapshot() -> dict[str, Any]:
+        summary = summarise(scores)
+        return {
+            "version": RESULTS_VERSION,
+            "date": datetime.date.today().isoformat(),
+            **(meta or {}),
+            "strategies": strategies,
+            "runs_per_scenario": runs,
+            "scenarios": [s.id for s in scenarios],
+            "cap_inr": cap_inr,
+            "usd_inr": usd_inr,
+            "usd_inr_checked": USD_INR_CHECKED,
+            "prices_checked": PRICES_CHECKED,
+            "spent_inr": round(meter.done_inr, 4),
+            "aborted_by_cap": meter.hit,
+            "aborted_run": aborted,
+            "aborted_unreachable": unreachable,
+            "interrupted": interrupted,
+            "invalid_runs": invalid,
+            "n_runs": len(rows),
+            "summary": {
+                strat: {name: {**cell, "text": k_of_n(cell)} for name, cell in cells.items()}
+                for strat, cells in summary.items()
+            },
+            "results": rows,
+        }
+
+    def save() -> None:
+        if checkpoint is not None:
+            checkpoint(snapshot())  # progress survives a crash, a sleeping laptop or Ctrl+C
+
+    try:
+        for sc in scenarios:
+            for strategy in strategies:
+                for n in range(1, (1 if strategy == "fixed_workflow" else runs) + 1):
+                    if meter.exhausted():
+                        meter.hit = True
+                    if meter.hit:
                         break
-                    continue
-                consecutive_invalid = 0
-                if meter.hit:  # the cap stopped this run partway: not a model failure
-                    aborted = {"scenario_id": sc.id, "strategy": strategy, "run": n}
-                    say(f"{sc.id} {strategy} run {n}: stopped by the spend cap, not scored")
+                    client = None
+                    if strategy != "fixed_workflow":
+                        client = CappedClient(client_factory(), meter) if client_factory else None
+                    rec = run_strategy(strategy, sc, client)
+                    meter.done_usd += rec.cost_usd or 0.0  # an interrupted run still cost money
+                    why = None if meter.hit else infra_error(rec)
+                    if why and strategy != "fixed_workflow":
+                        invalid += 1
+                        consecutive_invalid += 1
+                        rows.append({"scenario_id": sc.id, "group": sc.group, "strategy": strategy,
+                                     "run": n, "invalid": True, "invalid_reason": why})  # fmt: skip
+                        say(f"{sc.id} {strategy} run {n}: INVALID, not scored ({why})")
+                        save()
+                        if consecutive_invalid >= MAX_CONSECUTIVE_INVALID:
+                            unreachable = True
+                            break
+                        continue
+                    consecutive_invalid = 0
+                    if meter.hit:  # the cap stopped this run partway: not a model failure
+                        aborted = {"scenario_id": sc.id, "strategy": strategy, "run": n}
+                        say(f"{sc.id} {strategy} run {n}: stopped by the spend cap, not scored")
+                        break
+                    score = score_run(rec, sc)
+                    scores.append(score)
+                    row: dict[str, Any] = {
+                        "scenario_id": sc.id, "group": sc.group, "strategy": strategy, "run": n,
+                        "passed": score.passed, "failed_checks": score.failed,
+                        "checks": score.checks, "metrics": score.metrics, "notes": score.notes,
+                    }  # fmt: skip
+                    if not score.passed:
+                        row["trace"] = _trace(rec)  # failures are published (E1)
+                    rows.append(row)
+                    say(
+                        f"{sc.id} {strategy} run {n}: "
+                        + ("passed" if score.passed else f"FAILED {', '.join(score.failed)}")
+                        + f" (spent so far ₹{meter.done_inr:.2f})"
+                    )
+                    save()
+                if meter.hit or unreachable:
                     break
-                score = score_run(rec, sc)
-                scores.append(score)
-                row: dict[str, Any] = {
-                    "scenario_id": sc.id, "group": sc.group, "strategy": strategy, "run": n,
-                    "passed": score.passed, "failed_checks": score.failed,
-                    "checks": score.checks, "metrics": score.metrics, "notes": score.notes,
-                }  # fmt: skip
-                if not score.passed:
-                    row["trace"] = _trace(rec)  # failures are published (E1)
-                rows.append(row)
-                say(
-                    f"{sc.id} {strategy} run {n}: "
-                    + ("passed" if score.passed else f"FAILED {', '.join(score.failed)}")
-                    + f" (spent so far ₹{meter.done_inr:.2f})"
-                )
             if meter.hit or unreachable:
                 break
-        if meter.hit or unreachable:
-            break
-
-    summary = summarise(scores)
-    doc: dict[str, Any] = {
-        "version": RESULTS_VERSION,
-        "date": datetime.date.today().isoformat(),
-        **(meta or {}),
-        "strategies": strategies,
-        "runs_per_scenario": runs,
-        "scenarios": [s.id for s in scenarios],
-        "cap_inr": cap_inr,
-        "usd_inr": usd_inr,
-        "usd_inr_checked": USD_INR_CHECKED,
-        "prices_checked": PRICES_CHECKED,
-        "spent_inr": round(meter.done_inr, 4),
-        "aborted_by_cap": meter.hit,
-        "aborted_run": aborted,
-        "invalid_runs": invalid,
-        "aborted_unreachable": unreachable,
-        "n_runs": len(rows),
-        "summary": {
-            strat: {name: {**cell, "text": k_of_n(cell)} for name, cell in cells.items()}
-            for strat, cells in summary.items()
-        },
-        "results": rows,
-    }
-    return doc
+    except KeyboardInterrupt:
+        interrupted = True
+        say("Interrupted: saving the results so far.")
+    return snapshot()
 
 
 def results_path(out_dir: Path, doc: dict[str, Any]) -> Path:
@@ -297,6 +313,11 @@ def results_path(out_dir: Path, doc: dict[str, Any]) -> Path:
         path = out_dir / f"{base}-{n}.json"
         n += 1
     return path
+
+
+def partial_path(out_dir: Path, meta: dict[str, Any]) -> Path:
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "-", str(meta.get("model") or "unknown")).strip("-")
+    return out_dir / f"{datetime.date.today().isoformat()}-{slug}.partial.json"
 
 
 def write_results(doc: dict[str, Any], out_dir: Path = RESULTS_DIR) -> Path:
@@ -417,12 +438,32 @@ def main(argv: list[str] | None = None) -> int:
     meta = {"provider": provider, "model": model or "fixed-workflow", "set": args.set,
             "prompt_version": PROMPT_VERSION, "git": git_info(),
             "temperature": "provider default (not set by the runner)"}  # fmt: skip
-    doc = run_eval(scenarios, strategies, factory, runs=args.runs, cap_inr=args.cap_inr,
-                   usd_inr=args.usd_inr, meta=meta, progress=print)  # fmt: skip
+    partial = partial_path(args.out, meta)
+    args.out.mkdir(parents=True, exist_ok=True)
+
+    def checkpoint(snap: dict[str, Any]) -> None:
+        partial.write_text(json.dumps(snap, indent=1, ensure_ascii=False), encoding="utf-8")
+
+    print(f"Progress is saved as it goes to {partial} (kept if the run crashes).")
+    doc = run_eval(
+        scenarios,
+        strategies,
+        factory,
+        runs=args.runs,
+        cap_inr=args.cap_inr,
+        usd_inr=args.usd_inr,
+        meta=meta,
+        progress=print,
+        checkpoint=checkpoint,
+    )
     path = write_results(doc, args.out)
+    partial.unlink(missing_ok=True)  # the final file replaces it
     print(f"\nWrote {path}")
     for strat, cells in doc["summary"].items():
         print(f"{strat}: all checks {cells['all_checks']['text']}")
+    if doc["interrupted"]:
+        print("Interrupted. The results so far are saved above; rerun with --only for the rest.")
+        return 130
     if doc["invalid_runs"]:
         print(f"{doc['invalid_runs']} run(s) were invalid (model unreachable) and are not scored.")
     if doc["aborted_unreachable"]:

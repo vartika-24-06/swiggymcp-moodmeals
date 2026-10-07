@@ -29,3 +29,6 @@ spikes/captures/
 .DS_Store
 Thumbs.db
 scripts/_out/
+
+# Eval progress files (the final results file is the one to commit)
+evals/results/*.partial.json

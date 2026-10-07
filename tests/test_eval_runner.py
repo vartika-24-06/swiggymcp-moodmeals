@@ -349,3 +349,75 @@ def test_only_runs_the_named_scenarios_and_rejects_unknown_ids(tmp_path, capsys)
     assert json.loads(path.read_text(encoding="utf-8"))["scenarios"] == ["S-04", "S-06"]
     with pytest.raises(SystemExit, match="Unknown scenario id: S-77"):
         runner.main(["--only", "S-77", "--out", str(tmp_path)])
+
+
+# ---------------------------------------------------------------- progress is saved as it goes
+
+
+class Bomb(DemoLLM):
+    """Works for `ok_calls` model calls (across clients), then raises `error`."""
+
+    ok_calls = 6
+    error: BaseException = KeyboardInterrupt()
+    seen = 0
+
+    def next_action(self, view):
+        Bomb.seen += 1
+        if Bomb.seen > Bomb.ok_calls:
+            raise Bomb.error
+        return super().next_action(view)
+
+
+@pytest.fixture
+def bomb():
+    Bomb.seen, Bomb.ok_calls, Bomb.error = 0, 6, KeyboardInterrupt()
+    return Bomb
+
+
+def test_checkpoint_is_called_after_every_run_with_a_growing_document():
+    snaps = []
+    doc = runner.run_eval(SMOKE[:2], ["agent", "fixed_workflow"], DemoLLM, checkpoint=snaps.append)
+    assert [s["n_runs"] for s in snaps] == list(range(1, doc["n_runs"] + 1))
+    assert snaps[-1] == doc and all(s["interrupted"] is False for s in snaps)
+
+
+def test_ctrl_c_ends_the_eval_cleanly_and_returns_what_was_done(bomb):
+    doc = runner.run_eval(SMOKE, ["agent"], bomb)
+    assert doc["interrupted"] is True and 0 < doc["n_runs"] < len(SMOKE)
+    assert doc["summary"]["agent"]["all_checks"]["applicable"] == doc["n_runs"]
+    json.dumps(doc)
+
+
+def test_main_writes_the_results_and_exits_130_when_interrupted(
+    tmp_path, monkeypatch, capsys, bomb
+):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    monkeypatch.setattr(runner, "make_client", lambda provider, model, key: bomb())
+    code = runner.main(["--provider", "openai", "--model", "gpt-5-mini", "--strategies", "agent",
+                        "--cap-inr", "100000", "--out", str(tmp_path)])  # fmt: skip
+    assert code == 130 and "Interrupted" in capsys.readouterr().out
+    [path] = list(tmp_path.glob("*.json"))
+    assert not path.name.endswith(".partial.json")  # the final file replaced the partial one
+    assert json.loads(path.read_text(encoding="utf-8"))["interrupted"] is True
+
+
+def test_a_crash_leaves_the_partial_file_with_the_runs_finished_so_far(tmp_path, monkeypatch, bomb):
+    bomb.error = RuntimeError("laptop fell asleep")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    monkeypatch.setattr(runner, "make_client", lambda provider, model, key: bomb())
+    with pytest.raises(RuntimeError, match="fell asleep"):
+        runner.main(["--provider", "openai", "--model", "gpt-5-mini", "--strategies", "agent",
+                     "--cap-inr", "100000", "--out", str(tmp_path)])  # fmt: skip
+    [partial] = list(tmp_path.glob("*.partial.json"))
+    data = json.loads(partial.read_text(encoding="utf-8"))
+    assert data["n_runs"] >= 1 and data["model"] == "gpt-5-mini"  # the finished runs survived
+
+
+def test_a_normal_run_leaves_no_partial_file_behind(tmp_path):
+    assert runner.main(["--set", "smoke", "--out", str(tmp_path)]) == 0
+    assert [p.name for p in tmp_path.glob("*.partial.json")] == []
+    assert len(list(tmp_path.glob("*.json"))) == 1
+
+
+def test_the_default_exchange_rate_is_the_owners():
+    assert runner.USD_INR == 97.0 and "owner" in runner.USD_INR_CHECKED

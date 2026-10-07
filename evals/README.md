@@ -30,7 +30,9 @@ Free tiers limit tokens per minute. Calls are paced (`--min-interval-s`, default
 `--rate-limit-wait-s`). A run where the model could not be reached or answered (rate limit,
 bad key, network) is recorded as `invalid` with a reason and is NOT scored: it says nothing
 about the agent. Waiting for the quota does not count against a run's 90 s time limit. After 3 invalid runs in a row the eval stops as unreachable (exit code 4) and
-still writes its results. Exit codes: 0 ok, 3 spend cap, 4 model unreachable.
+still writes its results. Exit codes: 0 ok, 3 spend cap, 4 model unreachable, 130 interrupted.
+
+**Progress is saved as it goes** to `evals/results/<date>-<model>.partial.json` after every run. Ctrl+C ends the eval cleanly and writes the final file with `interrupted: true`; a crash or a sleeping laptop leaves the partial file with every finished run. Do not commit `.partial.json` files (they are git-ignored). The default exchange rate is Rs 97 per dollar (`--usd-inr` overrides it).
 
 Options: `--only S-04,S-06` (just those scenarios), `--set smoke|full`, `--strategies` (comma list of `one_shot`, `fixed_workflow`,
 `agent`, `agent_no_validator`), `--runs N` (model strategies only; the fixed workflow is deterministic and runs
