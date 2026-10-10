@@ -171,15 +171,15 @@ with st.sidebar:
 
 # ---------------------------------------------------------------- main
 
-st.title("MoodMeals 🍽️")
-st.caption("Kya khaun, batao. " + config.DISCLAIMER)
-if config.is_public():
-    st.info(
-        "This public site runs on made-up restaurants and groceries only. "
-        f"[Watch the demo video]({config.DEMO_VIDEO_URL}) to see it on real Swiggy data "
-        "(read-only dry-run on my own machine)."
+title_col, info_col = st.columns([12, 1])
+title_col.title("MoodMeals 🍽️")
+with info_col.popover("ℹ️"):
+    st.markdown(
+        "Runs on the **Swiggy MCP** tools (Food and Instamart). Swiggy sign-in only works on "
+        "localhost, so this public site uses **made-up data** only. To see it on real data, "
+        "open the **Demo video** page, or trace through the runs on **Replay**."
     )
-
+st.caption("Kya khaun, batao. " + config.DISCLAIMER)
 state, agent = S.state, S.agent
 
 if state is None:

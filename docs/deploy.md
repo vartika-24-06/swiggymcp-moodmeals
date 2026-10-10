@@ -25,8 +25,7 @@ results page, or their own model key.
 
 - Open the link in a private window. Pick **Scripted demo (no key)** and plan a meal: it must
   reach the approval screen with a "mock" label and no Swiggy connect button.
-- Open **Replay**, **Results** and **About**: all three load.
-- The page footer or About text says the site is not affiliated with Swiggy.
+- Open **Demo video**, **Replay** and **Results**: all three load. The ℹ️ next to the title opens a short note on why the site is mock only.
 - Optional: paste a low-limit key for one run, then confirm nothing in the app shows the key
   afterwards (not in the trace, not in an exported run).
 

@@ -9,7 +9,6 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import config  # noqa: E402
 import ui_text  # noqa: E402
 
 from moodmeals.core.events import Event  # noqa: E402
@@ -20,11 +19,6 @@ st.title("Replay ⏯️")
 st.caption(
     "Recorded runs on made-up restaurants and groceries. Playing one makes no model or tool "
     "calls and needs no key."
-)
-
-st.markdown(
-    f"🎥 [Watch the demo video]({config.DEMO_VIDEO_URL}): the same flow on real Swiggy data "
-    "(read-only dry-run on my own machine)."
 )
 
 folder = Path(__file__).resolve().parents[2] / "data" / "replays"

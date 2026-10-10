@@ -62,7 +62,7 @@ phone numbers, and no order, checkout or payment tool exists in the codebase. Fu
 
 Open https://swiggymcp-moodmeals-byvartika.streamlit.app/, pick **Scripted demo (no key)**, type
 a mood and plan. You can also paste your own model key to try a real model on made-up data. The
-Replay, Results and About pages are in the sidebar.
+The Demo video, Replay and Results pages are in the sidebar.
 
 **This site can only run mock mode, with made-up restaurants and groceries.** It cannot connect
 to Swiggy. Swiggy's sign-in only allows redirects to localhost, so a hosted site can't complete

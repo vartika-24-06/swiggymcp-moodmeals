@@ -218,7 +218,7 @@ def test_public_deployment_pages_all_render_and_requirements_are_present(monkeyp
     assert (root / "requirements.txt").read_text().strip() == "-e ."
     monkeypatch.setenv("MOODMEALS_DEPLOY", "public")
     monkeypatch.delenv("MOODMEALS_MODE", raising=False)
-    for page in ("app/Home.py", "app/pages/1_Replay.py", "app/pages/2_About.py",
+    for page in ("app/Home.py", "app/pages/0_Demo_video.py", "app/pages/1_Replay.py",
                  "app/pages/3_Results.py"):
         at = AppTest.from_file(str(root / page), default_timeout=30).run()
         assert not at.exception, page

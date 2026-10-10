@@ -4,9 +4,6 @@ from __future__ import annotations
 
 import os
 
-DEMO_VIDEO_URL = (
-    "https://drive.google.com/file/d/1f-2KqgMvKcHaOobi1U79c_BBmPKuCkIA/view?usp=sharing"
-)
 DISCLAIMER = "Planning aid, not advice. It suggests a meal; it does not diagnose or advise."
 PASS_THROUGH_NOTICE = (
     "On this public site your key passes through the app's server to the model provider you "

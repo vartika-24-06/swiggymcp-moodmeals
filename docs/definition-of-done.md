@@ -17,7 +17,7 @@ Checked against requirements section 11. Every box is ticked or carries an hones
 - `ruff check .` and `pytest` pass.
 - Repository scan for keys, tokens and phone-number patterns: only obviously fake test values
   (such as `9876543210`) in tests and spikes. No credentials or token files are tracked.
-- No Swiggy logo or wording implying endorsement in `app/`; About says "not approved, sponsored
+- No Swiggy logo or wording implying endorsement in `app/`; the README says "not approved, sponsored
   or endorsed".
 - Every page renders in public mode, and dry-run or live is refused there (`tests/test_app.py`).
 

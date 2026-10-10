@@ -55,5 +55,4 @@ $env:MOODMEALS_MODE = "dry_run"; streamlit run app/Home.py
 
 - [ ] No address, phone, OTP, name or order history anywhere in the video.
 - [ ] No API key visible. No browser bookmarks or personal tabs.
-- [ ] The About page wording is approved (T5.5) and the "not affiliated with Swiggy" line is visible.
 - [ ] You say that dry-run places no cart or order, and that mock mode is made up.
