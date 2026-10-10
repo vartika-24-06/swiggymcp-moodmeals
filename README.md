@@ -2,7 +2,7 @@
 
 **Live demo (mock data, no key needed):** https://swiggymcp-moodmeals-byvartika.streamlit.app/
 
-**Demo video (real Swiggy data, read-only dry-run on my own machine):** https://drive.google.com/file/d/1Xk0-A_zIZ9rchsEL3TaUSctpwyBqUwGO/view?usp=sharing
+**Demo video (real Swiggy data, read-only dry-run on my own machine):** https://drive.google.com/file/d/1f-2KqgMvKcHaOobi1U79c_BBmPKuCkIA/view?usp=sharing
 
 The live site uses made-up restaurants and groceries only. The real Swiggy connection runs locally
 (Swiggy sign-in allows only localhost), so it is shown in the video.
