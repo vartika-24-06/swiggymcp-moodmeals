@@ -1,0 +1,41 @@
+[
+  {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "mode": "native",
+    "calls": 15,
+    "answered": 15,
+    "valid": 15,
+    "right": 15,
+    "errors": {},
+    "reasons": {},
+    "per_prompt": {
+      "P1_order_veg": [
+        3,
+        3,
+        3
+      ],
+      "P2_cook_named": [
+        3,
+        3,
+        3
+      ],
+      "P3_vague": [
+        3,
+        3,
+        3
+      ],
+      "P4_hinglish": [
+        3,
+        3,
+        3
+      ],
+      "P5_ground_plan": [
+        3,
+        3,
+        3
+      ]
+    },
+    "median_latency_s": 4.265315099997679
+  }
+]
