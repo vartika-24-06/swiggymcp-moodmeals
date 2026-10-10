@@ -268,10 +268,9 @@ elif state.waiting == "address":
 if state.plan and state.phase == "AWAITING_APPROVAL":
     plan = state.plan
     with st.container(border=True):
-        st.subheader(
-            "Cook or grab it from Instamart" if plan.path == "cook" else "Order in from Swiggy Food",
-            anchor=False,
-        )
+        cook = plan.path == "cook"
+        heading = "Cook or grab it from Instamart" if cook else "Order in from Swiggy Food"
+        st.subheader(heading, anchor=False)
         st.write(plan.reason)
         for it in plan.items:
             st.write(f"• {it.qty} × {it.name} — ₹{it.unit_price * it.qty}")
