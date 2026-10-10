@@ -114,7 +114,7 @@ def stop_run() -> None:
 # ---------------------------------------------------------------- sidebar
 
 with st.sidebar:
-    st.header("Setup")
+    st.header("Setup", anchor=False)
     if MODE == "mock":
         st.caption("Mode: **mock** (simulated data, nothing is sent to Swiggy)")
     else:
@@ -196,7 +196,7 @@ def about_dialog() -> None:
 
 
 title_col, info_col = st.columns([14, 1], vertical_alignment="center")
-title_col.title("MoodMeals 🍽️")
+title_col.title("MoodMeals 🍽️", anchor=False)
 if info_col.button("i", key="about_btn", help="About"):
     about_dialog()
 st.caption("Kya khaun, batao. " + config.DISCLAIMER)
@@ -240,7 +240,7 @@ if state.address_label:
 # ---- waiting for the person
 if state.waiting == "answer" and state.pending_question:
     q = state.pending_question
-    st.subheader(q["question"])
+    st.subheader(q["question"], anchor=False)
     st.caption(f"Question {state.questions_asked} of {agent.guard.budget.max_questions}")
     opts = q.get("options") or []
     for col, opt in zip(st.columns(max(1, len(opts))), opts, strict=False):
@@ -252,7 +252,7 @@ if state.waiting == "answer" and state.pending_question:
             st.rerun()
 
 elif state.waiting == "address":
-    st.subheader("Which address should I use?")
+    st.subheader("Which address should I use?", anchor=False)
     st.caption("Counts as one of your questions.")
     hide = MODE != "mock" and S.get("hide_addr", True)
     for i, opt in enumerate(agent.address_options(state), 1):
@@ -269,7 +269,8 @@ if state.plan and state.phase == "AWAITING_APPROVAL":
     plan = state.plan
     with st.container(border=True):
         st.subheader(
-            "Cook or grab it from Instamart" if plan.path == "cook" else "Order in from Swiggy Food"
+            "Cook or grab it from Instamart" if plan.path == "cook" else "Order in from Swiggy Food",
+            anchor=False,
         )
         st.write(plan.reason)
         for it in plan.items:

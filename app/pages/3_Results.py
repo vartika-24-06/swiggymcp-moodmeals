@@ -14,7 +14,7 @@ from evals import report  # noqa: E402
 from evals.scenario import load_scenarios  # noqa: E402
 
 st.set_page_config(page_title="Results · MoodMeals", page_icon="📊", layout="wide")
-st.title("Results 📊")
+st.title("Results 📊", anchor=False)
 st.caption(
     "How the agent did on 24 made-up scenarios. Counts are 'k of n', failures are listed, and "
     "samples are small (3 runs per scenario), so read them as evidence, not as precise rates."
@@ -41,7 +41,7 @@ if len(prompts) > 1:
         + " (re-run after a fix)."
     )
 
-st.subheader("Runs passing every check")
+st.subheader("Runs passing every check", anchor=False)
 counts = report.pass_counts(doc)
 cols = st.columns(max(len(counts), 1))
 for col, (strat, (k, n)) in zip(cols, counts.items(), strict=False):
@@ -55,10 +55,10 @@ st.caption(
     "times each. Compare the 'k of n' text, not the bar heights."
 )
 
-st.subheader("Check by check")
+st.subheader("Check by check", anchor=False)
 st.dataframe(report.check_table(doc), hide_index=True, width="stretch")
 
-st.subheader("By scenario group")
+st.subheader("By scenario group", anchor=False)
 groups = report.by_group(doc)
 st.dataframe(
     [
@@ -71,13 +71,13 @@ st.dataframe(
     width="stretch",
 )
 
-st.subheader("Failures")
+st.subheader("Failures", anchor=False)
 fails = report.failures(doc, titles)
 st.write(f"{len(fails)} failed runs, all listed.")
 if fails:
     st.dataframe(fails, hide_index=True, width="stretch")
 
-st.subheader("Cost and speed per run")
+st.subheader("Cost and speed per run", anchor=False)
 cost_rows = [
     {"strategy": report.STRATEGY_LABELS.get(s, s), **v} for s, v in report.cost_summary(doc).items()
 ]

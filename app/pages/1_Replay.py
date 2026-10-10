@@ -15,7 +15,7 @@ from moodmeals.core.events import Event  # noqa: E402
 from moodmeals.core.replay import ReplayError, list_replays, load_replay  # noqa: E402
 
 st.set_page_config(page_title="Replay · MoodMeals", page_icon="⏯️", layout="wide")
-st.title("Replay ⏯️")
+st.title("Replay ⏯️", anchor=False)
 st.caption(
     "Recorded runs on made-up restaurants and groceries. Playing one makes no model or tool "
     "calls and needs no key."
@@ -57,7 +57,7 @@ except Exception:
     st.error("This file's events are not in the expected format.")
     st.stop()
 
-st.subheader(data.get("title", "Recorded run"))
+st.subheader(data.get("title", "Recorded run"), anchor=False)
 if data.get("note"):
     (st.warning if data.get("tag") == "failure" else st.info)(data["note"])
 st.caption(

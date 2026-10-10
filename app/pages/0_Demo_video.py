@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import links  # noqa: E402
 
 st.set_page_config(page_title="Demo video · MoodMeals", page_icon="🎥", layout="wide")
-st.title("Demo video 🎥")
+st.title("Demo video 🎥", anchor=False)
 st.caption(
     "The real-data run: read-only dry-run on my own Swiggy account, recorded on my machine. "
     "Swiggy sign-in only works on localhost, so this public site can't do it."
