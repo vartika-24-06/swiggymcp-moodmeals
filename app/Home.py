@@ -173,6 +173,12 @@ with st.sidebar:
 
 st.title("MoodMeals 🍽️")
 st.caption("Kya khaun, batao. " + config.DISCLAIMER)
+if config.is_public():
+    st.info(
+        "This public site runs on made-up restaurants and groceries only. "
+        f"[Watch the demo video]({config.DEMO_VIDEO_URL}) to see it on real Swiggy data "
+        "(read-only dry-run on my own machine)."
+    )
 
 state, agent = S.state, S.agent
 
