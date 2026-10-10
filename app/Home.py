@@ -171,14 +171,34 @@ with st.sidebar:
 
 # ---------------------------------------------------------------- main
 
-title_col, info_col = st.columns([12, 1])
-title_col.title("MoodMeals 🍽️")
-with info_col.popover("ℹ️"):
+st.markdown(
+    """
+<style>
+.st-key-about_btn button {
+    width: 1.7rem; min-width: 1.7rem; height: 1.7rem; min-height: 1.7rem; padding: 0;
+    border-radius: 50%; background: transparent; opacity: 0.45;
+    font-style: italic; font-family: Georgia, serif; line-height: 1;
+}
+.st-key-about_btn button:hover { opacity: 0.9; }
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+
+@st.dialog("About")
+def about_dialog() -> None:
     st.markdown(
         "Runs on the **Swiggy MCP** tools (Food and Instamart). Swiggy sign-in only works on "
         "localhost, so this public site uses **made-up data** only. To see it on real data, "
         "open the **Demo video** page, or trace through the runs on **Replay**."
     )
+
+
+title_col, info_col = st.columns([14, 1], vertical_alignment="center")
+title_col.title("MoodMeals 🍽️")
+if info_col.button("i", key="about_btn", help="About"):
+    about_dialog()
 st.caption("Kya khaun, batao. " + config.DISCLAIMER)
 state, agent = S.state, S.agent
 
