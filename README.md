@@ -2,6 +2,11 @@
 
 **Live demo (mock data, no key needed):** https://swiggymcp-moodmeals-byvartika.streamlit.app/
 
+**Demo video (real Swiggy data, read-only dry-run on my own machine):** https://drive.google.com/file/d/1Xk0-A_zIZ9rchsEL3TaUSctpwyBqUwGO/view?usp=sharing
+
+The live site uses made-up restaurants and groceries only. The real Swiggy connection runs locally
+(Swiggy sign-in allows only localhost), so it is shown in the video.
+
 A "kya khaun, batao" agent. It takes a vague "I don't know what to eat" and turns it into
 one concrete plan: **cook or grab it from Instamart**, or **order in from Swiggy Food**. It asks
 at most three questions, recommends one plan, checks the plan against what the tools really
