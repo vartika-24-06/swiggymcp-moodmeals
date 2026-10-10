@@ -45,7 +45,9 @@ $env:MOODMEALS_MODE = "dry_run"; streamlit run app/Home.py
 - Approve: show **"Dry-run: approving only shows what would happen. Nothing is sent to Swiggy."** and the "What would have happened" panel. "No cart or order is touched."
 - Optional close: show your Swiggy app cart is empty.
 
-**5. What I'd show an interviewer (20 s).** Evals page or `evals/results`: "24 scenarios, three strategies, k-of-n results including failures" (only once T7.5 and T7.6 are done; otherwise skip).
+**5. The evidence (30 s).** Results page (sidebar).
+- "24 scenarios, three strategies, counts shown as k of n." Point at the strategy cards, then scroll to **Failures** and say that every failed run is listed.
+- Say the caveat out loud: one model, small samples, and the agent was tuned after the first run.
 
 **6. Close (10 s).** "Planning aid, not advice. Not affiliated with Swiggy. Code and write-up are on GitHub."
 
