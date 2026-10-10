@@ -1,166 +1,144 @@
 # MoodMeals
 
 **Live demo (mock data, no key needed):** https://swiggymcp-moodmeals-byvartika.streamlit.app/
+**Demo video (real Swiggy data, read-only dry-run on my machine):** https://drive.google.com/file/d/1f-2KqgMvKcHaOobi1U79c_BBmPKuCkIA/view?usp=sharing
 
-**Demo video (real Swiggy data, read-only dry-run on my own machine):** https://drive.google.com/file/d/1f-2KqgMvKcHaOobi1U79c_BBmPKuCkIA/view?usp=sharing
+*A "kya khaun, batao" agent that decides between cooking and ordering in.*
 
-The live site uses made-up restaurants and groceries only. The real Swiggy connection runs locally
-(Swiggy sign-in allows only localhost), so it is shown in the video.
+Not affiliated with, approved by or endorsed by Swiggy. Planning aid, not advice.
 
-A "kya khaun, batao" agent. It takes a vague "I don't know what to eat" and turns it into
-one concrete plan: **cook or grab it from Instamart**, or **order in from Swiggy Food**. It asks
-at most three questions, recommends one plan, checks the plan against what the tools really
-returned, and stops at an approval gate before anything with real-world effect.
+## The problem
 
-This is a personal portfolio project. It is **not** affiliated with, approved by or endorsed by
-Swiggy. Planning aid, not advice: it suggests a meal; it does not diagnose or advise.
+"Kya khaun?" is a decision problem, not a search problem. The hard part isn't finding a dish.
+Choosing the *kind* of meal comes first, and that is mostly about effort: cook something, grab a
+ready-to-eat item from Instamart, or order in from a restaurant. With too many options, people
+end up ordering nothing or scrolling for 30 minutes.
 
-## What it shows
+MoodMeals takes a vague "thaka hua hoon, kuch halka" and turns it into one concrete plan, with
+the reason, the price and a stop for approval. It asks at most three questions.
 
-- **A real decision between two different paths.** Cooking (Instamart groceries or a quick-meal
-  item) versus ordering in (a restaurant dish). The agent has to pick one and say why.
-- **A hand-written agent loop**, no agent framework: a state machine with four model actions
-  (call a tool, ask a question, propose a plan, stop the search).
-- **Code, not the model, enforces the rules.** A question budget of three, run limits, a plan
-  validator (the model cannot invent an item, a price, a closed restaurant or a budget it was
-  not given), and a write gate that needs one approval per action.
-- **A privacy firewall.** The model sees a whitelisted view of tool results (as untrusted data),
-  never addresses, phone numbers or names.
-- **Failures are handled and published.** 24 eval scenarios, a no-validator ablation, and a
-  results page that lists every failed run.
+## Why I built it, and why agentic
 
-## Try it in five minutes (mock mode, no key, no Swiggy account)
+I'm a PM, and I wanted to learn agentic AI by building one properly, not by reading about it.
+Swiggy's Food and Instamart MCP tools made it possible: real restaurants, real menus and real
+stock, so the agent can't just make things up.
+
+**Why agentic here:** the number of steps isn't known up front. If every restaurant is closed,
+the agent has to switch to Instamart. If the person drops their budget mid-run, it has to
+replan. If a search returns nothing, it has to try something else. A fixed script handles the
+happy path; the agent decides what to try next.
+
+**An honest note.** Much of this flow could also be built as a router plus a pipeline, and I
+didn't build that baseline. What I compared against is a simple code-only workflow that always
+orders in. So the results show the agent beating a naive script, not beating a good pipeline.
+Most of the reliability came from code around the model, not from the model.
+
+## How I built it: spec first
+
+I wrote the requirements, design and task list before any code (`specs/`), and treated them as
+the source of truth. Work went one task at a time, with the spec updated whenever reality
+disagreed.
+
+The specs changed in useful ways:
+
+- I dropped the "go out" (Dineout) path after finding open tool defects and getting empty
+  results from every search. Details are in `specs/requirements.md`, section 12.1.
+- I added the quick-meal fallback after a scenario showed the agent giving up too early.
+- An eval run exposed a bug where a validator rule could never fire because one input was never
+  filled in.
+
+## The design in one paragraph
+
+A hand-written agent loop with no framework. The model picks one of four actions per turn: call a
+tool, ask a question, propose a plan, or stop searching. **Code enforces the rules:** at most
+three questions, run limits, a plan validator that checks every item and price against real tool
+results, and a write gate that needs one approval per action. The model never sees addresses or
+phone numbers, and no order, checkout or payment tool exists in the codebase. Full detail is in
+[specs/design.md](specs/design.md).
+
+## Running it
+
+### Option 1: the live link (mock only)
+
+Open https://swiggymcp-moodmeals-byvartika.streamlit.app/, pick **Scripted demo (no key)**, type
+a mood and plan. You can also paste your own model key to try a real model on made-up data. The
+Replay, Results and About pages are in the sidebar.
+
+**This site can only run mock mode, with made-up restaurants and groceries.** It cannot connect
+to Swiggy. Swiggy's sign-in only allows redirects to localhost, so a hosted site can't complete
+it, and I wouldn't route anyone's Swiggy account through a server anyway.
+
+### Option 2: locally (mock, dry-run or live)
 
 Python 3.11 or newer.
 
 ```
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -e ".[dev]"
+streamlit run app/Home.py       # mock mode
+```
+
+For the real Swiggy connection, read-only, nothing is changed:
+
+```
+$env:MOODMEALS_MODE="dry_run"   # macOS/Linux: export MOODMEALS_MODE=dry_run
 streamlit run app/Home.py
 ```
 
-Pick **Scripted demo (no key)**, type a mood, and press plan. Everything runs on made-up
-restaurants and groceries. Other pages in the sidebar:
+Press **Connect to Swiggy** and sign in to Food, then Instamart. Approving a plan shows a
+preview and sends nothing to Swiggy.
 
-- **Replay**: recorded runs (successes and failures) you can step through with no model and no
-  network.
-- **Results**: the committed eval results.
-- **About**: what this is and its limits.
+**Live mode** (cart updates only, behind an approval) exists but is opt-in, with
+`MOODMEALS_ALLOW_LIVE=1`. No order or payment tool exists.
 
-To use a real model, choose a provider in the app and paste a key. The key is kept in memory for
-the session and never saved or logged; use a key with a low spend limit.
+## Why the demo is a video
 
-## The three modes
+Because of that localhost restriction, the real-data run exists only on my machine. The **demo
+video** shows dry-run against my own Swiggy account (personal details cut out), including the
+approval screen where nothing is sent.
 
-| Mode | Data | Writes | How to start |
-|---|---|---|---|
-| **mock** (default, and the only mode on a public deployment) | Made-up world | None | `streamlit run app/Home.py` |
-| **dry_run** | Your real Swiggy data, read-only | Blocked; the approval screen shows a preview and changes nothing | `MOODMEALS_MODE=dry_run streamlit run app/Home.py`, then "Connect to Swiggy" |
-| **live** | Your real Swiggy data | Cart updates only, after your approval | also set `MOODMEALS_ALLOW_LIVE=1` |
+## How I tested it
 
-Dry-run and live run only on your own machine, because Swiggy sign-in allows only localhost
-redirects. `scripts/swiggy_check.py` makes a handful of read-only calls to check the connection
-and prints counts and field names, never addresses or ids.
+24 scenarios on the made-up world: happy paths, missing information, contradictions,
+infeasible asks, tool failures, mid-run changes and safety (including an instruction hidden in a
+dish name). Scoring is by deterministic checks, not another model. All results, including
+failures, are on the app's **Results** page and in [evals/results/](evals/results/README.md).
 
-In live mode the code may update the cart (`update_food_cart`, `update_cart`) behind the write
-gate: one approval per action, and a check for an existing cart first. **No order, checkout or
-payment tool exists in this codebase**; you finish the order yourself in the Swiggy app. Cart
-totals can differ from the plan because Swiggy recomputes them.
+Latest run (gpt-5-mini, about ₹161 including reruns), runs passing every check:
 
-## Architecture
-
-```
- Streamlit pages (app/)           Evals (evals/)
- Plan · Replay · Results · About  scenarios, runner, scoring
-          │                              │
-          └──────────────┬───────────────┘
-                         ▼
-              Core package (moodmeals/core)
-   RunState + event log · agent loop (state machine) · guard and question budget
-   plan validator · totals · WriteGate (mode + approvals)
-           ┌─────────────┴─────────────┐
-           ▼                           ▼
-   LLMClient (moodmeals/models)   ActionProvider (moodmeals/providers)
-   OpenAI-compatible · Anthropic   Mock · Swiggy (dry-run / live)
-```
-
-The core package has no Streamlit imports, so the same loop runs in the app, in tests and in
-the eval runner. Full detail is in [specs/design.md](specs/design.md).
-
-## Evals and results
-
-`evals/scenarios/` holds 24 scenarios: happy path, missing information, contradictions,
-infeasible requests, tool failures, mid-run changes and safety (including a prompt injection
-hidden in a dish name). Each run is scored by deterministic checks, not by another model. Three
-strategies are compared on the same scenarios: the agent, the agent with the validator switched
-off, and a fixed code-only workflow.
-
-Latest full run (gpt-5-mini, 24 scenarios, 3 runs per scenario for the agent strategies, about
-₹161 including re-runs), runs passing every check:
-
-| Strategy | Runs passing every check |
+| Strategy | Passing |
 |---|---|
 | Agent | 71 of 71 |
-| Agent, validator off | 67 of 71 |
-| Fixed workflow | 16 of 24 |
+| Agent, validator switched off | 67 of 71 |
+| Fixed code-only workflow | 16 of 24 |
 
-Three of the four validator-off failures are plans the validator would have rejected. No
-strategy wrote anything without approval or invented an item. Read these with care:
-
-- Samples are small (three runs per scenario, one model), so these are evidence, not rates.
-- I wrote the scenarios and the scoring after seeing early failures, and I fixed the agent's
-  prompt and code for three of them (S-04, S-05, S-11) before the final numbers. The merged file
-  is labelled with the prompt version used for each scenario. The fixed workflow was not tuned.
-- Everything ran on the made-up world. Real Swiggy data was only used for read-only checks and
-  dry-run demos.
-- Two runs where a model call stalled (a sleeping laptop) are excluded and listed.
-
-The raw files are in [evals/results/](evals/results/README.md); the **Results** page shows every
-failed run.
+- The validator caught three plans that broke a rule. No strategy invented an item or wrote
+  without approval.
+- **Read it with care:** one model, three runs per scenario, and the first run scored 65 of 71.
+  I then fixed the prompt and code for three scenarios (S-04, S-05, S-11) and raised one
+  scenario's limit (S-23). The agent was tuned against its own scenarios.
 
 ## Limits
 
-- Swiggy's own documentation says third-party app development is "not permitted at this time"
-  while its Builders Club pages describe it; this project follows the more specific pages and
-  treats any order as real. It never calls a payment tool.
-- Whether Swiggy's real Food cart reply, with items in it, matches what the code expects is
-  unconfirmed; only the empty-cart shape has been observed.
-- Prices in the cost table are unverified list prices; the exchange rate (₹97 per dollar) is
-  set by the owner.
+- Results come from one model and small samples.
+- The agent tuning above means 71 of 71 is not a held-out score.
+- The real Food cart reply with items hasn't been confirmed.
+- Model prices are unverified list prices.
 - English and Hinglish only, one person, one meal.
+- Swiggy's own docs say third-party app development is "not permitted at this time", while its
+  Builders Club pages describe it. I followed the more specific pages and treat any order as
+  real.
 
-## Why no "go out" path (Dineout)
+## What I'd do next
 
-An early plan had a third path, going out to eat via Swiggy Dineout. It was dropped for v1:
-public issues on Swiggy's manifest repository report a cancel tool that is not served and a
-slots result that exists only as prose; four read-only searches returned nothing with no error;
-and its booking step is created and confirmed in one go and cannot be undone through the tools.
-Building on that would have meant guessing. The reasons and the conditions for revisiting are in
-[specs/requirements.md](specs/requirements.md) section 12.1. The provider interface means a
-Dineout provider could be added later without changing the loop.
+Test a second and third model; build the router baseline; write a held-out scenario set after
+freezing the prompt; confirm the real Food cart shape.
 
-## Development
+## Repo map
 
-```
-pip install -e ".[dev]"
-ruff check .
-pytest
-```
+`specs/` (requirements, design, tasks) · `moodmeals/` (core, UI-free) · `app/` (Streamlit) ·
+`evals/` (scenarios, runner, results) · `prompts/` · `data/replays/` · `docs/` (case study,
+deploy guide, demo script)
 
-The specs are the source of truth: [requirements](specs/requirements.md),
-[design](specs/design.md), [tasks](specs/tasks.md).
-
-```
-moodmeals/   core package (UI-independent): core, models, providers, tools
-app/         Streamlit pages
-evals/       scenarios, runner, scoring, results
-data/        recorded replays (mock data only)
-prompts/     versioned agent prompts
-scripts/     swiggy_check, merge_results, make_replays
-spikes/      one-off experiments (see spikes/README.md)
-tests/
-```
-
-To re-run evals you need a model key in your terminal (never in the repo):
-`python -m evals.runner --set full --provider openai --model gpt-5-mini --runs 3`.
+Development checks: `ruff check .` and `pytest`.
