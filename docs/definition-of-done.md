@@ -9,7 +9,7 @@ Checked against requirements section 11. Every box is ticked or carries an hones
 | Evals for strategies 1–3 with published results, including failures | Done | `evals/results/2026-10-07-gpt-5-mini-full.json`, shown on the Results page with every failed run. Honest note: the agent's 71 of 71 follows fixes made after the first run (65 of 71); both are published, with the prompt version per scenario. One model only. |
 | Replay gallery with at least 6 runs (including 2 failures) | Done | `data/replays/`: 4 successes, 2 failures. |
 | Demo video recorded with personal data hidden | **Open, owner** | Script ready in `docs/demo_script.md` (T8.3). |
-| README and case study state the limits, A3 and the no-endorsement rule | Done | `README.md` (limits section, first paragraph), `docs/case-study.md`, About page. A3 is stated in README limits and case study. |
+| README and case study state the limits, A3 and the no-endorsement rule | Done | `README.md` (limits section, first paragraph), `docs/case-study.md`. A3 is stated in README limits and case study. |
 | Eval spend within the cap | Done | About ₹161 of the ₹1,500 cap, including reruns. |
 
 ## Other checks run in this pass
